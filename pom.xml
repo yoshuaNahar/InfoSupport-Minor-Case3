@@ -10,9 +10,9 @@
 
 	<name>kantilever parent pom</name>
 
-	<modules>
-		<module></module>
-	</modules>
+	<!--<modules>-->
+		<!--<module></module>-->
+	<!--</modules>-->
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
