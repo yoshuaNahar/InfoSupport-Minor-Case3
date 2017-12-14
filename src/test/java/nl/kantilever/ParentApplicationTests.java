@@ -1,4 +1,4 @@
-package com.minor.infosupport.parent;
+package nl.kantilever;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
