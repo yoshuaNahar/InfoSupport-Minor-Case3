@@ -7,5 +7,5 @@
 4. To actually lift your docker environment, execute the following command `bash lift.sh`
 
 Please note that this doesn't include our own microservices and front-end.
-0
+
 Happy coding :)
