@@ -1,12 +1,12 @@
-package nl.kantilever;
+package nl.kantilever.webwinkel;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ParentApplication {
+public class WebWinkelServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ParentApplication.class, args);
+		SpringApplication.run(WebWinkelServiceApplication.class, args);
 	}
 }
