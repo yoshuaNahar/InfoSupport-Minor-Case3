@@ -1,0 +1,45 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false,
+        extensions: [[$class: 'LocalBranch', localBranch: 'master'],
+        [$class: 'MessageExclusion', excludedMessage: '.*\\[maven-release-plugin\\].*']],
+        submoduleCfg: [], userRemoteConfigs: [[url: 'http://de-jong-gitlab:80/root/Case03']]])
+      }
+    }
+
+    stage('Clean') {
+      steps {
+        sh 'mvn clean'
+      }
+    }
+
+    stage('Package') {
+      steps {
+        sh 'mvn package'
+      }
+    }
+
+    stage('Docker') {
+      steps {
+          // Docker login
+          sh 'docker login minordotnet.azurecr.io --username a1236a8c-9c84-4ca3-b15c-6ff8ef6e1d8b --password Vqox9jmjWkA6BlkXlaUG'
+
+          // Docker networks
+          sh 'docker network create proxy_network &> /dev/null'
+          sh 'docker network create kantilever_network &> /dev/null'
+
+          // Clear previous deployment
+          sh 'docker-compose -f docker-compose.kantilever.yml stop'
+          sh 'docker-compose -f docker-compose.kantilever.yml down --remove-orphans'
+          sh 'docker-compose -f docker-compose.kantilever.yml rm -f'
+
+          // Lift
+          sh 'docker-compose -f docker-compose.kantilever.yml up --build'
+	    }
+    }
+  }
+}
