@@ -9,19 +9,19 @@ services:
      - "8920:5672"
      - "8921:15672"
 
-  de-jong-phpmyadmin:
-   image: phpmyadmin/phpmyadmin
-   ports:
-    - "8922:80"
-   links:
-     - de-jong-mysql:db
-
   de-jong-mysql:
     container_name: de-jong-mysql
     image: 'bitnami/mysql:latest'
     ports:
-      - "8923:3306"
+      - "8922:3306"
     environment:
       - MYSQL_ROOT_USER=root
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=webshop_kantilever
+
+  de-jong-phpmyadmin:
+   image: phpmyadmin/phpmyadmin
+   ports:
+    - "8923:80"
+   links:
+     - de-jong-mysql:db
