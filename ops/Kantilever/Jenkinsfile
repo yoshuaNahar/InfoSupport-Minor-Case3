@@ -29,8 +29,8 @@ pipeline {
           sh 'docker login minordotnet.azurecr.io --username a1236a8c-9c84-4ca3-b15c-6ff8ef6e1d8b --password Vqox9jmjWkA6BlkXlaUG'
 
           // Docker networks
-        //   sh 'docker network create proxy_network'
-        //   sh 'docker network create kantilever_network'
+          sh 'docker network create proxy_network &> /dev/null'
+          sh 'docker network create kantilever_network &> /dev/null'
 
           // Clear previous deployment
           sh 'docker-compose -f docker-compose.kantilever.yml stop'
