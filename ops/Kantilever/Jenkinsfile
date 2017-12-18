@@ -25,6 +25,13 @@ pipeline {
 
     stage('Docker') {
       steps {
+          // Docker login
+          sh 'docker login minordotnet.azurecr.io --username ${DOCKER_USER} --password ${DOCKER_PASS}'
+
+          // Docker networks
+          sh 'docker network create proxy_network'
+          sh 'docker network create kantilever_network'
+
           // Clear previous deployment
           sh 'docker-compose -f docker-compose.kantilever.yml stop'
           sh 'docker-compose -f docker-compose.kantilever.yml down --remove-orphans'
