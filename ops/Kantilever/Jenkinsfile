@@ -7,7 +7,7 @@ pipeline {
         checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false,
         extensions: [[$class: 'LocalBranch', localBranch: 'master'],
         [$class: 'MessageExclusion', excludedMessage: '.*\\[maven-release-plugin\\].*']],
-        submoduleCfg: [], userRemoteConfigs: [[url: 'http://noah-gitlab:80/root/Case03']]])
+        submoduleCfg: [], userRemoteConfigs: [[url: 'http://de-jong-gitlab:80/root/Case03']]])
       }
     }
 
