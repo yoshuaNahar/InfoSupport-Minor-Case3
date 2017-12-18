@@ -61,7 +61,6 @@
             <outputFormat>XML</outputFormat>
             <outputFormat>HTML</outputFormat>
           </outputFormats>
-          <failWhenNoMutations>false</failWhenNoMutations>
         </configuration>
       </plugin>
 		</plugins>
