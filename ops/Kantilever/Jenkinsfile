@@ -26,7 +26,7 @@ pipeline {
     stage('Docker') {
       steps {
           // Docker login
-          sh 'docker login minordotnet.azurecr.io --username ${DOCKER_USER} --password ${DOCKER_PASS}'
+          sh 'docker login minordotnet.azurecr.io --username a1236a8c-9c84-4ca3-b15c-6ff8ef6e1d8b --password Vqox9jmjWkA6BlkXlaUG'
 
           // Docker networks
           sh 'docker network create proxy_network'
