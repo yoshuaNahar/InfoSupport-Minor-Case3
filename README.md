@@ -9,6 +9,12 @@
 Please note that this doesn't include our own microservices and front-end.
 
 ## Front end Development
+Install the following
+- Node ``https://nodejs.org/en/download/``
+  - For Non-Windows users: ```sudo apt-get install node``` <- Depends on which distro which version it will install
+     - you can also install ``nvm`` for node, EZ for windows and linux.
+- Bower ``npm install -g bower``
+
 1. Open a unix based terminal.
 2. Install Polymer cli : ```npm install -g polymer-cli```
 3. Navigate to /front-end-webwinkel
