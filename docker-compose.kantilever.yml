@@ -44,7 +44,7 @@ services:
       - kantilever_network
       - proxy
     ports:
-      - "8022:80"
+      - "8922:80"
 
   kantilever-magazijn-service:
     image: minordotnet.azurecr.io/kantilever-magazijn-service:latest
@@ -62,7 +62,7 @@ services:
       - kantilever_network
       - proxy
     ports:
-      - "8023:80"
+      - "8923:80"
 
   kantilever-magazijn-frontend:
     image: minordotnet.azurecr.io/kantilever-magazijn-frontend:latest
@@ -80,7 +80,7 @@ services:
       - kantilever_network
       - proxy
     ports:
-      - "8024:80"
+      - "8924:80"
 
 networks:
   proxy:
