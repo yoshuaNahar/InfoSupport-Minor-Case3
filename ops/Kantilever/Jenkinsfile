@@ -26,7 +26,7 @@ pipeline {
           sh 'docker-compose -f docker-compose.kantilever.yml rm -f'
 
           // Lift
-          sh 'docker-compose -f docker-compose.kantilever.yml up --build'
+          sh 'docker-compose -f docker-compose.kantilever.yml up --build -d'
 	    }
     }
   }
