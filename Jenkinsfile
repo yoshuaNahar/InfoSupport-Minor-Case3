@@ -42,6 +42,7 @@ pipeline {
 
           // Lift
           // sh 'MYSQL_HOST=jeruno-mysql MYSQL_PORT=3306 RABBIT_HOST=jeruno-rabbitmq RABBIT_PORT=5672 microservices_bs_klant_beheer_url=http://jeruno-spring-bs_klant_beheer:8920 microservices_bs_voertuig_beheer_url=http://jeruno-spring-bs_voertuig_beheer:8921 microservices_is_rijksdienst_wegverkeer_url=http://jeruno-spring-is_rijksdienst_wegverkeer:8923 microservices_pcs_onderhoud_url=http://jeruno-spring-pcs_onderhoud:8924 docker-compose -f docker-compose.deployment.yml up --build -d'
+          sh 'docker-compose -f docker-compose.deployment.yml up --build -d'
 	  }
     }
 
