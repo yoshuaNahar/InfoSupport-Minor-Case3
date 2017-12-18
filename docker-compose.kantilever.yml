@@ -1,0 +1,88 @@
+﻿version: '3.3'
+
+services:
+  sql:
+    image: microsoft/mssql-server-linux:2017-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Geheim_101
+    networks:
+      - kantilever_network
+
+  kantilever-eventbus:
+    image: rabbitmq:3-management
+    container_name: kantilever-eventbus
+    environment:
+      - RABBITMQ_DEFAULT_USER=Kantilever
+      - RABBITMQ_DEFAULT_PASS=Kant1lever
+      #- VIRTUAL_HOST=kantilever-event-bus.netminor.infosupport.net
+      #- VIRTUAL_PORT=15672
+    networks:
+      - kantilever_network
+      #- proxy
+
+  kantilever-auditlog:
+    image: minordotnet.azurecr.io/kantilever-auditlog:latest
+    container_name: kantilever-auditlog
+    environment:
+      - AuditLogDb=Server=sql,1433;Database=AuditLogDB;User ID=sa;Password=Geheim_101
+      - VIRTUAL_HOST=kantilever-auditlog.netminor.infosupport.net
+      - VIRTUAL_PORT=80
+      - eventbus-exchangename=KantileverBus
+      - eventbus-hostname=kantilever-eventbus
+      - eventbus-username=Kantilever
+      - eventbus-password=Kant1lever
+      - startup-delay-in-seconds=20
+    volumes:
+      - type: "volume"
+        target: /app/data
+        #source: /dir/to/map/on/docker/host/machine
+    networks:
+      - kantilever_network
+      - proxy
+    ports:
+      - 8082:80
+
+  kantilever-magazijn-service:
+    image: minordotnet.azurecr.io/kantilever-magazijn-service:latest
+    container_name: kantilever-magazijn-service
+    environment:
+      - MagazijnDb=Server=sql,1433;Database=MagazijnDb;User ID=sa;Password=Geheim_101
+      - VIRTUAL_HOST=kantilever-magazijn-service.netminor.infosupport.net
+      - VIRTUAL_PORT=80
+      - eventbus-exchangename=KantileverBus
+      - eventbus-hostname=kantilever-eventbus
+      - eventbus-username=Kantilever
+      - eventbus-password=Kant1lever
+      - startup-delay-in-seconds=20
+    networks:
+      - kantilever_network
+      - proxy
+    ports:
+      - 8081:80
+
+  kantilever-magazijn-frontend:
+    image: minordotnet.azurecr.io/kantilever-magazijn-frontend:latest
+    container_name: kantilever-magazijn-frontend
+    environment:
+      - MagazijnViewDb=Server=sql,1433;Database=MagazijnViewDb;User ID=sa;Password=Geheim_101
+      - VIRTUAL_HOST=kantilever-magazijn-frontend.netminor.infosupport.net
+      - VIRTUAL_PORT=80
+      - eventbus-exchangename=KantileverBus
+      - eventbus-hostname=kantilever-eventbus
+      - eventbus-username=Kantilever
+      - eventbus-password=Kant1lever
+      - startup-delay-in-seconds=20
+    networks:
+      - kantilever_network
+      - proxy
+    ports:
+      - 8080:80
+
+networks:
+  proxy:
+    external:
+      name: proxy_network
+  kantilever_network:
+    external:
+      name: kantilever_network
