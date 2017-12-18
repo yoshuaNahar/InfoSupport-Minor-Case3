@@ -11,18 +11,6 @@ pipeline {
       }
     }
 
-    stage('Clean') {
-      steps {
-        sh 'mvn clean'
-      }
-    }
-
-    stage('Package') {
-      steps {
-        sh 'mvn package'
-      }
-    }
-
     stage('Docker') {
       steps {
           // Docker login
