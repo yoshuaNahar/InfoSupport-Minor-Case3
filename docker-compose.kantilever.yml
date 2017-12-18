@@ -1,7 +1,7 @@
 ﻿version: '3.3'
 
 services:
-  sql:
+  kantilever-mysql:
     image: microsoft/mssql-server-linux:2017-latest
     environment:
       - ACCEPT_EULA=Y
@@ -17,6 +17,9 @@ services:
       - RABBITMQ_DEFAULT_PASS=Kant1lever
       #- VIRTUAL_HOST=kantilever-event-bus.netminor.infosupport.net
       #- VIRTUAL_PORT=15672
+    ports:
+     - "8920:5672"
+     - "8921:15672"
     networks:
       - kantilever_network
       #- proxy
@@ -41,7 +44,7 @@ services:
       - kantilever_network
       - proxy
     ports:
-      - 8082:80
+      - "8922:80"
 
   kantilever-magazijn-service:
     image: minordotnet.azurecr.io/kantilever-magazijn-service:latest
@@ -59,7 +62,7 @@ services:
       - kantilever_network
       - proxy
     ports:
-      - 8081:80
+      - "8923:80"
 
   kantilever-magazijn-frontend:
     image: minordotnet.azurecr.io/kantilever-magazijn-frontend:latest
@@ -77,7 +80,7 @@ services:
       - kantilever_network
       - proxy
     ports:
-      - 8080:80
+      - "8924:80"
 
 networks:
   proxy:
