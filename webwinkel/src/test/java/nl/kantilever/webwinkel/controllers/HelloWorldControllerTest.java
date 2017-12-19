@@ -1,4 +1,4 @@
-package nl.kantilever.webwinkel.controller;
+package nl.kantilever.webwinkel.controllers;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

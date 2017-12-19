@@ -1,4 +1,4 @@
-package nl.kantilever.webwinkel.controller.domain;
+package nl.kantilever.webwinkel.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Article {
+public class Atrikel {
   @Id
   @Column(name = "artikelnummer")
   @GeneratedValue(strategy = GenerationType.IDENTITY)

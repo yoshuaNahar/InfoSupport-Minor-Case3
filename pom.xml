@@ -12,7 +12,8 @@
 
 	<modules>
 		<module>webwinkel</module>
-	</modules>
+    <module>replayservice</module>
+  </modules>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
