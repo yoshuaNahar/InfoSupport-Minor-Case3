@@ -19,16 +19,32 @@ pipeline {
 	  }
     }
 
-    stage('Package') {
+    stage('Maven Package') {
       steps {
         sh 'mvn package'
       }
     }
 
+    stage('Bower install') {
+      steps {
+        dir ('front-end-webwinkel') {
+          sh 'bower install --allow-root'
+        }
+      }
+    }
+
+    stage('Polymer Build') {
+      steps {
+        dir ('front-end-webwinkel') {
+          sh 'polymer build'
+        }
+      }
+    }
+
     stage('Docker') {
-	  when {
-		branch 'master'
-	  }
+      when {
+        branch 'master'
+      }
       steps {
           // Clear previous deployment
           sh 'docker-compose -f docker-compose.deployment.yml stop'
