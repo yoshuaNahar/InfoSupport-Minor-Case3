@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Atrikel {
+public class Artikel {
   @Id
   @Column(name = "artikelnummer")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +49,6 @@ public class Atrikel {
   String leverancier;
 
   @Column(name = "categorieen")
-  List<String> categorieen;
+  ArrayList<String> categorieen;
 
 }
