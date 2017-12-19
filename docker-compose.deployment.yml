@@ -21,7 +21,7 @@ services:
 
   front-end-webwinkel:
     build:
-      context: .
+      context: ./front-end-webwinkel
       dockerfile: ./ops/front-end-webwinkel/Dockerfile
     ports:
       - "8927:80"
