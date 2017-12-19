@@ -28,7 +28,7 @@ pipeline {
     stage('Bower install') {
       steps {
         dir ('front-end-webwinkel') {
-          sh 'bower install'
+          sh 'bower install --allow-root'
         }
       }
     }
