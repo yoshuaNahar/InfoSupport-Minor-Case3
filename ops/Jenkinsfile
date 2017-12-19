@@ -25,6 +25,14 @@ pipeline {
       }
     }
 
+    stage('Bower install') {
+      steps {
+        dir ('front-end-webwinkel') {
+          sh 'bower install'
+        }
+      }
+    }
+
     stage('Polymer Build') {
       steps {
         dir ('front-end-webwinkel') {
