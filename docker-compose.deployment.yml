@@ -1,5 +1,5 @@
 ---
-version: '2'
+version: '3'
 services:
 
   de-jong-mysql:
@@ -18,6 +18,13 @@ services:
     - "8926:80"
    links:
      - de-jong-mysql:db
+
+  front-end-webwinkel:
+    build:
+
+
+#  de-jong-fe-webwinkel:
+#    image
 
 
 
