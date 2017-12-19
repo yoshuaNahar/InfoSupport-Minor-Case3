@@ -24,3 +24,5 @@ nbdist/
 .nb-gradle/
 
 ops/.envIsSetup
+npm-debug.log
+
