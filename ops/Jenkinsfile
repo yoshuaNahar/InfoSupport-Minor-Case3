@@ -4,19 +4,19 @@ pipeline {
   stages {
     stage('Clean') {
       steps {
-		    sh 'mvn clean'
+		sh 'mvn clean'
       }
     }
 
     stage('SonarQube analysis') {
-      steps {
-        withSonarQubeEnv('SonarQube') {
-          // requires SonarQube Scanner for Maven 3.2+
-          sh 'mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true'
-          sh 'mvn org.pitest:pitest-maven:mutationCoverage -DwithHistory'
-          sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar -Dsonar.pitest.mode=reuseReport'
-        }
-      }
+	  steps {
+		  withSonarQubeEnv('SonarQube') {
+			  // requires SonarQube Scanner for Maven 3.2+
+			  sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true"
+			  sh "mvn org.pitest:pitest-maven:mutationCoverage -DwithHistory"
+			  sh "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar -Dsonar.pitest.mode=reuseReport -Dsonar.branch=${env.BRANCH_NAME}"
+	  	  }
+	  }
     }
 
     stage('Maven Package') {
