@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class ArtikelService {
 
@@ -21,4 +23,19 @@ public class ArtikelService {
     this.artikelRepository.save(artikel);
   }
 
+  public Artikel findArtikelenByArtikelnummer(int artikelnummer) {
+    return artikelRepository.findArtikelenByArtikelnummer(artikelnummer);
+  }
+
+  public List<Artikel> findArtikelenByNaam(String naam) {
+    return artikelRepository.findArtikelenByNaam(naam);
+  }
+
+  public List<Artikel> findArtikelenByLeverancier(String leverancier) {
+    return artikelRepository.findArtikelenByLeverancier(leverancier);
+  }
+
+  public List<Artikel> findArtikelenByCategorie(String categorie) {
+    return artikelRepository.findArtikelenByCategorie(categorie);
+  }
 }

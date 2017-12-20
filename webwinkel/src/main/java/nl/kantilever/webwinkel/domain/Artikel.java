@@ -1,5 +1,6 @@
 package nl.kantilever.webwinkel.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,10 +15,11 @@ import java.util.List;
  */
 
 @Entity
-@Table(name ="articles")
+@Table(name = "artikelen")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Artikel {
   @Id
   @Column(name = "artikelnummer")
@@ -43,12 +45,13 @@ public class Artikel {
   Date leverbaarTot;
 
   @Column(name = "leverancierCode")
-  String leverancierCode;
+  int leverancierCode;
 
   @Column(name = "leverancier")
   String leverancier;
 
-  @Column(name = "categorieen")
-  ArrayList<String> categorieen;
-
+  @OneToMany
+  @JoinColumn(name = "categorie_naam")
+  List<Categorie> categorieen;
 }
+
