@@ -29,14 +29,7 @@ pipeline {
       }
     }
 
-    stage('Build') {
-      steps {
-       parallel (
-         "Maven package": { sh 'mvn package' },
-         "Bower install & Polymer Build: {dir ('front-end-webwinkel') {sh 'bower install --allow-root'sh 'polymer build'}}
-       )
-      }
-    }
+
 
     stage('Deploy') {
       when {
