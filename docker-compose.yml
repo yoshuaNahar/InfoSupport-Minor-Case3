@@ -34,4 +34,4 @@ services:
    ports:
     - "8932:80"
    links:
-     - de-jong-webwinkel-mysql:db
+     - de-jong-bestellingservice-mysql:db
