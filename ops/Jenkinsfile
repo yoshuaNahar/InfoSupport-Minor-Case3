@@ -10,7 +10,7 @@ pipeline {
 
     stage('Test') {
       steps {
-        parallel (
+        parallel {
           stage("SonarQube analysis") {
             steps {
               withSonarQubeEnv('SonarQube') {
@@ -21,19 +21,25 @@ pipeline {
               }
             }
           }
-
-        )
+          stage("Polymer Test") {
+            steps {
+              dir ('front-end-webwinkel') {
+                sh 'polymer test'
+              }
+            }
+          }
+        }
       }
     }
 
     stage('Build') {
       steps {
-        parallel (
+        parallel {
           stage("Maven package" {
             steps {
               sh 'mvn package'
             }
-          },
+          }
           stage("Bower install & Polymer Build") {
             steps {
               dir ('front-end-webwinkel') {
@@ -42,7 +48,7 @@ pipeline {
               }
             }
           }
-        )
+        }
       }
     }
 
