@@ -4,44 +4,46 @@ pipeline {
   stages {
     stage('Clean') {
       steps {
-		sh 'mvn clean'
+		    sh 'mvn clean'
       }
     }
 
-    stage('SonarQube analysis') {
-	  steps {
-		  withSonarQubeEnv('SonarQube') {
-			  // requires SonarQube Scanner for Maven 3.2+
-			  sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true"
-			  sh "mvn org.pitest:pitest-maven:mutationCoverage -DwithHistory"
-			  sh "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar -Dsonar.pitest.mode=reuseReport -Dsonar.branch=${env.BRANCH_NAME}"
-	  	  }
-	  }
-    }
-
-    stage('Maven Package') {
+    stage('Test') {
       steps {
-        sh 'mvn package'
+         parallel (
+           "SonarQube analysis" : {
+           withSonarQubeEnv('SonarQube') {
+                  // requires SonarQube Scanner for Maven 3.2+
+                  sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true"
+                  sh "mvn org.pitest:pitest-maven:mutationCoverage -DwithHistory"
+                  sh "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar -Dsonar.pitest.mode=reuseReport -Dsonar.branch=${env.BRANCH_NAME}"
+                  }
+
+           },
+           "Polymer Test" : {
+            dir ('front-end-webwinkel') {
+              sh 'polymer test'
+            }
+            }
+         )
       }
     }
 
-    stage('Bower install') {
+    stage('Build') {
       steps {
-        dir ('front-end-webwinkel') {
-          sh 'bower install --allow-root'
-        }
+       parallel (
+         "Maven package": { sh 'mvn package' },
+         "Bower install & Polymer Build: {
+           dir ('front-end-webwinkel') {
+            sh 'bower install --allow-root'
+            sh 'polymer build'
+           }
+         }
+       )
       }
     }
 
-    stage('Polymer Build') {
-      steps {
-        dir ('front-end-webwinkel') {
-          sh 'polymer build'
-        }
-      }
-    }
-
-    stage('Docker') {
+    stage('Deploy') {
       when {
         branch 'master'
       }
