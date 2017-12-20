@@ -10,45 +10,38 @@ pipeline {
 
     stage('Test') {
       steps {
-         parallel (
-           stage("SonarQube analysis") {
-           steps {
-           withSonarQubeEnv('SonarQube') {
-                  // requires SonarQube Scanner for Maven 3.2+
-                  sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true"
-                  sh "mvn org.pitest:pitest-maven:mutationCoverage -DwithHistory"
-                  sh "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar -Dsonar.pitest.mode=reuseReport -Dsonar.branch=${env.BRANCH_NAME}"
-                  }
+        parallel (
+          stage("SonarQube analysis") {
+            steps {
+              withSonarQubeEnv('SonarQube') {
+                // requires SonarQube Scanner for Maven 3.2+
+                sh "mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true"
+                sh "mvn org.pitest:pitest-maven:mutationCoverage -DwithHistory"
+                sh "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar -Dsonar.pitest.mode=reuseReport -Dsonar.branch=${env.BRANCH_NAME}"
+              }
+            }
+          }
 
-           }}
-           stage("Polymer Test") {
-           steps {
-            dir ('front-end-webwinkel') {
-              sh 'polymer test'
-            }
-            }
-            }
-         )
       }
     }
 
     stage('Build') {
       steps {
-       parallel (
-         stage("Maven package" {
-         steps {
-          sh 'mvn package'
+        parallel (
+          stage("Maven package" {
+            steps {
+              sh 'mvn package'
+            }
           }
-         }
-         stage("Bower install & Polymer Build") {
-         steps {
-           dir ('front-end-webwinkel') {
-            sh 'bower install --allow-root'
-            sh 'polymer build'
-           }
-         }
-         }
-       )
+          stage("Bower install & Polymer Build") {
+            steps {
+              dir ('front-end-webwinkel') {
+                sh 'bower install --allow-root'
+                sh 'polymer build'
+              }
+            }
+          }
+        )
       }
     }
 
