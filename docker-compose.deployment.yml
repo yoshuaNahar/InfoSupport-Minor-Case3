@@ -2,34 +2,31 @@
 version: '3'
 services:
 
-  de-jong-phpmyadmin:
-   image: phpmyadmin/phpmyadmin
-   ports:
-    - "8925:80"
-   links:
-     - de-jong-webwinkel-mysql:db
-
   de-jong-webwinkel-mysql:
-    container_name: de-jong-mysql
     image: 'bitnami/mysql:latest'
     ports:
-      - "8926:3306"
+      - "8925:3306"
     environment:
       - MYSQL_ROOT_USER=root
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=webwinkel
 
+  de-jong-phpmyadmin:
+   image: phpmyadmin/phpmyadmin
+   ports:
+    - "8926:80"
+   links:
+     - de-jong-webwinkel-mysql:db
+
   de-jong-webwinkel:
     build:
       context: .
       dockerfile: ops/Webwinkel/Dockerfile
-    container_name: de-jong-webwinkel
     command: sh ./wait-for.sh --timeout=300 de-jong-webwinkel-mysql:3306 -- java -jar app.jar
     ports:
-      - "8927:8080"
+      - "8927:8081"
     environment:
-      - MYSQL_HOST=de-jong-webwinkel-mysql
-      - MYSQL_PORT=3306
+      - spring_datasource_url=jdbc:mysql://de-jong-webwinkel-mysql:3306/webwinkel
     depends_on:
       - de-jong-webwinkel-mysql
 
@@ -38,12 +35,12 @@ services:
       context: .
       dockerfile: ops/Polymer/Dockerfile
     ports:
-      - "8928:80"
+      - "8928:8081"
 
-
-#  de-jong-fe-webwinkel:
-#    image
-
-
-
-
+  de-jong-replayservice:
+      build:
+        context: .
+        dockerfile: ops/Replayservice/Dockerfile
+      command: java -jar app.jar
+      ports:
+        - "8929:8080"

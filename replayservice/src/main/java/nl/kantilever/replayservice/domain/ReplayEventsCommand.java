@@ -1,4 +1,4 @@
-package domain;
+package nl.kantilever.replayservice.domain;
 
 public class ReplayEventsCommand {
   public String ExchangeName;
