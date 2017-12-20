@@ -13,6 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="shop-image.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/paper-search/paper-search-panel.html">
+<link rel="import" href="../bower_components/polymer/lib/utils/async.html">
 
 <dom-module id="shop-home">
 
@@ -98,14 +99,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-search-panel
       placeholder="Zoek naar artikelen.."
       search="{{search}}"
-      items="[[items]]"
+      items="{{items}}"
       has-more="[[hasMore]]"
       loading="[[loading]]"
       filters="[[filters]]"
       selected-filters="{{selectedFilters}}"
-      on-change-request-params="getArticles">
-
-      <div>
+      no-results-text="Er zijn geen resultaten gevonden bij het zoeken.">
+      <div id="results">
         <h1>Resultaten</h1>
         <hr>
       </div>
@@ -135,9 +135,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get is() { return 'shop-home'; }
 
+      ready() {
+        super.ready()
+        if(this.search ==="") {
+          Polymer.Async.microTask.run(() => {
+            const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel')
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none'
+            searchShadowDom.querySelector('#results').style.display='none'
+          })
+        }
+      }
+
       static get properties() { return {
         search: {
-          type: String
+          type: String,
+          value: "",
+          observer: '_searchChanged'
         },
 
         loading: {
@@ -175,10 +188,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _visibleChanged(visible) {
         if (visible) {
           this.dispatchEvent(new CustomEvent('change-section', {
-            bubbles: true, composed: true, detail: {title: 'Home'}}));
+            bubbles: true, composed: true, detail: {title: 'Home'}
+          }));
         }
       }
 
+      _searchChanged(value) {
+        const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel')
+        if(this.search ==="") {
+          Polymer.Async.microTask.run(() => {
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none'
+            searchShadowDom.querySelector('#results').style.display='none'
+          })
+        } else {
+          searchShadowDom.shadowRoot.querySelector('.noResults').style.display='inline'
+          searchShadowDom.querySelector('#results').style.display='inline'
+        }
+
+        let results = this._getMatchingArticles(value)
+      }
+
+      _getMatchingArticles(value) {
+
+      }
     }
 
     customElements.define(ShopHome.is, ShopHome);
