@@ -33,12 +33,7 @@ pipeline {
       steps {
        parallel (
          "Maven package": { sh 'mvn package' },
-         "Bower install & Polymer Build: {
-           dir ('front-end-webwinkel') {
-            sh 'bower install --allow-root'
-            sh 'polymer build'
-           }
-         }
+         "Bower install & Polymer Build: {dir ('front-end-webwinkel') {sh 'bower install --allow-root'sh 'polymer build'}}
        )
       }
     }
