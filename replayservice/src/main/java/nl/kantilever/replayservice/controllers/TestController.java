@@ -34,8 +34,14 @@ public class TestController {
         HttpMethod.GET,
         null,
         new ParameterizedTypeReference<List<String>>() {});
-    System.out.println(z.getBody());
-    System.out.println(z.getBody().get(0));
+    for (String a: z.getBody()) {
+      System.out.println(a);
+    }
+//    ObjectMapper objectMapper = new ObjectMapper();
+
+//    ArrayList<ReplayEventsCommand> events = objectMapper.readValue(response, new TypeReference<List<ReplayEventsCommand>>(){});
+
+
 
 
 

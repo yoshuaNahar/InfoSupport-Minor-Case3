@@ -6,18 +6,18 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReplayEventsCommand {
-  private String ExchangeName;
-  private long FromTimestamp;
-  private long ToTimestamp;
-  private String EventType;
-  private String Topic;
+  private String exchangeName;
+  private long fromTimestamp;
+  private long toTimestamp;
+  private String eventType;
+  private String topic;
 
   public ReplayEventsCommand(String exchangeName, long fromTimestamp, long toTimestamp, String eventType, String topic) {
-    this.ExchangeName = exchangeName;
-    this.FromTimestamp = fromTimestamp;
-    this.ToTimestamp = toTimestamp;
-    this.EventType = eventType;
-    this.Topic = topic;
+    this.exchangeName = exchangeName;
+    this.fromTimestamp = fromTimestamp;
+    this.toTimestamp = toTimestamp;
+    this.eventType = eventType;
+    this.topic = topic;
   }
   public ReplayEventsCommand() {
   }
