@@ -21,7 +21,7 @@ pipeline {
               }
             }
           }
-          
+
         )
       }
     }
@@ -33,7 +33,7 @@ pipeline {
             steps {
               sh 'mvn package'
             }
-          }
+          },
           stage("Bower install & Polymer Build") {
             steps {
               dir ('front-end-webwinkel') {
