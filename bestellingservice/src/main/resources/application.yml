@@ -1,7 +1,7 @@
 spring:
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.99.100:8925/webwinkelservice
+    url: jdbc:mysql://192.168.99.100:8931/bestellingservice
     username: root
     password: root
   rabbitmq:
@@ -15,5 +15,5 @@ spring:
       ddl-auto: create-drop
 
 server:
-  port: 8081
+  port: 8082
 

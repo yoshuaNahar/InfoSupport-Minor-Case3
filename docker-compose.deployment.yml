@@ -4,14 +4,15 @@ services:
 
   de-jong-webwinkel-mysql:
     image: 'bitnami/mysql:latest'
+    container_name: de-jong-webwinkel-mysql
     ports:
       - "8925:3306"
     environment:
       - MYSQL_ROOT_USER=root
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=webwinkel
+      - MYSQL_DATABASE=webwinkelservice
 
-  de-jong-phpmyadmin:
+  de-jong-webwinkel-phpmyadmin:
    image: phpmyadmin/phpmyadmin
    ports:
     - "8926:80"
@@ -26,7 +27,7 @@ services:
     ports:
       - "8927:8081"
     environment:
-      - spring_datasource_url=jdbc:mysql://de-jong-webwinkel-mysql:3306/webwinkel
+      - spring_datasource_url=jdbc:mysql://de-jong-webwinkel-mysql:3306/webwinkelservice
     depends_on:
       - de-jong-webwinkel-mysql
 
@@ -44,3 +45,32 @@ services:
       command: java -jar app.jar
       ports:
         - "8929:8080"
+
+  de-jong-bestellingservice:
+    build:
+      context: .
+      dockerfile: ops/BestellingService/Dockerfile
+    command: sh ./wait-for.sh --timeout=300 de-jong-bestellingservice-mysql:3306 -- java -jar app.jar
+    ports:
+      - "8930:8082"
+    environment:
+      - spring_datasource_url=jdbc:mysql://de-jong-bestellingservice-mysql:3306/bestellingservice
+    depends_on:
+      - de-jong-webwinkel-mysql
+
+  de-jong-bestellingservice-mysql:
+    image: 'bitnami/mysql:latest'
+    container_name: de-jong-bestellingservice-mysql
+    ports:
+      - "8931:3306"
+    environment:
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=bestellingservice
+
+  de-jong-bestellingservice-phpmyadmin:
+   image: phpmyadmin/phpmyadmin
+   ports:
+    - "8932:80"
+   links:
+     - de-jong-webwinkel-mysql:db
