@@ -20,5 +20,10 @@ public class ReplayEventsCommand {
     this.topic = topic;
   }
   public ReplayEventsCommand() {
+    this.exchangeName = "KantileverBus";
+    this.fromTimestamp = 0;
+    this.toTimestamp= 999999999999999999l;
+    this.eventType = "Kantilever.CatalogusService.ArtikelAanCatalogusToegevoegd";
+    this.topic = "#";
   }
 }

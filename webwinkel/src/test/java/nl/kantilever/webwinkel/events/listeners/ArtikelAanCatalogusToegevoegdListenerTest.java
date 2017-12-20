@@ -25,10 +25,10 @@ public class ArtikelAanCatalogusToegevoegdListenerTest {
     this.artikelAanCatalogusToegevoegdListener = new ArtikelAanCatalogusToegevoegdListener();
   }
 
-  @Test
+/*  @Test
   public void listenWithNewArtikelShouldCallSaveOnArtikelService() {
     this.artikelAanCatalogusToegevoegdListener.setArtikelService(apkCheckService);
     this.artikelAanCatalogusToegevoegdListener.listen(new Artikel());
     verify(apkCheckService, times(1)).save(any(Artikel.class));
-  }
+  }*/
 }

@@ -14,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,11 +24,11 @@ import java.util.List;
 public class testGetReplayEvents {
 
   @Test
-  public void test() throws URISyntaxException {
+  public void test() throws URISyntaxException, IOException {
     RestTemplate restTemplate = new RestTemplate();
 
     ResponseEntity<List<String>> z = restTemplate
-      .exchange(new URI("https://kantilever-auditlog.netminor.infosupport.net/api/ReplayEvents"),
+      .exchange(new URI("http://dormin02:8922/api/ReplayEvents"),
         HttpMethod.GET,
         null,
         new ParameterizedTypeReference<List<String>>() {
@@ -36,24 +37,11 @@ public class testGetReplayEvents {
     System.out.println(z.getBody().get(0));
 
     ObjectMapper mapper = new ObjectMapper();
-//    String s = z.getBody().get(0);
+    String s = z.getBody().get(0);
 
-        String s = "{\"Id\": 0, \"CorrelationId\": \"seks\"}";
+    EenEvent obj = mapper.readValue(s, EenEvent.class);
+    System.out.println(obj);
 
-//      s = s.replace("\\", "");
-//      System.out.println(s);
-
-    try {
-      EenEvent obj = mapper.readValue(s, new TypeReference<EenEvent>() {
-      });
-      System.out.println(obj);
-
-      obj = mapper.readValue(s, EenEvent.class);
-      System.out.println(obj);
-
-    } catch (Exception pe) {
-      pe.printStackTrace();
-    }
   }
 
 }

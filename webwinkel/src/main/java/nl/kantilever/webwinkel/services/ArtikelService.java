@@ -21,4 +21,5 @@ public class ArtikelService {
     this.artikelRepository.save(artikel);
   }
 
+
 }
