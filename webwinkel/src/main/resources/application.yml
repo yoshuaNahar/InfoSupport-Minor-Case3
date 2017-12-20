@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.99.100:8925/webshop_kantilever
+    username: root
+    password: root
+  rabbitmq:
+    username: Kantilever
+    password: Kant1lever
+    host: 192.168.178.158
+    port: 8920
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+server:
+  port: 8920
+
