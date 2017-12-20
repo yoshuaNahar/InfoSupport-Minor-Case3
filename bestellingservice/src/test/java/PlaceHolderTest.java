@@ -7,11 +7,11 @@ import static org.hamcrest.CoreMatchers.is;
 
 public class PlaceHolderTest {
 
-  TestController testController;
+  private TestController testController;
 
   @Before
   public void setup() {
-    this.testController = testController;
+    this.testController = new TestController();
   }
 
   @Test
