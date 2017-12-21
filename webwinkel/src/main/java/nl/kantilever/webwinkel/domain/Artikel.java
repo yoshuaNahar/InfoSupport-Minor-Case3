@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 @Entity
-@Table(name ="articles")
+@Table(name = "artikelen")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,31 +30,31 @@ public class Artikel {
 
   @JsonProperty("Naam")
   @Column(name = "naam")
-  String naam;
+  private String naam;
 
   @JsonProperty("Beschrijving")
   @Column(name = "beschrijving")
-  String beschrijving;
+  private String beschrijving;
 
   @JsonProperty("Prijs")
   @Column(name = "prijs")
-  double prijs;
+  private double prijs;
 
   @JsonProperty("AfbeeldingUrl")
   @Column(name = "afbeeldingURL")
-  String afbeeldingURL;
+  private String afbeeldingURL;
 
   @JsonProperty("LeverbaarVanaf")
   @Column(name = "leverbaarVanaf")
-  Date leverbaarVanaf;
+  private Date leverbaarVanaf;
 
   @JsonProperty("LeverbaarTot")
   @Column(name = "leverbaarTot")
-  Date leverbaarTot;
+  private Date leverbaarTot;
 
   @JsonProperty("Leveranciercode")
   @Column(name = "leverancierCode")
-  String leverancierCode;
+  private int leverancierCode;
 
   @JsonProperty("Leverancier")
   @Column(name = "leverancier")
@@ -64,4 +64,7 @@ public class Artikel {
   @Column(name = "categorieen")
   ArrayList<String> categorieen;
 
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<Categorie> categorieen;
 }
+
