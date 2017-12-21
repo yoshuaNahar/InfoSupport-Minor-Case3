@@ -1,21 +1,18 @@
 package nl.kantilever.bestellingservice.entities;
 
-import java.sql.Date;
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name ="articles")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Artikel {
 
   @Id
   @Column(name = "artikelnummer")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long artikelnummer;
 
   @Column(name = "naam")
@@ -30,20 +27,11 @@ public class Artikel {
   @Column(name = "afbeeldingURL")
   private String afbeeldingURL;
 
-  @Column(name = "leverbaarVanaf")
-  private Date leverbaarVanaf;
-
-  @Column(name = "leverbaarTot")
-  private Date leverbaarTot;
-
   @Column(name = "leverancierCode")
   private String leverancierCode;
 
   @Column(name = "leverancier")
   private String leverancier;
-
-  @Column(name = "categorieen")
-  private ArrayList<String> categorieen;
 
   public Artikel() {
     // Needed by JPA
@@ -89,22 +77,6 @@ public class Artikel {
     this.afbeeldingURL = afbeeldingURL;
   }
 
-  public Date getLeverbaarVanaf() {
-    return leverbaarVanaf;
-  }
-
-  public void setLeverbaarVanaf(Date leverbaarVanaf) {
-    this.leverbaarVanaf = leverbaarVanaf;
-  }
-
-  public Date getLeverbaarTot() {
-    return leverbaarTot;
-  }
-
-  public void setLeverbaarTot(Date leverbaarTot) {
-    this.leverbaarTot = leverbaarTot;
-  }
-
   public String getLeverancierCode() {
     return leverancierCode;
   }
@@ -121,14 +93,6 @@ public class Artikel {
     this.leverancier = leverancier;
   }
 
-  public ArrayList<String> getCategorieen() {
-    return categorieen;
-  }
-
-  public void setCategorieen(ArrayList<String> categorieen) {
-    this.categorieen = categorieen;
-  }
-
   @Override
   public String toString() {
     return "Artikel{" +
@@ -137,11 +101,8 @@ public class Artikel {
       ", beschrijving='" + beschrijving + '\'' +
       ", prijs=" + prijs +
       ", afbeeldingURL='" + afbeeldingURL + '\'' +
-      ", leverbaarVanaf=" + leverbaarVanaf +
-      ", leverbaarTot=" + leverbaarTot +
       ", leverancierCode='" + leverancierCode + '\'' +
       ", leverancier='" + leverancier + '\'' +
-      ", categorieen=" + categorieen +
       '}';
   }
 

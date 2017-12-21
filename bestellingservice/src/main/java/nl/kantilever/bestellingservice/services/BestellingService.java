@@ -11,6 +11,7 @@ import nl.kantilever.bestellingservice.repositories.BestellingViewRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,6 +26,9 @@ public class BestellingService {
   private ArtikellenRepository artikellenRepository;
 
   private RestTemplate restTemplate;
+
+  @Value("${urls.webwinkel}")
+  private String webwinkelUrl;
 
   @Autowired
   public BestellingService(
@@ -54,8 +58,10 @@ public class BestellingService {
     List<Artikel> artikellen = new ArrayList<>();
 
     bestelling.getArtikelenIds().forEach(id ->
-      artikellen.add(restTemplate.getForObject("http://xx/xx/" + id, Artikel.class)
+      artikellen.add(restTemplate.getForObject("http://" + webwinkelUrl + "artikel/artikelnummer/" + id, Artikel.class)
     ));
+
+    logger.info("artikkelen list: {}", artikellen);
 
     artikellenRepository.save(artikellen);
 
