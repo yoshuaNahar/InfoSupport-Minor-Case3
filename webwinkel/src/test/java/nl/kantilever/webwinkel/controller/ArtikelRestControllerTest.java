@@ -7,6 +7,7 @@ import nl.kantilever.webwinkel.domain.Categorie;
 import nl.kantilever.webwinkel.services.ArtikelService;
 import nl.kantilever.webwinkel.services.CategorieService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -82,25 +83,29 @@ public class ArtikelRestControllerTest {
       .andExpect(content().contentType("application/json;charset=UTF-8"));
   }
 
-//  @Test
-//  public void test2() throws Exception {
-//    System.out.println(categorieService.findAll().get(0).getArtikellen());
-//
-//    mockMvc.perform(get("/artikelen")
-//      .contentType(MediaType.APPLICATION_JSON))
-//      .andExpect(status().isOk())
-//      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//      .andExpect(jsonPath("$[0]", is("Fietsketting")));
-//  }
-//
-//  @Test
-//  public void test3() throws Exception {
-//    Iterable<Artikel> testList = Arrays.asList(new Artikel(), new Artikel());
-//    when(categorieService.findAll().get(0).getArtikellen()).thenReturn((List<Artikel>) testList);
-//    mockMvc.perform(MockMvcRequestBuilders
-//      .get("/artikelen"))
-//      .andExpect(status().isOk())
-//      .andExpect(content().json(mapper.writeValueAsString(testList)));
-//    System.out.println(mapper.writeValueAsString(testList));
-//  }
+  @Test
+  @Ignore
+  public void test2() throws Exception {
+    System.out.println(categorieService.findAll().get(0).getArtikellen());
+
+    mockMvc.perform(get("/artikelen")
+      .contentType(MediaType.APPLICATION_JSON))
+      .andExpect(status().isOk())
+      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+      .andExpect(jsonPath("$[0]", is("Fietsketting")));
+  }
+
+  @Test
+  @Ignore
+  public void test3() throws Exception {
+    Iterable<Artikel> testList = Arrays.asList(new Artikel(115, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(new Categorie("Roestvrijstaal", "Image_URL"), new Categorie("Onderdelen", "Image_URL"))), new Artikel());
+    when(categorieService.findAll().get(0).getArtikellen()).thenReturn((List<Artikel>) testList);
+    mockMvc.perform(MockMvcRequestBuilders
+      .get("/artikel/artikelnummer/115"))
+
+      .andExpect(status().isOk())
+      .andExpect(content().json(mapper.writeValueAsString(testList)));
+    System.out.println(mapper.writeValueAsString(testList));
+  }
 }
+
