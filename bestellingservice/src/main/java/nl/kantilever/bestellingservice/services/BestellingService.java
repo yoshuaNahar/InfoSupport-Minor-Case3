@@ -1,8 +1,13 @@
 package nl.kantilever.bestellingservice.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import nl.kantilever.bestellingservice.entities.Artikel;
 import nl.kantilever.bestellingservice.entities.Bestelling;
+import nl.kantilever.bestellingservice.entities.BestellingView;
+import nl.kantilever.bestellingservice.repositories.ArtikellenRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
+import nl.kantilever.bestellingservice.repositories.BestellingViewRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +20,21 @@ public class BestellingService {
   private static final Logger logger = LoggerFactory.getLogger(BestellingService.class);
 
   private BestellingRepository bestellingRepository;
+
+  private BestellingViewRepository bestellingViewRepository;
+  private ArtikellenRepository artikellenRepository;
+
   private RestTemplate restTemplate;
 
   @Autowired
-  public BestellingService(BestellingRepository bestellingRepository, RestTemplate restTemplate) {
+  public BestellingService(
+    BestellingRepository bestellingRepository,
+    BestellingViewRepository bestellingViewRepository,
+    ArtikellenRepository artikellenRepository,
+    RestTemplate restTemplate) {
     this.bestellingRepository = bestellingRepository;
+    this.bestellingViewRepository = bestellingViewRepository;
+    this.artikellenRepository = artikellenRepository;
     this.restTemplate = restTemplate;
   }
 
@@ -27,17 +42,28 @@ public class BestellingService {
     bestellingRepository.save(bestelling);
   }
 
-  public Bestelling findById(Long bestellingId) {
-    return bestellingRepository.findOne(bestellingId);
+  public BestellingView findById(Long bestellingId) {
+    return bestellingViewRepository.findOne(bestellingId);
   }
 
-  public void getArtikellen(Bestelling bestelling) {
-    restTemplate.getForObject("http://", Artikel.class);
+  public void saveBestellingView(Bestelling bestelling) {
+    List<Artikel> artikellen = new ArrayList<>();
+
+    bestelling.getArtikelenIds().forEach(id ->
+      artikellen.add(restTemplate.getForObject("http://xx/xx/" + id, Artikel.class)
+    ));
+
+    artikellenRepository.save(artikellen);
+
+    BestellingView bestellingView = new BestellingView();
+    bestellingView.setId(bestelling.getId());
+    bestellingView.setGebruikerId(bestelling.getGebruikerId());
+    bestellingView.setGeplaatstOp(bestelling.getGeplaatstOp());
+    bestellingView.setArtikellen(artikellen);
+
+    bestellingViewRepository.save(bestellingView);
 
     logger.info("artikkelen hier ophalen obv artikellenId, {}", bestelling);
-
-
-
   }
 
 }

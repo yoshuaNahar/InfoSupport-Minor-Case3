@@ -1,6 +1,7 @@
 package nl.kantilever.bestellingservice.controllers;
 
 import nl.kantilever.bestellingservice.entities.Bestelling;
+import nl.kantilever.bestellingservice.entities.BestellingView;
 import nl.kantilever.bestellingservice.services.BestellingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,15 +28,19 @@ public class BestellingController {
 
   @PostMapping("/bestelling")
   public ResponseEntity addBestelling(@RequestBody Bestelling bestelling) {
+    logger.debug("addBestelling: {}", bestelling);
+
     bestellingService.addBestelling(bestelling);
 
-    bestellingService.getArtikellen(bestelling);
+    bestellingService.saveBestellingView(bestelling);
 
     return new ResponseEntity(HttpStatus.CREATED); // 201 Created
   }
 
   @GetMapping("/bestelling/{id}")
-  public Bestelling getBestelling(@PathVariable("id") Long bestellingId) {
+  public BestellingView getBestelling(@PathVariable("id") Long bestellingId) {
+    logger.debug("getBestelling: {}", bestellingId);
+
     return bestellingService.findById(bestellingId);
   }
 
