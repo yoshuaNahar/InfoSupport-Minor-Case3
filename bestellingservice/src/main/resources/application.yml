@@ -1,7 +1,7 @@
 spring:
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.99.100:8925/webwinkelservice
+    url: jdbc:mysql://192.168.99.100:8931/bestellingservice
     username: root
     password: root
   rabbitmq:
@@ -9,19 +9,9 @@ spring:
     password: Kant1lever
     host: 192.168.178.158
     port: 8920
-
   jpa:
     hibernate:
       ddl-auto: create-drop
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
 
 server:
-  port: 8081
-
-logging:
-  level:
-    org:  FINE
-
+  port: 8082
