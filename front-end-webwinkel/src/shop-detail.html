@@ -181,7 +181,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </shop-select>
         </div>
         <div class="description">
-          <h2>Description</h2>
+          <h2>Beschrijving</h2>
           <p id="desc"></p>
         </div>
         <shop-button responsive>
@@ -244,8 +244,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               this.$.desc.innerHTML = this._unescapeText(text);
 
               // Reset the select menus.
-              this.$.quantitySelect.value = '1';
-              this.$.sizeSelect.value = 'M';
+//              this.$.quantitySelect.value = '1';
+//              this.$.sizeSelect.value = 'M';
 
               this.dispatchEvent(new CustomEvent('change-section', {
                 bubbles: true, composed: true, detail: {
@@ -277,7 +277,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 //      }
 
       _setOrder() {
-        fetch()
+        return 'hoi';
       }
 
       _isDefined(item) {
