@@ -23,7 +23,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
 
     <style include="shop-common-styles">
-
+      paper-search-panel {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
       .hero-image {
         position: relative;
         height: 320px;
@@ -83,16 +86,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         category="{{category}}"
         failure="{{failure}}"></shop-category-data>
 
-    <shop-image
-        alt="[[category.title]]"
-        src="[[category.image]]"
-        class="hero-image"></shop-image>
-
-    <header>
-      <h1>[[category.title]]</h1>
-      <span>[[_getPluralizedQuantity(category.items.length)]]</span>
-    </header>
-
     <paper-search-panel
       placeholder="Zoek naar artikelen.."
       search="{{search}}"
@@ -108,18 +101,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <hr>
       </div>
     </paper-search-panel>
-
     <hr>
+    <div hidden$="[[_hasItems()]]" class="shop-items">
+      <shop-image
+        alt="[[category.title]]"
+        src="[[category.image]]"
+        class="hero-image"></shop-image>
 
-    <ul class="grid" hidden$="[[failure]]">
-      <dom-repeat items="[[_getListItems(category.items)]]" initial-count="4">
-        <template>
-          <li>
-            <a href$="[[_getItemHref(item)]]"><shop-list-item item="[[item]]"></shop-list-item></a>
-          </li>
-        </template>
-      </dom-repeat>
-    </ul>
+      <header>
+        <h1>[[category.title]]</h1>
+        <span>[[_getPluralizedQuantity(category.items.length)]]</span>
+      </header>
+
+      <ul class="grid" hidden$="[[failure]]">
+        <dom-repeat items="[[_getListItems(category.items)]]" initial-count="4">
+          <template>
+            <li>
+              <a href$="[[_getItemHref(item)]]"><shop-list-item item="[[item]]"></shop-list-item></a>
+            </li>
+          </template>
+        </dom-repeat>
+      </ul>
+
+    </div>
 
     <!--
       shop-network-warning shows a warning message when the items can't be rendered due
@@ -136,77 +140,110 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     class ShopList extends Polymer.Element {
 
-      static get is() { return 'shop-list'; }
+      static get is() {
+        return 'shop-list';
+      }
 
-      static get properties() { return {
+      static get properties() {
+        return {
 
-        category: Object,
+          category: Object,
 
-        route: Object,
+          route: Object,
 
-        routeData: Object,
+          routeData: Object,
 
-        search: {
-          type: String,
-          value: "",
-          observer: '_searchChanged'
-        },
+          search: {
+            type: String,
+            value: "",
+            observer: '_searchChanged'
+          },
 
-        loading: {
-          type: Boolean
-        },
+          loading: {
+            type: Boolean
+          },
 
-        items: {
-          type: Array,
-          value: []
-        },
+          items: {
+            type: Array,
+            value: [],
+            observer: "_itemsChanged"
+          },
 
-        filters: {
-          type: Object
-        },
+          filters: {
+            type: Object,
+            value: [
+              {
+                id:'categorie',
+                name:'Categorie',
+                values: [
+                  {
+                    id: 'road bike',
+                    name: 'Road bike'
+                  },
+                  {
+                    id:'onderdelen',
+                    name:'Onderdelen'
+                  }
+                ]
+              },
+              {
+                id: 'merk',
+                name: 'Merk',
+                values: [
+                  {
+                    id: 'batavus',
+                    name: 'Batavus'
+                  }
+                ]
+              }
+            ]
+          },
 
-        selectedFilters: {
-          type: Array
-        },
+          selectedFilters: {
+            type: Array
+          },
 
-        categories: {
-          type: Array
-        },
+          categories: {
+            type: Array
+          },
 
-        visible: {
-          type: Boolean,
-          observer: '_visibleChanged'
-        },
+          visible: {
+            type: Boolean,
+            observer: '_visibleChanged'
+          },
 
-        hasMore: {
-          type: Boolean
-        },
+          hasMore: {
+            type: Boolean
+          },
 
-        visible: {
-          type: Boolean,
-          value: false
-        },
+          visible: {
+            type: Boolean,
+            value: false
+          },
 
-        offline: {
-          type: Boolean,
-          observer: '_offlineChanged'
-        },
+          offline: {
+            type: Boolean,
+            observer: '_offlineChanged'
+          },
 
-        failure: Boolean
+          failure: Boolean
 
-      }}
+        }
+      }
 
-      static get observers() { return [
-        '_categoryChanged(category, visible)'
-      ]}
+      static get observers() {
+        return [
+          '_categoryChanged(category, visible)'
+        ]
+      }
 
       ready() {
-        super.ready()
-        if(this.search ==="") {
+        super.ready();
+        if (this.search === "") {
           Polymer.Async.microTask.run(() => {
             const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel')
-            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none'
-            searchShadowDom.querySelector('#results').style.display='none'
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display = 'none'
+            searchShadowDom.querySelector('#results').style.display = 'none'
           })
         }
       }
@@ -223,7 +260,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _getListItems(items) {
         // Return placeholder items when the items haven't loaded yet.
-        return items || [{},{},{},{},{},{},{},{},{},{}];
+        return items || [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
       }
 
       _getItemHref(item) {
@@ -237,7 +274,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           return '';
         }
         let pluralizedQ = quantity === 1 ? 'item' : 'items';
-        return  '(' + quantity + ' ' + pluralizedQ + ')';
+        return '(' + quantity + ' ' + pluralizedQ + ')';
       }
 
       _categoryChanged(category, visible) {
@@ -252,10 +289,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 bubbles: true, composed: true, detail: {
                   category: category.name,
                   title: category.title
-                }}));
+                }
+              }));
             } else {
               this.dispatchEvent(new CustomEvent('show-invalid-url-warning', {
-                bubbles: true, composed: true}));
+                bubbles: true, composed: true
+              }));
             }
           });
       }
@@ -273,26 +312,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _searchChanged(value) {
         const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel');
         this.loading = true;
-        if(this.search ==="") {
+        if (this.search === "") {
           Polymer.Async.microTask.run(() => {
-            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none';
-            searchShadowDom.querySelector('#results').style.display='none'
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display = 'none';
+            searchShadowDom.querySelector('#results').style.display = 'none'
           })
         } else {
-          if(this.items.length === 0) {
-            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='inline';
+          if (this.items.length === 0) {
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display = 'inline';
           }
-          searchShadowDom.querySelector('#results').style.display='inline'
+          searchShadowDom.querySelector('#results').style.display = 'inline'
         }
 
-        let results = this._getMatchingArticles(value)
+        let results = this._getMatchingArticles(value);
         this.loading = false;
       }
 
       _getMatchingArticles(value) {
-
+        fetch(environment.API.webwinkel + '/artikelen/naam/' + value).then(data => {
+          return data.json()
+        }).then(data => {
+          this.items = data
+        })
       }
 
+      _hasItems() {
+        return this.items.length !== 0;
+      }
     }
 
     customElements.define(ShopList.is, ShopList);

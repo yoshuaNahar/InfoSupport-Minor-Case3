@@ -20,7 +20,8 @@
     "iron-selector": "polymerelements/iron-selector#^2.0.0",
     "paper-icon-button": "polymerelements/paper-icon-button#^2.0.0",
     "paper-spinner": "polymerelements/paper-spinner#^2.0.0",
-    "paper-search": "^2.0.9"
+    "paper-search": "^2.0.9",
+    "paper-dialog": "PolymerElements/paper-dialog#^2.0.1"
   },
   "devDependencies": {
     "web-component-tester": "^6.0.0"

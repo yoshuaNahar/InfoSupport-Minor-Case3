@@ -11,6 +11,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="shop-button.html">
 <link rel="import" href="shop-category-data.html">
 <link rel="import" href="shop-common-styles.html">
@@ -147,6 +150,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         item="{{item}}"
         failure="{{failure}}"></shop-category-data>
 
+    <paper-dialog id="modal" modal>
+      <p>Uw bestelling is geplaatst</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Sluiten</paper-button>
+      </div>
+    </paper-dialog>
+
     <div id="content" hidden$="[[failure]]">
       <shop-image alt="[[item.title]]" src="[[item.largeImage]]"></shop-image>
       <div class="detail" has-content$="[[_isDefined(item)]]">
@@ -186,7 +196,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
         <shop-button responsive>
           <!--<button on-click="_addToCart" aria-label="Add this item to cart">Add to Cart</button>-->
-          <button on-click="_setOrder" aria-label="Bestellen">Bestellen</button>
+          <button on-click="_setOrder" data-item$="[[item]]" aria-label="Bestellen">Bestellen</button>
         </shop-button>
       </div>
     </div>
@@ -276,8 +286,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 //          }}));
 //      }
 
-      _setOrder() {
-        return 'hoi';
+      _setOrder(event) {
+        console.log(event);
+        let order = event.target.dataset.item;
+
+        this.shadowRoot.querySelector('#modal').open()
+
+        fetch(environment.API.bestellingservice + '/bestelling', {
+          method: 'post',
+          headers: {
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            gebruikderId: 1,
+            artikelenIds: [order],
+            geplaatsOp: new Date()
+          })
+        }).then(data => {
+          return data.json()
+        }).then(data => {
+          console.log(data)
+        })
       }
 
       _isDefined(item) {
