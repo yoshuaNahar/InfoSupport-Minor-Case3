@@ -22,7 +22,9 @@ services:
   de-jong-webwinkel:
     build:
       context: .
-      dockerfile: ops/Webwinkel/Dockerfile
+      dockerfile: ops/Java/Dockerfile
+      args:
+        - DIRECTORY=webwinkel
     command: sh ./wait-for.sh --timeout=300 de-jong-webwinkel-mysql:3306 -- java -jar app.jar
     ports:
       - "8927:8081"
@@ -36,12 +38,14 @@ services:
       context: .
       dockerfile: ops/Polymer/Dockerfile
     ports:
-      - "8928:8081"
+      - "8928:80"
 
   de-jong-replayservice:
       build:
         context: .
-        dockerfile: ops/Replayservice/Dockerfile
+        dockerfile: ops/Java/Dockerfile
+        args:
+          - DIRECTORY=replayservice
       command: java -jar app.jar
       ports:
         - "8929:8080"
@@ -49,7 +53,9 @@ services:
   de-jong-bestellingservice:
     build:
       context: .
-      dockerfile: ops/BestellingService/Dockerfile
+      dockerfile: ops/Java/Dockerfile
+      args:
+        - DIRECTORY=bestellingservice
     command: sh ./wait-for.sh --timeout=300 de-jong-bestellingservice-mysql:3306 -- java -jar app.jar
     ports:
       - "8930:8082"
