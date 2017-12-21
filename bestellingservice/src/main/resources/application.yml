@@ -12,10 +12,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+  # LocalDateTime fix Jackson https://stackoverflow.com/a/29959842/5473627
+  # Example yyyy-MM-dd HH:mm:ss
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
 
 urls:
   webwinkel: "localhost:8081"
-
 
 logging:
   level:

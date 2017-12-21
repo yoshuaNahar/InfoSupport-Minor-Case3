@@ -5,7 +5,7 @@ import java.util.List;
 import nl.kantilever.bestellingservice.entities.Artikel;
 import nl.kantilever.bestellingservice.entities.Bestelling;
 import nl.kantilever.bestellingservice.entities.BestellingView;
-import nl.kantilever.bestellingservice.repositories.ArtikellenRepository;
+import nl.kantilever.bestellingservice.repositories.ArtikelenRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingViewRepository;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ public class BestellingService {
   private BestellingRepository bestellingRepository;
 
   private BestellingViewRepository bestellingViewRepository;
-  private ArtikellenRepository artikellenRepository;
+  private ArtikelenRepository artikelenRepository;
 
   private RestTemplate restTemplate;
 
@@ -34,11 +34,11 @@ public class BestellingService {
   public BestellingService(
     BestellingRepository bestellingRepository,
     BestellingViewRepository bestellingViewRepository,
-    ArtikellenRepository artikellenRepository,
+    ArtikelenRepository artikelenRepository,
     RestTemplate restTemplate) {
     this.bestellingRepository = bestellingRepository;
     this.bestellingViewRepository = bestellingViewRepository;
-    this.artikellenRepository = artikellenRepository;
+    this.artikelenRepository = artikelenRepository;
     this.restTemplate = restTemplate;
   }
 
@@ -55,25 +55,25 @@ public class BestellingService {
   }
 
   public void saveBestellingView(Bestelling bestelling) {
-    List<Artikel> artikellen = new ArrayList<>();
+    List<Artikel> artikelen = new ArrayList<>();
 
     bestelling.getArtikelenIds().forEach(id ->
-      artikellen.add(restTemplate.getForObject("http://" + webwinkelUrl + "artikel/artikelnummer/" + id, Artikel.class)
+      artikelen.add(restTemplate.getForObject("http://" + webwinkelUrl + "artikel/artikelnummer/" + id, Artikel.class)
     ));
 
-    logger.info("artikkelen list: {}", artikellen);
+    logger.info("artikkelen list: {}", artikelen);
 
-    artikellenRepository.save(artikellen);
+    artikelenRepository.save(artikelen);
 
     BestellingView bestellingView = new BestellingView();
     bestellingView.setId(bestelling.getId());
     bestellingView.setGebruikerId(bestelling.getGebruikerId());
     bestellingView.setGeplaatstOp(bestelling.getGeplaatstOp());
-    bestellingView.setArtikellen(artikellen);
+    bestellingView.setArtikelen(artikelen);
 
     bestellingViewRepository.save(bestellingView);
 
-    logger.info("artikkelen hier ophalen obv artikellenId, {}", bestelling);
+    logger.info("artikelen hier ophalen obv artikellenId, {}", bestelling);
   }
 
 }

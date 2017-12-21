@@ -21,7 +21,7 @@ public class BestellingView {
   private Long gebruikerId;
 
   @ElementCollection
-  private List<Artikel> artikellen;
+  private List<Artikel> artikelen;
   private LocalDateTime geplaatstOp;
 
   public BestellingView() {
@@ -44,12 +44,12 @@ public class BestellingView {
     this.gebruikerId = gebruikerId;
   }
 
-  public List<Artikel> getArtikellen() {
-    return artikellen;
+  public List<Artikel> getArtikelen() {
+    return artikelen;
   }
 
-  public void setArtikellen(List<Artikel> artikellen) {
-    this.artikellen = artikellen;
+  public void setArtikelen(List<Artikel> artikelen) {
+    this.artikelen = artikelen;
   }
 
   public LocalDateTime getGeplaatstOp() {
@@ -65,7 +65,7 @@ public class BestellingView {
     return "BestellingView{" +
       "id=" + id +
       ", gebruikerId=" + gebruikerId +
-      ", artikellen=" + artikellen +
+      ", artikelen=" + artikelen +
       ", geplaatstOp=" + geplaatstOp +
       '}';
   }

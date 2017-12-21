@@ -8,7 +8,7 @@ import java.util.Arrays;
 import nl.kantilever.bestellingservice.config.Config;
 import nl.kantilever.bestellingservice.entities.Bestelling;
 import nl.kantilever.bestellingservice.entities.BestellingView;
-import nl.kantilever.bestellingservice.repositories.ArtikellenRepository;
+import nl.kantilever.bestellingservice.repositories.ArtikelenRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingViewRepository;
 import org.junit.Before;
@@ -41,7 +41,7 @@ public class BestellingServiceTest {
   private BestellingViewRepository bestellingViewRepository;
 
   @Autowired
-  private ArtikellenRepository artikellenRepository;
+  private ArtikelenRepository artikelenRepository;
 
   @Autowired
   private RestTemplate restTemplate;
@@ -56,7 +56,7 @@ public class BestellingServiceTest {
     bestellingService = new BestellingService(
       bestellingRepository,
       bestellingViewRepository,
-      artikellenRepository,
+      artikelenRepository,
       restTemplate);
 
     bestelling = new Bestelling();
