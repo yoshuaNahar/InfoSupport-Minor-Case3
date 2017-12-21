@@ -1,0 +1,111 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="bestellingen-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      h2 {
+        color: black;
+      }
+    </style>
+
+    <h1>Bestellingen</h1>
+
+    <dom-repeat items="[[bestellingen]]">
+      <template strip-whitespace>
+        <div class="card">
+          <div class="circle">[[item.id]]</div>
+          <h1>Bestelling geplaatst op [[item.geplaatstOp]]</h1>
+          <h3>Artikelen:</h3>
+
+          <dom-repeat items="[[item.artikelen]]">
+            <template strip-whitespace>
+              <b>Naam: </b>[[item.naam]]<br>
+              <b>Beschrijving: </b>[[item.beschrijving]]<br>
+              <b>Prijs: </b>[[item.prijs]]<br>
+              <b>Leverancier: </b>[[item.leverancier]]<br><br>
+
+            </template>
+          </dom-repeat>
+        </div>
+      </template>
+    </dom-repeat>
+
+
+  </template>
+
+  <script>
+    class Bestellingen extends Polymer.Element {
+      static get is() { return 'bestellingen-view'; }
+
+      static get properties() {
+        return {
+          bestellingen: {
+            value: this.bestellingen
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+
+        let bestellingen = [{
+          id: 1,
+          gebruikerId: 1,
+          geplaatstOp: "2017-09-12",
+          artikelen: [{
+            naam: "Big Black Dildo",
+            prijs: 50.25,
+            beschrijving: "Ik kan uit ervaring spreken dat deze heel goed is\n\n ECHT HEEL GOED ;)",
+            leverancier: "Durex"
+          },
+            {
+              naam: "Glijmiddel",
+              prijs: 1.25,
+              beschrijving: "De titel spreekt voor zich",
+              leverancier: "Durex"
+            }]
+
+        },
+          {
+            id: 2,
+            gebruikerId: 2,
+            geplaatstOp: "2017-12-13",
+            artikelen: [{
+              naam: "Nasi",
+              prijs: 2500.00,
+              beschrijving: "Voor als je geen voedsel krijgt van je familie voor als je geen dokter bent. Kan gebeuren natuurlijk",
+              leverancier: "Lassi"
+            }]
+
+          }];
+
+        this.bestellingen = bestellingen;
+
+//        let url = environment.API.bestellingservice + "/bestellingen";
+//        fetch(url, {
+//        }).then(bestellingen => {
+//          this.bestellingen = bestellingen;
+//        });
+      }
+    }
+
+    window.customElements.define(Bestellingen.is, Bestellingen);
+  </script>
+</dom-module>
