@@ -24,11 +24,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin: 0 48px;
       }
 
-      shop-image {
+      shop-round-image {
         margin: 32px 0 16px;
       }
 
-      shop-image::before {
+      shop-round-image::before {
         content: "";
       }
 
@@ -53,7 +53,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <shop-image src="[[item.image]]" alt="[[item.title]]"></shop-image>
+    <shop-round-image src="[[item.image]]" alt="[[item.title]]" class="item-image"></shop-round-image>
     <div class="title">[[item.title]]</div>
     <span class="price">[[_formatPrice(item.price)]]</span>
     <span class="stock">Voorraad: [[stock]]</span>

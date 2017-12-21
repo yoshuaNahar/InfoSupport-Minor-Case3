@@ -107,13 +107,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       no-results-text="Er zijn geen resultaten gevonden bij het zoeken.">
       <div id="results">
         <h1>Resultaten</h1>
-
+          <dom-repeat items="[[items]]">
+            <template strip-whitespace>
+              <div class="item">
+                <a class="image-link" href$="[[_getItemHref(item)]]">
+                  <shop-image src="[[item.afbeeldingUrl]]" alt="[[item.naam]]"></shop-image>
+                </a>
+                <h2>[[item.naam]]</h2>
+              </div>
+            </template>
+          </dom-repeat>
         <hr>
       </div>
     </paper-search-panel>
+
     <h1>Categorieen</h1>
     <hr>
-    <div class="categories layout horizontal around-justified wrap">
+    <div class="layout horizontal around-justified wrap">
       <dom-repeat items="[[categories]]">
         <template strip-whitespace>
           <div class="item">
@@ -183,7 +193,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         hasMore: {
           type: Boolean
         }
-
       }}
 
       _visibleChanged(visible) {
@@ -192,6 +201,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             bubbles: true, composed: true, detail: {title: 'Home'}
           }));
         }
+      }
+
+      _getItemHref(item) {
+        // By returning null when `itemId` is undefined, the href attribute won't be set and
+        // the link will be disabled.
+        return item.naam ? ['/detail', this.category.name, item.name].join('/') : null;
       }
 
       _searchChanged(value) {
@@ -203,7 +218,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             searchShadowDom.querySelector('#results').style.display='none'
           })
         } else {
-          searchShadowDom.shadowRoot.querySelector('.noResults').style.display='inline';
+          if(this.items.length === 0) {
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='inline';
+          }
           searchShadowDom.querySelector('#results').style.display='inline'
         }
 
@@ -212,7 +229,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _getMatchingArticles(value) {
-
       }
     }
 
