@@ -2,19 +2,36 @@
 version: '3'
 services:
 
-  de-jong-mysql:
-    container_name: de-jong-mysql
+  de-jong-webwinkel-mysql:
     image: 'bitnami/mysql:latest'
+    container_name: de-jong-webwinkel-mysql
     ports:
       - "8925:3306"
     environment:
       - MYSQL_ROOT_USER=root
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=webshop_kantilever
+      - MYSQL_DATABASE=webwinkelservice
 
-  de-jong-phpmyadmin:
+  de-jong-webwinkel-phpmyadmin:
    image: phpmyadmin/phpmyadmin
    ports:
     - "8926:80"
    links:
-     - de-jong-mysql:db
+     - de-jong-webwinkel-mysql:db
+
+  de-jong-bestellingservice-mysql:
+    image: 'bitnami/mysql:latest'
+    container_name: de-jong-bestellingservice-mysql
+    ports:
+      - "8931:3306"
+    environment:
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=bestellingservice
+
+  de-jong-bestellingservice-phpmyadmin:
+   image: phpmyadmin/phpmyadmin
+   ports:
+    - "8932:80"
+   links:
+     - de-jong-bestellingservice-mysql:db
