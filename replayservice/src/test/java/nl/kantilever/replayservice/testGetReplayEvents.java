@@ -1,47 +1,60 @@
 package nl.kantilever.replayservice;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.minidev.json.JSONArray;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
-import nl.kantilever.replayservice.domain.EenEvent;
-import org.json.JSONException;
-import org.json.JSONObject;
+import nl.kantilever.replayservice.services.ReplayService;
+import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import javax.xml.ws.Response;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
 
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class testGetReplayEvents {
 
+  @MockBean
+  private RestTemplate restTemplate;
+
+  @Autowired
+  private ReplayService replayService;
+
   @Test
-  public void test() throws URISyntaxException, IOException {
-    RestTemplate restTemplate = new RestTemplate();
-
-    ResponseEntity<List<String>> z = restTemplate
-      .exchange(new URI("http://dormin02:8922/api/ReplayEvents"),
-        HttpMethod.GET,
-        null,
-        new ParameterizedTypeReference<List<String>>() {
-        });
-
-    System.out.println(z.getBody().get(0));
-
-    ObjectMapper mapper = new ObjectMapper();
-    String s = z.getBody().get(0);
-
-    EenEvent obj = mapper.readValue(s, EenEvent.class);
-    System.out.println(obj);
-
+  public void GetReplayEventsTest() throws Exception {
+    HttpHeaders responseHeaders = new HttpHeaders();
+    responseHeaders.set("MyResponseHeader", "MyValue");
+    ArrayList stringList = new ArrayList();
+    stringList.add("String1");
+    stringList.add("String2");
+    stringList.add("String3");
+    ResponseEntity<List<String>> responseEntity = new ResponseEntity<List<String >>(stringList,responseHeaders,HttpStatus.OK);
+    Mockito.when(restTemplate.exchange(Mockito.any(), Mockito.any(),Mockito.any(),Matchers.any(ParameterizedTypeReference.class))).thenReturn(responseEntity);
+    ResponseEntity<List<String>> response = replayService.getAllEvents();
+    Assert.assertEquals(response.getBody().get(0),responseEntity.getBody().get(0));
   }
 
+  @Test
+  public void replayPostTest() throws Exception {
+    HttpHeaders responseHeaders = new HttpHeaders();
+    responseHeaders.set("MyResponseHeader", "MyValue");
+    ResponseEntity responseEntity = new ResponseEntity("TestBody", responseHeaders, HttpStatus.OK);
+    Mockito.when(restTemplate.postForEntity(Mockito.anyString(), Mockito.anyObject(), Mockito.any())).thenReturn(responseEntity);
+    ResponseEntity<String> response = replayService.replayEvents();
+    Assert.assertEquals(response.getBody(),responseEntity.getBody().toString() );
+  }
 }
