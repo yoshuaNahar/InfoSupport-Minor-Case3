@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table("bestelling_view")
+@Table(name = "bestelling_view")
 public class BestellingView {
 
   @Id
