@@ -42,6 +42,10 @@ public class BestellingService {
     bestellingRepository.save(bestelling);
   }
 
+  public Bestelling findBestellingById(Long bestellingId) {
+    return bestellingRepository.findOne(bestellingId);
+  }
+
   public BestellingView findById(Long bestellingId) {
     return bestellingViewRepository.findOne(bestellingId);
   }
