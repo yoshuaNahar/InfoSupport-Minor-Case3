@@ -22,7 +22,7 @@ public class ReplayEventsCommand {
   public ReplayEventsCommand() {
     this.exchangeName = "KantileverBus";
     this.fromTimestamp = 0;
-    this.toTimestamp= 999999999999999999l;
+    this.toTimestamp= 999999999999999999L;
     this.eventType = "Kantilever.CatalogusService.ArtikelAanCatalogusToegevoegd";
     this.topic = "#";
   }

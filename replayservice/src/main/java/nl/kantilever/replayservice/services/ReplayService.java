@@ -28,8 +28,7 @@ public class ReplayService {
 
   public ResponseEntity<String> replayEvents(){
     ReplayEventsCommand replayEventsCommand = new ReplayEventsCommand();
-    ResponseEntity<String> response = restTemplate.postForEntity(REST_SERVICE_URI, replayEventsCommand, String.class);
-    return response;
+    return restTemplate.postForEntity(REST_SERVICE_URI, replayEventsCommand, String.class);
   }
 
   public  ResponseEntity<List<String>> getAllEvents(){
