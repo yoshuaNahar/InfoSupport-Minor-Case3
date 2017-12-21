@@ -13,6 +13,7 @@
 	<modules>
 		<module>webwinkel</module>
     <module>replayservice</module>
+    <module>bestellingservice</module>
   </modules>
 
 	<parent>

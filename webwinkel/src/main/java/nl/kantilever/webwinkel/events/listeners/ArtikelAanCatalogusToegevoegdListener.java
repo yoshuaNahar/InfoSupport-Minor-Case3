@@ -32,7 +32,6 @@ public class ArtikelAanCatalogusToegevoegdListener {
     this.artikelService = artikelService;
   }
 
-
   @RabbitListener(bindings = @QueueBinding(
     value = @Queue(value = "Kantilever.WebwinkelService.Replay", durable = "false"),
     exchange = @Exchange(value = "KantileverBus", ignoreDeclarationExceptions = "true", durable = "false", type = ExchangeTypes.TOPIC),
