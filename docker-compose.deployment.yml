@@ -38,7 +38,7 @@ services:
       context: .
       dockerfile: ops/Polymer/Dockerfile
     ports:
-      - "8928:8081"
+      - "8928:80"
 
   de-jong-replayservice:
       build:
