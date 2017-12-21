@@ -38,7 +38,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .price {
-        color: var(--app-secondary-color);
+        color: var(--app-primary-color);
+      }
+
+      .stock {
+        color: var(--app-primary-color);
       }
 
       @media (max-width: 767px) {
@@ -52,6 +56,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <shop-image src="[[item.image]]" alt="[[item.title]]"></shop-image>
     <div class="title">[[item.title]]</div>
     <span class="price">[[_formatPrice(item.price)]]</span>
+    <span class="stock">Voorraad: [[stock]]</span>
 
   </template>
 
@@ -63,7 +68,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get properties() { return {
 
-        item: Object
+        item: Object,
+        stock: {
+          type: Number,
+          value: 420
+        }
 
       }}
 

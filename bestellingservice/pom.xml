@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>webwinkel</artifactId>
-	<name>Web Winkel Service</name>
+	<artifactId>bestellingservice</artifactId>
+	<name>Bestelling Service</name>
 
   <parent>
     <artifactId>kantilever</artifactId>

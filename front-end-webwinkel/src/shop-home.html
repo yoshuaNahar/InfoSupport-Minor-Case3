@@ -107,6 +107,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       no-results-text="Er zijn geen resultaten gevonden bij het zoeken.">
       <div id="results">
         <h1>Resultaten</h1>
+
         <hr>
       </div>
     </paper-search-panel>
@@ -194,18 +195,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _searchChanged(value) {
-        const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel')
+        const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel');
+        this.loading = true;
         if(this.search ==="") {
           Polymer.Async.microTask.run(() => {
-            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none'
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none';
             searchShadowDom.querySelector('#results').style.display='none'
           })
         } else {
-          searchShadowDom.shadowRoot.querySelector('.noResults').style.display='inline'
+          searchShadowDom.shadowRoot.querySelector('.noResults').style.display='inline';
           searchShadowDom.querySelector('#results').style.display='inline'
         }
 
         let results = this._getMatchingArticles(value)
+        this.loading = false;
       }
 
       _getMatchingArticles(value) {

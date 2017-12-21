@@ -15,6 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="shop-common-styles.html">
 <link rel="import" href="shop-image.html">
 <link rel="import" href="shop-list-item.html">
+<link rel="import" href="../bower_components/paper-search/paper-search-panel.html">
 
 <dom-module id="shop-list">
 
@@ -101,6 +102,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <h1>[[category.title]]</h1>
       <span>[[_getPluralizedQuantity(category.items.length)]]</span>
     </header>
+
+    <paper-search-panel
+      placeholder="Zoek naar artikelen.."
+      search="{{search}}"
+      items="{{items}}"
+      has-more="[[hasMore]]"
+      loading="[[loading]]"
+      filters="[[filters]]"
+      selected-filters="{{selectedFilters}}"
+      no-results-text="Er zijn geen resultaten gevonden bij het zoeken.">
+      <div id="results">
+        <h1>Resultaten</h1>
+
+        <hr>
+      </div>
+    </paper-search-panel>
 
     <ul class="grid" hidden$="[[failure]]">
       <dom-repeat items="[[_getListItems(category.items)]]" initial-count="4">
@@ -212,6 +229,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (!offline && this.isAttached) {
           this._tryReconnect();
         }
+      }
+
+      _searchChanged(value) {
+        const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel');
+        this.loading = true;
+        if(this.search ==="") {
+          Polymer.Async.microTask.run(() => {
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none';
+            searchShadowDom.querySelector('#results').style.display='none'
+          })
+        } else {
+          searchShadowDom.shadowRoot.querySelector('.noResults').style.display='inline';
+          searchShadowDom.querySelector('#results').style.display='inline'
+        }
+
+        let results = this._getMatchingArticles(value)
+        this.loading = false;
+      }
+
+      _getMatchingArticles(value) {
+
       }
 
     }
