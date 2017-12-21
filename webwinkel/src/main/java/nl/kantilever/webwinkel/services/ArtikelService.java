@@ -23,8 +23,8 @@ public class ArtikelService {
     this.artikelRepository.save(artikel);
   }
 
-  public Artikel findArtikelenByArtikelnummer(int artikelnummer) {
-    return artikelRepository.findArtikelenByArtikelnummer(artikelnummer);
+  public Artikel findArtikelByArtikelnummer(int artikelnummer) {
+    return artikelRepository.findArtikelByArtikelnummer(artikelnummer);
   }
 
   public List<Artikel> findArtikelenByNaam(String naam) {
@@ -33,9 +33,5 @@ public class ArtikelService {
 
   public List<Artikel> findArtikelenByLeverancier(String leverancier) {
     return artikelRepository.findArtikelenByLeverancier(leverancier);
-  }
-
-  public List<Artikel> findArtikelenByCategorie(String categorie) {
-    return artikelRepository.findArtikelenByCategorie(categorie);
   }
 }

@@ -31,8 +31,7 @@ public class ArtikelAanCatalogusToegevoegdListener {
     value = @Queue,
     exchange = @Exchange(
       value = "KantileverBus",
-      type = ExchangeTypes.TOPIC,
-      durable = "true"),
+      type = ExchangeTypes.TOPIC),
     key = "Kantilever.CatalogusService.ArtikelAanCatalogusToegevoegd"))
   public void listen(Artikel artikel) {
     logger.debug("Event Caught: Kantilever.CatalogusService.ArtikelAanCatalogusToegevoegd");

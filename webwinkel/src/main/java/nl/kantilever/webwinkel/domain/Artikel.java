@@ -22,36 +22,34 @@ import java.util.List;
 @AllArgsConstructor
 public class Artikel {
   @Id
-  @Column(name = "artikelnummer")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  long artikelnummer;
+  @Column(name = "artikelnummer", unique = true)
+  private long artikelnummer;
 
   @Column(name = "naam")
-  String naam;
+  private String naam;
 
   @Column(name = "beschrijving")
-  String beschrijving;
+  private String beschrijving;
 
   @Column(name = "prijs")
-  double prijs;
+  private double prijs;
 
   @Column(name = "afbeeldingURL")
-  String afbeeldingURL;
+  private String afbeeldingURL;
 
   @Column(name = "leverbaarVanaf")
-  Date leverbaarVanaf;
+  private Date leverbaarVanaf;
 
   @Column(name = "leverbaarTot")
-  Date leverbaarTot;
+  private Date leverbaarTot;
 
   @Column(name = "leverancierCode")
-  int leverancierCode;
+  private int leverancierCode;
 
   @Column(name = "leverancier")
-  String leverancier;
+  private String leverancier;
 
-  @OneToMany
-  @JoinColumn(name = "categorie_naam")
-  List<Categorie> categorieen;
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<Categorie> categorieen;
 }
 

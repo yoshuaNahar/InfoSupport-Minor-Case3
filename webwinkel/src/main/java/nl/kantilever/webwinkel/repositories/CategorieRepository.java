@@ -7,13 +7,15 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by Tinne on 20-12-2017.
  */
 
 @Repository
 public interface CategorieRepository extends CrudRepository<Categorie, String> {
-  @Query(value = "select * from categorieen", nativeQuery = true)
-  Artikel findAllCategorieen();
 
+  @Query(value = "select * from categorieen where naam = :naam", nativeQuery = true)
+  Categorie findCategorieByNaam(@Param("naam") String naam);
 }
