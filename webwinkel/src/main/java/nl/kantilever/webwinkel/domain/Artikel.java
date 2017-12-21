@@ -1,5 +1,6 @@
 package nl.kantilever.webwinkel.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,41 +15,41 @@ import java.util.List;
  */
 
 @Entity
-@Table(name ="articles")
+@Table(name = "artikelen")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Artikel {
   @Id
-  @Column(name = "artikelnummer")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  long artikelnummer;
+  @Column(name = "artikelnummer", unique = true)
+  private long artikelnummer;
 
   @Column(name = "naam")
-  String naam;
+  private String naam;
 
   @Column(name = "beschrijving")
-  String beschrijving;
+  private String beschrijving;
 
   @Column(name = "prijs")
-  double prijs;
+  private double prijs;
 
   @Column(name = "afbeeldingURL")
-  String afbeeldingURL;
+  private String afbeeldingURL;
 
   @Column(name = "leverbaarVanaf")
-  Date leverbaarVanaf;
+  private Date leverbaarVanaf;
 
   @Column(name = "leverbaarTot")
-  Date leverbaarTot;
+  private Date leverbaarTot;
 
   @Column(name = "leverancierCode")
-  String leverancierCode;
+  private int leverancierCode;
 
   @Column(name = "leverancier")
-  String leverancier;
+  private String leverancier;
 
-  @Column(name = "categorieen")
-  ArrayList<String> categorieen;
-
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<Categorie> categorieen;
 }
+

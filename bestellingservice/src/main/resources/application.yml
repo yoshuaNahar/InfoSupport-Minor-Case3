@@ -9,11 +9,25 @@ spring:
     password: Kant1lever
     host: 192.168.178.158
     port: 8920
-
   jpa:
     hibernate:
       ddl-auto: create-drop
+  # LocalDateTime fix Jackson https://stackoverflow.com/a/29959842/5473627
+  # Example yyyy-MM-dd HH:mm:ss
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+
+urls:
+  webwinkel: "localhost:8081"
+
+logging:
+  level:
+    nl:
+      kantilever: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 server:
   port: 8082
-
