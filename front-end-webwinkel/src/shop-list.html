@@ -154,6 +154,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         routeData: Object,
 
+        search: {
+          type: String,
+          value: "",
+          observer: '_searchChanged'
+        },
+
+        loading: {
+          type: Boolean
+        },
+
+        items: {
+          type: Array,
+          value: []
+        },
+
+        filters: {
+          type: Object
+        },
+
+        selectedFilters: {
+          type: Array
+        },
+
+        categories: {
+          type: Array
+        },
+
+        visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        },
+
+        hasMore: {
+          type: Boolean
+        },
+
         visible: {
           type: Boolean,
           value: false
@@ -171,6 +207,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       static get observers() { return [
         '_categoryChanged(category, visible)'
       ]}
+
+      ready() {
+        super.ready()
+        if(this.search ==="") {
+          Polymer.Async.microTask.run(() => {
+            const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel')
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none'
+            searchShadowDom.querySelector('#results').style.display='none'
+          })
+        }
+      }
 
       connectedCallback() {
         super.connectedCallback();
