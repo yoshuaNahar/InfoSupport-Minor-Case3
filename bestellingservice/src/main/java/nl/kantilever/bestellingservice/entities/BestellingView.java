@@ -11,20 +11,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "bestelling")
-public class Bestelling {
+@Table("bestelling_view")
+public class BestellingView {
 
   @Id
-  @Column(name = "bestelling_id")
+  @Column(name = "bestelling_view_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private Long gebruikerId;
 
   @ElementCollection
-  private List<Long> artikelenIds;
+  private List<Artikel> artikellen;
   private LocalDateTime geplaatstOp;
 
-  public Bestelling() {
+  public BestellingView() {
     // Needed for JPA
   }
 
@@ -44,12 +44,12 @@ public class Bestelling {
     this.gebruikerId = gebruikerId;
   }
 
-  public List<Long> getArtikelenIds() {
-    return artikelenIds;
+  public List<Artikel> getArtikellen() {
+    return artikellen;
   }
 
-  public void setArtikelenIds(List<Long> artikelenIds) {
-    this.artikelenIds = artikelenIds;
+  public void setArtikellen(List<Artikel> artikellen) {
+    this.artikellen = artikellen;
   }
 
   public LocalDateTime getGeplaatstOp() {
@@ -62,10 +62,10 @@ public class Bestelling {
 
   @Override
   public String toString() {
-    return "Bestelling{" +
+    return "BestellingView{" +
       "id=" + id +
       ", gebruikerId=" + gebruikerId +
-      ", artikelenIds=" + artikelenIds +
+      ", artikellen=" + artikellen +
       ", geplaatstOp=" + geplaatstOp +
       '}';
   }
