@@ -35,8 +35,10 @@ services:
     build:
       context: .
       dockerfile: ops/Polymer/Dockerfile
+      args:
+        - DIRECTORY=front-end-webwinkel
     ports:
-      - "8928:8081"
+      - "8928:80"
 
   de-jong-replayservice:
       build:
@@ -74,3 +76,12 @@ services:
     - "8932:80"
    links:
      - de-jong-bestellingservice-mysql:db
+
+  de-jong-front-end-bestellingservice:
+     build:
+       context: .
+       dockerfile: ops/Polymer/Dockerfile
+       args:
+         - DIRECTORY=front-end-bestellingservice
+     ports:
+       - "8933:80"

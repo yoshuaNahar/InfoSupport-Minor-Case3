@@ -21,9 +21,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="my-icons.html">
+
 <script src="environment.js"></script>
-
-
 <link rel="lazy-import" href="bestellingen.html">
 <link rel="lazy-import" href="notFound.html">
 
@@ -138,8 +137,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _routePageChanged(page) {
         // If no page was found in the route data, page will be an empty string.
-        // Default to 'view1' in that case.
-        this.page = page || 'view1';
+        // Default to 'bestellingen' in that case.
+        this.page = page || 'bestellingen';
 
         // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {
