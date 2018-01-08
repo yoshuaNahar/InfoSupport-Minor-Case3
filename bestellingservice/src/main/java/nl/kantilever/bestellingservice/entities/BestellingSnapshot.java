@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "bestelling_view")
-public class BestellingView {
+public class BestellingSnapshot {
 
   @Id
   @Column(name = "bestelling_view_id")
@@ -24,7 +24,7 @@ public class BestellingView {
   private List<Artikel> artikelen;
   private LocalDateTime geplaatstOp;
 
-  public BestellingView() {
+  public BestellingSnapshot() {
     // Needed for JPA
   }
 
@@ -62,7 +62,7 @@ public class BestellingView {
 
   @Override
   public String toString() {
-    return "BestellingView{" +
+    return "BestellingSnapshot{" +
       "id=" + id +
       ", gebruikerId=" + gebruikerId +
       ", artikelen=" + artikelen +

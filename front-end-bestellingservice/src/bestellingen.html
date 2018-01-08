@@ -66,7 +66,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       ready() {
         super.ready();
-        let url = environment.API.bestellingservice + "/bestelling/1";
+        let url = environment.API.bestellingservice + "/bestelling";
         fetch(url).then(data => {
           console.log(data, 'data');
 
