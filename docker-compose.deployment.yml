@@ -33,12 +33,12 @@ services:
     depends_on:
       - de-jong-webwinkel-mysql
 
-  de-jong-front-end-webwinkel:
-    build:
-      context: .
-      dockerfile: ops/Polymer/Dockerfile
-    ports:
-      - "8928:80"
+#  de-jong-front-end-webwinkel:
+#    build:
+#      context: .
+#      dockerfile: ops/Polymer/Dockerfile
+#    ports:
+#      - "8928:80"
 
   de-jong-replayservice:
       build:
