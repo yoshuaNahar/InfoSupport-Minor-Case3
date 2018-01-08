@@ -1,0 +1,239 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shop-button.html">
+<link rel="import" href="shop-image.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/paper-search/paper-search-panel.html">
+<link rel="import" href="../bower_components/polymer/lib/utils/async.html">
+
+<dom-module id="shop-home">
+
+  <template>
+
+    <style include="shop-button iron-flex iron-flex-alignment">
+
+      .banner {
+        position: relative;
+        height: 280px;
+        overflow: hidden;
+        margin-bottom: 32px;
+        width: 100%;
+      }
+      .image-link {
+        outline: none;
+      }
+
+      .image-link > shop-image::after {
+        display: block;
+        content: '';
+        position: absolute;
+        transition-property: opacity;
+        transition-duration: 0s;
+        transition-delay: 90ms;
+        pointer-events: none;
+        opacity: 0;
+        top: 5px;
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        outline: #2196F3 auto 5px;
+        outline: -moz-mac-focusring auto 5px;
+        outline: -webkit-focus-ring-color auto 5px;
+      }
+
+      .image-link:focus > shop-image::after {
+        opacity: 1;
+      }
+
+      .item {
+        margin: 0 10px 40px 10px;
+        width: 30%;
+        text-align: center;
+      }
+
+      shop-image {
+        height: 200px;
+      }
+
+      h2 {
+        font-size: 1.3em;
+        font-weight: 500;
+        margin: 32px 0;
+      }
+
+      @media (max-width: 767px) {
+        .banner {
+          height: 160px;
+        }
+
+        shop-image {
+          height: 240px;
+        }
+
+        h2 {
+          margin: 24px 0;
+        }
+
+        h1 {
+          text-align: center;
+        }
+
+        .item {
+          width: 100%;
+        }
+      }
+
+    </style>
+
+    <img class="banner" src="../images/Kantilever%208%20Banner.png"/>
+
+    <paper-search-panel
+      placeholder="Zoek naar artikelen.."
+      search="{{search}}"
+      items="{{items}}"
+      has-more="[[hasMore]]"
+      loading="[[loading]]"
+      filters="[[filters]]"
+      selected-filters="{{selectedFilters}}"
+      no-results-text="Er zijn geen resultaten gevonden bij het zoeken.">
+      <div id="results">
+        <h1>Resultaten</h1>
+          <dom-repeat items="[[items]]">
+            <template strip-whitespace>
+              <div class="item">
+                <a class="image-link" href$="[[_getItemHref(item)]]">
+                  <shop-image src="[[item.afbeeldingUrl]]" alt="[[item.naam]]"></shop-image>
+                </a>
+                <h2>[[item.naam]]</h2>
+              </div>
+            </template>
+          </dom-repeat>
+        <hr>
+      </div>
+    </paper-search-panel>
+
+    <h1>Categorieen</h1>
+    <hr>
+    <div class="layout horizontal around-justified wrap">
+      <dom-repeat items="[[categories]]">
+        <template strip-whitespace>
+          <div class="item">
+            <a class="image-link" href$="/list/[[item.name]]">
+              <shop-image src="[[item.image]]" alt="[[item.title]]"></shop-image>
+            </a>
+            <h2>[[item.title]]</h2>
+            <shop-button>
+              <a aria-label$="[[item.title]] Shop Now" href$="/list/[[item.name]]"> Bekijken</a>
+            </shop-button>
+          </div>
+        </template>
+      </dom-repeat>
+    </div>
+  </template>
+
+  <script>
+
+    class ShopHome extends Polymer.Element {
+
+      static get is() { return 'shop-home'; }
+
+      ready() {
+        super.ready()
+        if(this.search ==="") {
+          Polymer.Async.microTask.run(() => {
+            const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel')
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none'
+            searchShadowDom.querySelector('#results').style.display='none'
+          })
+        }
+      }
+
+      static get properties() { return {
+        search: {
+          type: String,
+          value: "",
+          observer: '_searchChanged'
+        },
+
+        loading: {
+          type: Boolean
+        },
+
+        items: {
+          type: Array,
+          value: []
+        },
+
+        filters: {
+          type: Object
+        },
+
+        selectedFilters: {
+          type: Array
+        },
+
+        categories: {
+          type: Array
+        },
+
+        visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        },
+
+        hasMore: {
+          type: Boolean
+        }
+      }}
+
+      _visibleChanged(visible) {
+        if (visible) {
+          this.dispatchEvent(new CustomEvent('change-section', {
+            bubbles: true, composed: true, detail: {title: 'Home'}
+          }));
+        }
+      }
+
+      _getItemHref(item) {
+        // By returning null when `itemId` is undefined, the href attribute won't be set and
+        // the link will be disabled.
+        return item.naam ? ['/detail', this.category.name, item.name].join('/') : null;
+      }
+
+      _searchChanged(value) {
+        const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel');
+        this.loading = true;
+        if(this.search ==="") {
+          Polymer.Async.microTask.run(() => {
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none';
+            searchShadowDom.querySelector('#results').style.display='none'
+          })
+        } else {
+          if(this.items.length === 0) {
+            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='inline';
+          }
+          searchShadowDom.querySelector('#results').style.display='inline'
+        }
+
+        let results = this._getMatchingArticles(value)
+        this.loading = false;
+      }
+
+      _getMatchingArticles(value) {
+      }
+    }
+
+    customElements.define(ShopHome.is, ShopHome);
+
+  </script>
+
+</dom-module>
