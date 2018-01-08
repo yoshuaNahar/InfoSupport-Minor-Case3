@@ -71,13 +71,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           console.log(data, 'data');
 
           return data.json()
-        }).then(bestelling => {
-          console.log(bestelling, "bestelling");
-          let x = bestelling.geplaatstOp.substring(0, bestelling.geplaatstOp.indexOf("T"));
-          let y = bestelling.geplaatstOp.substring(bestelling.geplaatstOp.indexOf("T") + 1, bestelling.geplaatstOp.length);
+        }).then(bestellingen => {
+          console.log(bestellingen, "bestellingen");
 
-          bestelling.geplaatstOp = x + " " + y;
-          this.bestellingen = [bestelling];
+          bestellingen.forEach(bestelling => {
+            let date = bestelling.geplaatstOp.substring(0, bestelling.geplaatstOp.indexOf("T"));
+            let time = bestelling.geplaatstOp.substring(bestelling.geplaatstOp.indexOf("T") + 1, bestelling.geplaatstOp.length);
+
+            bestelling.geplaatstOp = date + " " + time;
+          });
+
+
+          this.bestellingen = bestellingen;
         });
       }
     }
