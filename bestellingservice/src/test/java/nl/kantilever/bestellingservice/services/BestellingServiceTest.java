@@ -1,16 +1,11 @@
 package nl.kantilever.bestellingservice.services;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import nl.kantilever.bestellingservice.config.Config;
 import nl.kantilever.bestellingservice.entities.Bestelling;
-import nl.kantilever.bestellingservice.entities.BestellingView;
+import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.repositories.ArtikelenRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
-import nl.kantilever.bestellingservice.repositories.BestellingViewRepository;
+import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -22,6 +17,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 // Aangezien we geen heel complexe dingen doen in de bestellingRepository voeg
 // ik hier gewoon IntegrationTests uit tussen de BestellingService, BestellingRepository en H2 uit.
@@ -38,7 +39,7 @@ public class BestellingServiceTest {
   private BestellingRepository bestellingRepository;
 
   @Autowired
-  private BestellingViewRepository bestellingViewRepository;
+  private BestellingSnapshotRepository bestellingSnapshotRepository;
 
   @Autowired
   private ArtikelenRepository artikelenRepository;
@@ -55,7 +56,7 @@ public class BestellingServiceTest {
   public void setup() {
     bestellingService = new BestellingService(
       bestellingRepository,
-      bestellingViewRepository,
+      bestellingSnapshotRepository,
       artikelenRepository,
       restTemplate);
 
@@ -86,7 +87,7 @@ public class BestellingServiceTest {
   }
 
   // We should create our own matcher that does this.
-  private void assertBestelling(BestellingView expected, Bestelling actual) {
+  private void assertBestelling(BestellingSnapshot expected, Bestelling actual) {
     assertThat(expected.getId(), is(actual.getGebruikerId()));
     assertThat(expected.getGebruikerId(), is(actual.getGebruikerId()));
     assertThat(expected.getGeplaatstOp(), is(actual.getGeplaatstOp()));
