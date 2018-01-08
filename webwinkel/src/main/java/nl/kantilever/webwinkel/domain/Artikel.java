@@ -49,21 +49,21 @@ public class Artikel {
 
   @JsonProperty("Leveranciercode")
   @Column(name = "leverancierCode")
-  private int leverancierCode;
+  private String leverancierCode;
 
   @JsonProperty("Leverancier")
   @Column(name = "leverancier")
   String leverancier;
 
   @JsonProperty("Categorieen")
-  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<Categorie> categorieen;
 
   public Artikel() {
   }
 
   public Artikel(String naam, String beschrijving, double prijs, String afbeeldingURL,
-    Date leverbaarVanaf, Date leverbaarTot, int leverancierCode, String leverancier,
+    Date leverbaarVanaf, Date leverbaarTot, String leverancierCode, String leverancier,
     List<Categorie> categorieen) {
     this.naam = naam;
     this.beschrijving = beschrijving;
@@ -77,7 +77,7 @@ public class Artikel {
   }
 
   public Artikel(Long artikelnummer, String naam, String beschrijving, double prijs, String afbeeldingURL,
-    Date leverbaarVanaf, Date leverbaarTot, int leverancierCode, String leverancier,
+    Date leverbaarVanaf, Date leverbaarTot, String leverancierCode, String leverancier,
     List<Categorie> categorieen) {
     this.artikelnummer = artikelnummer;
     this.naam = naam;
@@ -148,11 +148,11 @@ public class Artikel {
     this.leverbaarTot = leverbaarTot;
   }
 
-  public int getLeverancierCode() {
+  public String getLeverancierCode() {
     return leverancierCode;
   }
 
-  public void setLeverancierCode(int leverancierCode) {
+  public void setLeverancierCode(String leverancierCode) {
     this.leverancierCode = leverancierCode;
   }
 

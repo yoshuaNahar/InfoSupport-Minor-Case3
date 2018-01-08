@@ -18,4 +18,5 @@ public interface CategorieRepository extends CrudRepository<Categorie, String> {
 
   @Query(value = "select * from categorieen where naam = :naam", nativeQuery = true)
   Categorie findCategorieByNaam(@Param("naam") String naam);
+
 }
