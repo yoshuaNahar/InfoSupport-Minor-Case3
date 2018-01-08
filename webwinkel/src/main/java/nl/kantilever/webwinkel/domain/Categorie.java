@@ -33,7 +33,7 @@ public class Categorie {
 
   @JsonIgnore
   @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categorieen")
-  private List<Artikel> artikellen;
+  private List<Artikel> artikelen;
 
   public Categorie(String naam) {
     this.naam = naam;

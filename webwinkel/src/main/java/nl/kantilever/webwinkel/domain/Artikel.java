@@ -51,5 +51,9 @@ public class Artikel {
 
   @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Categorie> categorieen;
+
+  public Artikel(String naam) {
+    this.naam = naam;
+  }
 }
 

@@ -29,7 +29,7 @@ public class BestellingController {
   public ResponseEntity addBestelling(@RequestBody Bestelling bestelling) {
     bestellingService.addBestelling(bestelling);
 
-    bestellingService.getArtikellen(bestelling);
+    bestellingService.getArtikelen(bestelling);
 
     return new ResponseEntity(HttpStatus.CREATED); // 201 Created
   }

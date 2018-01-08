@@ -31,7 +31,7 @@ public class BestellingService {
     return bestellingRepository.findOne(bestellingId);
   }
 
-  public void getArtikellen(Bestelling bestelling) {
+  public void getArtikelen(Bestelling bestelling) {
     restTemplate.getForObject("http://", Artikel.class);
 
     logger.info("artikkelen hier ophalen obv artikellenId, {}", bestelling);

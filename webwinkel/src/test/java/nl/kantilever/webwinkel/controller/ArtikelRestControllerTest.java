@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.lang.reflect.Array;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Created by Tinne on 21-12-2017.
+ * Tests for the ArtikelRestController
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(ArtikelRestController.class)
@@ -51,61 +53,132 @@ public class ArtikelRestControllerTest {
   @MockBean
   private ArtikelService artikelService;
 
-  @InjectMocks
-  ArtikelRestController artikelRestController;
-
-
   @Autowired
   private MockMvc mockMvc;
 
   @Autowired
   private ObjectMapper mapper;
 
-  @Before
-  public void intialize() {
-    try {
-      categorieService.save(new Categorie("Onderdelen", "fork_small.gif"));
-      categorieService.save(new Categorie("Roestvrijstaal", "no_image_available_small.gif"));
-      artikelService.save(new Artikel(115, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1))));
-    } catch (Exception e) {
-      System.out.println("Temp data is al aangemaakt");
-    }
+  @Test
+  public void getArtikelenByNaamExpectOkAnd2Artikelen() throws Exception {
+    Artikel artikel1 = new Artikel("Fietsketting 3");
+    Artikel artikel2 = new Artikel("Fietsband 17 inch");
+    List<Artikel> artikelArray = Arrays.asList(artikel1, artikel2);
+
+    when(artikelService.findArtikelenByNaam("fiets")).thenReturn(artikelArray);
+    this.mockMvc.perform(get("/artikelen/naam/fiets")
+    ).andDo(print()).andExpect(status().isOk())
+      .andExpect(content().contentType("application/json;charset=UTF-8"))
+      .andExpect(content().json((mapper.writeValueAsString(artikelArray))));
   }
 
   @Test
-  public void test() throws Exception {
-    Artikel response = new Artikel();
+  public void getArtikelByArtikelnummerExpectOkAnd1Artikel() throws Exception {
+    Artikel response = new Artikel("Batavus C7");
     response.setArtikelnummer(115);
 
     when(artikelService.findArtikelByArtikelnummer(Mockito.anyInt())).thenReturn(response);
+    this.mockMvc.perform(get("/artikel/artikelnummer/115")
+    ).andDo(print()).andExpect(status().isOk())
+      .andExpect(content().contentType("application/json;charset=UTF-8"))
+      .andExpect(content().json((mapper.writeValueAsString( response))));
+  }
+
+
+
+  @Test
+  public void getArtikelenByLeverancierExpectOkAnd2Artikelen() throws Exception {
+    List<Artikel> artikelArray = Arrays.asList(new Artikel("Fietsketting 3"), new Artikel("Fietsband 17 inch"));
+
+    when(artikelService.findArtikelenByNaam("fiets")).thenReturn(artikelArray);
     this.mockMvc.perform(get("/artikelen/naam/fiets")
     ).andDo(print()).andExpect(status().isOk())
-      .andExpect(content().contentType("application/json;charset=UTF-8"));
+      .andExpect(content().contentType("application/json;charset=UTF-8"))
+      .andExpect(content().json((mapper.writeValueAsString(artikelArray))));
   }
+//  @RequestMapping(value = "artikelen/leverancier/{leverancier}", method = RequestMethod.GET)
+//  public List<Artikel> findArtikelenByLeverancier(Model model, @PathVariable String leverancier) {
+//    return artikelService.findArtikelenByLeverancier(leverancier);
+//  }
+
+
+
 
   @Test
-  @Ignore
-  public void test2() throws Exception {
-    System.out.println(categorieService.findAll().get(0).getArtikellen());
+  public void getAllCategorieenExpectOkAnd2Categorieen() throws Exception {
 
-    mockMvc.perform(get("/artikelen")
-      .contentType(MediaType.APPLICATION_JSON))
-      .andExpect(status().isOk())
-      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-      .andExpect(jsonPath("$[0]", is("Fietsketting")));
   }
+//  @RequestMapping(value = "categorieen", method = RequestMethod.GET)
+//  public List<Categorie> findAllCategorieen(Model model) {
+//    return categorieService.findAll();
+//  }
+
 
   @Test
-  @Ignore
-  public void test3() throws Exception {
-    Iterable<Artikel> testList = Arrays.asList(new Artikel(115, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(new Categorie("Roestvrijstaal", "Image_URL"), new Categorie("Onderdelen", "Image_URL"))), new Artikel());
-    when(categorieService.findAll().get(0).getArtikellen()).thenReturn((List<Artikel>) testList);
-    mockMvc.perform(MockMvcRequestBuilders
-      .get("/artikel/artikelnummer/115"))
+  public void getArtikelenByCategorieExpectOkAnd2Artikelen() throws Exception {
 
-      .andExpect(status().isOk())
-      .andExpect(content().json(mapper.writeValueAsString(testList)));
-    System.out.println(mapper.writeValueAsString(testList));
   }
+//  @RequestMapping(value = "artikelen/categorie/{categorie}", method = RequestMethod.GET)
+//  public List<Artikel> findArtikelenByCategorie(Model model, @PathVariable String categorie) {
+//    Categorie matchendeCategorie = categorieService.findCategorieByNaam(categorie);
+//    List<Artikel> artikelLijst = new ArrayList<Artikel>();
+//
+//    if (matchendeCategorie != null) {
+//      artikelLijst = categorieService.findCategorieByNaam(categorie).getArtikelen();
+//    } else {
+//      System.out.println("Categorie not found");
+//    }
+//
+//    return artikelLijst;
+//  }
+
+
+  @Test
+  public void getCategorieByNaamExpectOkAnd1Categorie() throws Exception {
+
+  }
+//  @RequestMapping(value = "categorie/naam/{naam}", method = RequestMethod.GET)
+//  public Categorie findCategorieByNaam(Model model, @PathVariable String naam) {
+//    return categorieService.findCategorieByNaam(naam);
+//  }
+
+
+  @Test
+  public void getArtikelenByBeschrijvingExpectOkAnd2Artikelen() throws Exception {
+
+  }
+//  @RequestMapping(value = "artikelen/beschrijving/{beschrijving}", method = RequestMethod.GET)
+//  public List<Artikel> findArtikelenByBeschrijving(Model model, @PathVariable String beschrijving) {
+//    return artikelService.findArtikelenByBeschrijving(beschrijving);
+//  }
+
+
+  @Test
+  public void getArtikelenInPriceRangeExpectOkAnd2Artikelen() throws Exception {
+
+  }
+//  @RequestMapping(value = "artikelen/pricerange/{minPrice}/{maxPrice}", method = RequestMethod.GET)
+//  public List<Artikel> findArtikelenInPriceRange(Model model, @PathVariable final double minPrice, @PathVariable final double maxPrice) {
+//    return artikelService.findArtikelenInPriceRange(minPrice, maxPrice);
+//  }
+
+
+  @Test
+  public void getArtikelenAfterLeverbaarVanafDateExpectOkAnd2Artikelen() throws Exception {
+
+  }
+//  @RequestMapping(value = "artikelen/leverbaar_vanaf/{leverbaar_vanaf}", method = RequestMethod.GET)
+//  public List<Artikel> findArtikelenLeverbaarVanaf(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date leverbaar_vanaf) {
+//    return artikelService.findArtikelenLeverbaarVanaf(leverbaar_vanaf);
+//  }
+
+  @Test
+  public void getArtikelenBeforeLeverbaarTotDateExpectOkAnd2Artikelen() throws Exception {
+
+  }
+//  @RequestMapping(value = "artikelen/leverbaar_tot/{leverbaar_tot}", method = RequestMethod.GET)
+//  public List<Artikel> findArtikelenLeverbaarTot(Model model, @PathVariable Date leverbaar_tot) {
+//    return artikelService.findArtikelenLeverbaarTot(leverbaar_tot);
+//  }
 }
 
