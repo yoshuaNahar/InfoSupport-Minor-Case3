@@ -25,7 +25,7 @@ pipeline {
             dir('front-end-webwinkel') {
               // sh 'polymer test'
             }
-            dir('front-end-bestellingservice') {
+            dir('front-end-commercieel-manager') {
               // sh 'polymer test'
             }
           }
