@@ -21,7 +21,6 @@ public class BestellingService {
   private static final Logger logger = LoggerFactory.getLogger(BestellingService.class);
 
   private BestellingRepository bestellingRepository;
-
   private BestellingSnapshotRepository bestellingSnapshotRepository;
   private ArtikelenRepository artikelenRepository;
 
@@ -58,24 +57,25 @@ public class BestellingService {
     return bestellingSnapshotRepository.findAll();
   }
 
-  public void saveBestellingView(Bestelling bestelling) {
+  public void saveBestellingSnapshot(Bestelling bestelling) {
     List<Artikel> artikelen = new ArrayList<>();
 
     bestelling.getArtikelenIds().forEach(id ->
-      artikelen.add(restTemplate.getForObject("http://" + webwinkelUrl + "artikel/artikelnummer/" + id, Artikel.class)
-    ));
+      artikelen.add(restTemplate
+        .getForObject("http://" + webwinkelUrl + "artikel/artikelnummer/" + id, Artikel.class)
+      ));
 
     logger.info("artikkelen list: {}", artikelen);
 
     artikelenRepository.save(artikelen);
 
-    BestellingSnapshot bestellingView = new BestellingSnapshot();
-    bestellingView.setId(bestelling.getId());
-    bestellingView.setGebruikerId(bestelling.getGebruikerId());
-    bestellingView.setGeplaatstOp(bestelling.getGeplaatstOp());
-    bestellingView.setArtikelen(artikelen);
+    BestellingSnapshot bestellingSnapshot = new BestellingSnapshot();
+    bestellingSnapshot.setId(bestelling.getId());
+    bestellingSnapshot.setGebruikerId(bestelling.getGebruikerId());
+    bestellingSnapshot.setArtikelen(artikelen);
+    bestellingSnapshot.setStatus("geplaatsd");
 
-    bestellingSnapshotRepository.save(bestellingView);
+    bestellingSnapshotRepository.save(bestellingSnapshot);
 
     logger.info("artikelen hier ophalen obv artikellenId, {}", bestelling);
   }

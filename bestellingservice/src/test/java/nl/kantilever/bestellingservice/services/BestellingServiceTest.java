@@ -1,5 +1,9 @@
 package nl.kantilever.bestellingservice.services;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
 import nl.kantilever.bestellingservice.config.Config;
 import nl.kantilever.bestellingservice.entities.Bestelling;
 import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
@@ -17,12 +21,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 // Aangezien we geen heel complexe dingen doen in de bestellingRepository voeg
 // ik hier gewoon IntegrationTests uit tussen de BestellingService, BestellingRepository en H2 uit.
@@ -61,7 +59,6 @@ public class BestellingServiceTest {
       restTemplate);
 
     bestelling = new Bestelling();
-    bestelling.setGeplaatstOp(LocalDateTime.now());
     bestelling.setGebruikerId(1L);
     bestelling.setArtikelenIds(Arrays.asList(1L, 2L));
   }
@@ -80,22 +77,20 @@ public class BestellingServiceTest {
   @Test
   @Ignore("Should mock the RestTemplate but do this later....")
   public void saveBestellingViewGivenBestellingExpectArtikellenAndBestellingViewSaved() {
-    bestellingService.saveBestellingView(bestelling);
+    bestellingService.saveBestellingSnapshot(bestelling);
     entityManager.flush();
     entityManager.clear();
-
   }
 
   // We should create our own matcher that does this.
   private void assertBestelling(BestellingSnapshot expected, Bestelling actual) {
     assertThat(expected.getId(), is(actual.getGebruikerId()));
     assertThat(expected.getGebruikerId(), is(actual.getGebruikerId()));
-    assertThat(expected.getGeplaatstOp(), is(actual.getGeplaatstOp()));
   }
 
   private void assertBestelling(Bestelling expected, Bestelling actual) {
     assertThat(expected.getId(), is(actual.getGebruikerId()));
     assertThat(expected.getGebruikerId(), is(actual.getGebruikerId()));
-    assertThat(expected.getGeplaatstOp(), is(actual.getGeplaatstOp()));
   }
+
 }
