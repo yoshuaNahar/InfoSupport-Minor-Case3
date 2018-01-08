@@ -40,7 +40,7 @@ public class ArtikelRestController {
           "silver_chain_small.gif",
           new Date(5),
           new Date(1999999999),
-          1989,
+          "12345",
           "Henk & Nagel B.V.",
           Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1))));
     } catch (Exception e) {
@@ -75,7 +75,7 @@ public class ArtikelRestController {
     List<Artikel> artikelLijst = new ArrayList<Artikel>();
 
     if (matchendeCategorie != null) {
-      artikelLijst = categorieService.findCategorieByNaam(categorie).getArtikellen();
+      artikelLijst = categorieService.findCategorieByNaam(categorie).getArtikelen();
     } else {
       System.out.println("Categorie not found");
     }
