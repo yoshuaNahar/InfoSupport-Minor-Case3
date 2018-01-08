@@ -52,7 +52,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
     class Bestellingen extends Polymer.Element {
-      static get is() { return 'bestellingen-view'; }
+      static get is() {
+        return 'bestellingen-view';
+      }
 
       static get properties() {
         return {
@@ -64,45 +66,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       ready() {
         super.ready();
+        let url = environment.API.bestellingservice + "/bestelling/1";
+        fetch(url).then(data => {
+          console.log(data, 'data');
 
-        let bestellingen = [{
-          id: 1,
-          gebruikerId: 1,
-          geplaatstOp: "2017-09-12",
-          artikelen: [{
-            naam: "Big Black Dildo",
-            prijs: 50.25,
-            beschrijving: "Ik kan uit ervaring spreken dat deze heel goed is\n\n ECHT HEEL GOED ;)",
-            leverancier: "Durex"
-          },
-            {
-              naam: "Glijmiddel",
-              prijs: 1.25,
-              beschrijving: "De titel spreekt voor zich",
-              leverancier: "Durex"
-            }]
+          return data.json()
+        }).then(bestelling => {
+          console.log(bestelling, "bestelling");
+          let x = bestelling.geplaatstOp.substring(0, bestelling.geplaatstOp.indexOf("T"));
+          let y = bestelling.geplaatstOp.substring(bestelling.geplaatstOp.indexOf("T") + 1, bestelling.geplaatstOp.length);
 
-        },
-          {
-            id: 2,
-            gebruikerId: 2,
-            geplaatstOp: "2017-12-13",
-            artikelen: [{
-              naam: "Nasi",
-              prijs: 2500.00,
-              beschrijving: "Voor als je geen voedsel krijgt van je familie voor als je geen dokter bent. Kan gebeuren natuurlijk",
-              leverancier: "Lassi"
-            }]
-
-          }];
-
-        this.bestellingen = bestellingen;
-
-//        let url = environment.API.bestellingservice + "/bestellingen";
-//        fetch(url, {
-//        }).then(bestellingen => {
-//          this.bestellingen = bestellingen;
-//        });
+          bestelling.geplaatstOp = x + " " + y;
+          this.bestellingen = [bestelling];
+        });
       }
     }
 

@@ -43,4 +43,36 @@ public class Categorie {
     this.naam = naam;
     this.afbeeldingURL = afbeeldingURL;
   }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public String getNaam() {
+    return naam;
+  }
+
+  public void setNaam(String naam) {
+    this.naam = naam;
+  }
+
+  public String getAfbeeldingURL() {
+    return afbeeldingURL;
+  }
+
+  public void setAfbeeldingURL(String afbeeldingURL) {
+    this.afbeeldingURL = afbeeldingURL;
+  }
+
+  public List<Artikel> getArtikellen() {
+    return artikellen;
+  }
+
+  public void setArtikellen(List<Artikel> artikellen) {
+    this.artikellen = artikellen;
+  }
 }

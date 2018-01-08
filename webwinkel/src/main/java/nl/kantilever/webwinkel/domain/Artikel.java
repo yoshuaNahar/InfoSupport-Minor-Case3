@@ -19,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 public class Artikel {
   @Id
   @Column(name = "artikelnummer", unique = true)
@@ -51,5 +51,98 @@ public class Artikel {
 
   @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Categorie> categorieen;
+
+  public long getArtikelnummer() {
+    return artikelnummer;
+  }
+
+  public void setArtikelnummer(long artikelnummer) {
+    this.artikelnummer = artikelnummer;
+  }
+
+  public String getNaam() {
+    return naam;
+  }
+
+  public void setNaam(String naam) {
+    this.naam = naam;
+  }
+
+  public String getBeschrijving() {
+    return beschrijving;
+  }
+
+  public void setBeschrijving(String beschrijving) {
+    this.beschrijving = beschrijving;
+  }
+
+  public double getPrijs() {
+    return prijs;
+  }
+
+  public void setPrijs(double prijs) {
+    this.prijs = prijs;
+  }
+
+  public String getAfbeeldingURL() {
+    return afbeeldingURL;
+  }
+
+  public void setAfbeeldingURL(String afbeeldingURL) {
+    this.afbeeldingURL = afbeeldingURL;
+  }
+
+  public Date getLeverbaarVanaf() {
+    return leverbaarVanaf;
+  }
+
+  public void setLeverbaarVanaf(Date leverbaarVanaf) {
+    this.leverbaarVanaf = leverbaarVanaf;
+  }
+
+  public Date getLeverbaarTot() {
+    return leverbaarTot;
+  }
+
+  public void setLeverbaarTot(Date leverbaarTot) {
+    this.leverbaarTot = leverbaarTot;
+  }
+
+  public int getLeverancierCode() {
+    return leverancierCode;
+  }
+
+  public void setLeverancierCode(int leverancierCode) {
+    this.leverancierCode = leverancierCode;
+  }
+
+  public String getLeverancier() {
+    return leverancier;
+  }
+
+  public void setLeverancier(String leverancier) {
+    this.leverancier = leverancier;
+  }
+
+  public List<Categorie> getCategorieen() {
+    return categorieen;
+  }
+
+  public void setCategorieen(List<Categorie> categorieen) {
+    this.categorieen = categorieen;
+  }
+
+  public Artikel(long artikelnummer, String naam, String beschrijving, double prijs, String afbeeldingURL, Date leverbaarVanaf, Date leverbaarTot, int leverancierCode, String leverancier, List<Categorie> categorieen) {
+    this.artikelnummer = artikelnummer;
+    this.naam = naam;
+    this.beschrijving = beschrijving;
+    this.prijs = prijs;
+    this.afbeeldingURL = afbeeldingURL;
+    this.leverbaarVanaf = leverbaarVanaf;
+    this.leverbaarTot = leverbaarTot;
+    this.leverancierCode = leverancierCode;
+    this.leverancier = leverancier;
+    this.categorieen = categorieen;
+  }
 }
 
