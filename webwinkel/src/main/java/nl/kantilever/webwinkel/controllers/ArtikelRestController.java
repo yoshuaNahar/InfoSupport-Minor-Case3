@@ -1,8 +1,11 @@
 package nl.kantilever.webwinkel.controllers;
 
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import nl.kantilever.webwinkel.domain.Artikel;
 import nl.kantilever.webwinkel.domain.Categorie;
-import nl.kantilever.webwinkel.repositories.ArtikelRepository;
 import nl.kantilever.webwinkel.services.ArtikelService;
 import nl.kantilever.webwinkel.services.CategorieService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.sql.Date;
-import java.util.List;
 
 /**
  * Created by Tinne on 20-12-2017.
@@ -34,7 +32,17 @@ public class ArtikelRestController {
     try { //TEMP SAVE CODE
       categorieService.save(new Categorie("Onderdelen", "fork_small.gif"));
       categorieService.save(new Categorie("Roestvrijstaal", "no_image_available_small.gif"));
-      artikelService.save(new Artikel(115, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1))));
+      artikelService.save(
+        new Artikel(115L,
+          "Fietsketting",
+          "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.",
+          79.50,
+          "silver_chain_small.gif",
+          new Date(5),
+          new Date(1999999999),
+          1989,
+          "Henk & Nagel B.V.",
+          Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1))));
     } catch (Exception e) {
       System.out.println("Temp data is al aangemaakt");
     } //TEMP SAVE CODE
