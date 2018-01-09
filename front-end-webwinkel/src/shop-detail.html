@@ -298,7 +298,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 //      }
 
       _setOrder(event) {
-        this.shadowRoot.querySelector('#modal').open()
+        this.shadowRoot.querySelector('#modal').open();
 
         fetch(environment.API.bestellingservice + '/bestelling', {
           method: 'post',
@@ -311,9 +311,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             artikelenIds: [this.item.Artikelnummer],
           })
         }).then(data => {
-          return data.json()
-        }).then(data => {
-          console.log(data)
+          return
         })
       }
 
