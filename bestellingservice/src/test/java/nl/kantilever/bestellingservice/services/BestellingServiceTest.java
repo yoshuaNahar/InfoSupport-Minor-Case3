@@ -3,14 +3,13 @@ package nl.kantilever.bestellingservice.services;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import nl.kantilever.bestellingservice.config.Config;
 import nl.kantilever.bestellingservice.entities.Bestelling;
-import nl.kantilever.bestellingservice.entities.BestellingView;
+import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.repositories.ArtikelenRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
-import nl.kantilever.bestellingservice.repositories.BestellingViewRepository;
+import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,7 +37,7 @@ public class BestellingServiceTest {
   private BestellingRepository bestellingRepository;
 
   @Autowired
-  private BestellingViewRepository bestellingViewRepository;
+  private BestellingSnapshotRepository bestellingSnapshotRepository;
 
   @Autowired
   private ArtikelenRepository artikelenRepository;
@@ -55,12 +54,11 @@ public class BestellingServiceTest {
   public void setup() {
     bestellingService = new BestellingService(
       bestellingRepository,
-      bestellingViewRepository,
+      bestellingSnapshotRepository,
       artikelenRepository,
       restTemplate);
 
     bestelling = new Bestelling();
-    bestelling.setGeplaatstOp(LocalDateTime.now());
     bestelling.setGebruikerId(1L);
     bestelling.setArtikelenIds(Arrays.asList(1L, 2L));
   }
@@ -78,23 +76,21 @@ public class BestellingServiceTest {
 
   @Test
   @Ignore("Should mock the RestTemplate but do this later....")
-  public void saveBestellingViewGivenBestellingExpectArtikellenAndBestellingViewSaved() {
-    bestellingService.saveBestellingView(bestelling);
+  public void saveBestellingViewGivenBestellingExpectArtikelenAndBestellingViewSaved() {
+    bestellingService.saveBestellingSnapshot(bestelling);
     entityManager.flush();
     entityManager.clear();
-
   }
 
   // We should create our own matcher that does this.
-  private void assertBestelling(BestellingView expected, Bestelling actual) {
+  private void assertBestelling(BestellingSnapshot expected, Bestelling actual) {
     assertThat(expected.getId(), is(actual.getGebruikerId()));
     assertThat(expected.getGebruikerId(), is(actual.getGebruikerId()));
-    assertThat(expected.getGeplaatstOp(), is(actual.getGeplaatstOp()));
   }
 
   private void assertBestelling(Bestelling expected, Bestelling actual) {
     assertThat(expected.getId(), is(actual.getGebruikerId()));
     assertThat(expected.getGebruikerId(), is(actual.getGebruikerId()));
-    assertThat(expected.getGeplaatstOp(), is(actual.getGeplaatstOp()));
   }
+
 }

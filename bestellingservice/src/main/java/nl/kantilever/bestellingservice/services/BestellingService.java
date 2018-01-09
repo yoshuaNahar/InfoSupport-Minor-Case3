@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import nl.kantilever.bestellingservice.entities.Artikel;
 import nl.kantilever.bestellingservice.entities.Bestelling;
-import nl.kantilever.bestellingservice.entities.BestellingView;
+import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.repositories.ArtikelenRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
-import nl.kantilever.bestellingservice.repositories.BestellingViewRepository;
+import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,7 @@ public class BestellingService {
   private static final Logger logger = LoggerFactory.getLogger(BestellingService.class);
 
   private BestellingRepository bestellingRepository;
-
-  private BestellingViewRepository bestellingViewRepository;
+  private BestellingSnapshotRepository bestellingSnapshotRepository;
   private ArtikelenRepository artikelenRepository;
 
   private RestTemplate restTemplate;
@@ -33,11 +32,11 @@ public class BestellingService {
   @Autowired
   public BestellingService(
     BestellingRepository bestellingRepository,
-    BestellingViewRepository bestellingViewRepository,
+    BestellingSnapshotRepository bestellingSnapshotRepository,
     ArtikelenRepository artikelenRepository,
     RestTemplate restTemplate) {
     this.bestellingRepository = bestellingRepository;
-    this.bestellingViewRepository = bestellingViewRepository;
+    this.bestellingSnapshotRepository = bestellingSnapshotRepository;
     this.artikelenRepository = artikelenRepository;
     this.restTemplate = restTemplate;
   }
@@ -50,30 +49,48 @@ public class BestellingService {
     return bestellingRepository.findOne(bestellingId);
   }
 
-  public BestellingView findById(Long bestellingId) {
-    return bestellingViewRepository.findOne(bestellingId);
+  public BestellingSnapshot findById(Long bestellingId) {
+    return bestellingSnapshotRepository.findOne(bestellingId);
   }
 
-  public void saveBestellingView(Bestelling bestelling) {
+  public Iterable<BestellingSnapshot> findAll() {
+    return bestellingSnapshotRepository.findAll();
+  }
+
+  public void saveBestellingSnapshot(Bestelling bestelling) {
     List<Artikel> artikelen = new ArrayList<>();
 
+    // NOTE: webwinkel + replayservice draaien
     bestelling.getArtikelenIds().forEach(id ->
-      artikelen.add(restTemplate.getForObject("http://" + webwinkelUrl + "artikel/artikelnummer/" + id, Artikel.class)
-    ));
+      artikelen.add(restTemplate
+        .getForObject("http://" + webwinkelUrl + "artikel/artikelnummer/" + id, Artikel.class)
+      ));
 
     logger.info("artikkelen list: {}", artikelen);
 
     artikelenRepository.save(artikelen);
 
-    BestellingView bestellingView = new BestellingView();
-    bestellingView.setId(bestelling.getId());
-    bestellingView.setGebruikerId(bestelling.getGebruikerId());
-    bestellingView.setGeplaatstOp(bestelling.getGeplaatstOp());
-    bestellingView.setArtikelen(artikelen);
+    Double bestellingTotal = artikelen.stream().mapToDouble(Artikel::getPrijs).sum();
 
-    bestellingViewRepository.save(bestellingView);
+    BestellingSnapshot bestellingSnapshot = new BestellingSnapshot();
+    bestellingSnapshot.setId(bestelling.getId());
+    bestellingSnapshot.setGebruikerId(bestelling.getGebruikerId());
+    bestellingSnapshot.setArtikelen(artikelen);
+    bestellingSnapshot.setTotal(bestellingTotal);
+    bestellingSnapshot.setStatus("geplaatst");
+
+    bestellingSnapshotRepository.save(bestellingSnapshot);
 
     logger.info("artikelen hier ophalen obv artikellenId, {}", bestelling);
   }
+
+  public void getBestellingenGebruiker(int id){
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
+    if(bestellingenByGebruiker != null){
+      bestellingenByGebruiker.get(0).toString();
+    }
+
+  }
+
 
 }

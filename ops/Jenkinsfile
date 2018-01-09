@@ -25,6 +25,9 @@ pipeline {
             dir('front-end-webwinkel') {
               // sh 'polymer test'
             }
+            dir('front-end-commercieel-manager') {
+              // sh 'polymer test'
+            }
           }
         }
       }
@@ -40,6 +43,23 @@ pipeline {
         stage('Polymer Build') {
           steps {
             dir('front-end-webwinkel') {
+              dir('src') {
+                  sh 'rm environment.js'
+                  sh 'cp environment.prod.js environment.js'
+                  sh 'rm environment.prod.js'
+              }
+
+              sh 'bower install --allow-root'
+              sh 'polymer build'
+            }
+            dir('front-end-commercieel-manager') {
+              dir('src') {
+                sh 'rm environment.js'
+                sh 'cp environment.prod.js environment.js'
+                sh 'rm environment.prod.js'
+              }
+
+
               sh 'bower install --allow-root'
               sh 'polymer build'
             }

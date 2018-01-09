@@ -1,7 +1,7 @@
 package nl.kantilever.bestellingservice.controllers;
 
 import nl.kantilever.bestellingservice.entities.Bestelling;
-import nl.kantilever.bestellingservice.entities.BestellingView;
+import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.services.BestellingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,16 +29,28 @@ public class BestellingController {
 
     bestellingService.addBestelling(bestelling);
 
-    bestellingService.saveBestellingView(bestelling);
+    bestellingService.saveBestellingSnapshot(bestelling);
 
     return new ResponseEntity(HttpStatus.CREATED); // 201 Created
   }
 
   @GetMapping("/bestelling/{id}")
-  public BestellingView getBestelling(@PathVariable("id") Long bestellingId) {
+  public BestellingSnapshot getBestelling(@PathVariable("id") Long bestellingId) {
     logger.debug("getBestelling: {}", bestellingId);
 
     return bestellingService.findById(bestellingId);
+  }
+
+  @GetMapping("/bestelling")
+  public ResponseEntity getAllBestellingen() {
+    logger.debug("getAllBestellingen");
+
+    return ResponseEntity.ok().body(bestellingService.findAll());
+  }
+
+  @GetMapping("/test")
+  public void test() {
+    bestellingService.getBestellingenGebruiker(1);
   }
 
 }
