@@ -299,8 +299,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 attr-for-selected="name">
                 <dom-repeat items="[[categories]]" as="category" initial-count="4">
                   <template>
-                    <shop-tab name="[[category.name]]">
-                      <a href="/list/[[category.name]]">[[category.title]]</a>
+                    <shop-tab name="[[category.naam]]">
+                      <a href="/list/[[category.naam]]">[[category.naam]]</a>
                     </shop-tab>
                   </template>
                 </dom-repeat>
@@ -322,7 +322,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-selector role="navigation" class="drawer-list" selected="[[categoryName]]" attr-for-selected="name">
           <dom-repeat items="[[categories]]" as="category" initial-count="4">
             <template>
-              <a name="[[category.name]]" href="/list/[[category.name]]">[[category.title]]</a>
+              <a name="[[category.naam]]" href="/list/[[category.naam]]">[[category.naam]]</a>
             </template>
           </dom-repeat>
         </iron-selector>
@@ -494,6 +494,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // Elements in the app can notify section changes.
       // Response by a11y announcing the section and syncronizing the category.
       _onChangeSection(event) {
+        console.log("onchange " + JSON.stringify(event.detail))
         let detail = event.detail;
 
         // Scroll to the top of the page when navigating to a non-list page. For list view,

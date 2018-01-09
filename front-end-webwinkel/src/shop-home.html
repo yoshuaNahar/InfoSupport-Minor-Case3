@@ -12,9 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="shop-button.html">
 <link rel="import" href="shop-image.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-cd<link rel="import" href="../bower_components/polymer/lib/utils/async.html">
-
-<script src="environment.js"></script>
+<link rel="import" href="../bower_components/polymer/lib/utils/async.html">
 
 <dom-module id="shop-home">
 
@@ -28,10 +26,6 @@ cd<link rel="import" href="../bower_components/polymer/lib/utils/async.html">
 
       .search {
         width: 20%;
-      }
-
-      .search-button {
-        width: 50%;
       }
 
       .categories {
@@ -77,6 +71,9 @@ cd<link rel="import" href="../bower_components/polymer/lib/utils/async.html">
       }
 
       @media (max-width: 767px) {
+        .search {
+          width: 50%;
+        }
 
         shop-image {
           height: 240px;
@@ -96,7 +93,8 @@ cd<link rel="import" href="../bower_components/polymer/lib/utils/async.html">
       }
 
     </style>
-    <div class="horizontal around-justified layout">
+
+    <div class="horizontal around-justified wrap layout">
       <div class="search">
         <h1>Zoeken</h1>
         <input id="searchform" type="text" value="[[search]]">
@@ -105,16 +103,16 @@ cd<link rel="import" href="../bower_components/polymer/lib/utils/async.html">
       </div>
       <div class="categories flex">
         <h1>Categorieen</h1>
-        <div class="horizontal layout">
+        <div class="horizontal layout wrap">
           <dom-repeat items="[[categories]]">
             <template strip-whitespace>
               <div class="item">
-                <a class="image-link" href$="/list/[[item.name]]">
-                  <shop-image src="[[item.image]]" alt="[[item.title]]"></shop-image>
+                <a class="image-link" href$="/list/[[item.naam]]">
+                  <shop-image src="../images/[[item.afbeeldingURL]]" alt="[[item.naam]]"></shop-image>
                 </a>
-                <h2>[[item.title]]</h2>
+                <h2>[[item.naam]]</h2>
                 <shop-button>
-                  <a aria-label$="[[item.title]] Shop Now" href$="/list/[[item.name]]"> Bekijken</a>
+                  <a aria-label$="[[item.naam]] Shop Now" href$="/list/[[item.naam]]"> Bekijken</a>
                 </shop-button>
               </div>
             </template>
@@ -127,10 +125,13 @@ cd<link rel="import" href="../bower_components/polymer/lib/utils/async.html">
   </template>
 
   <script>
-
     class ShopHome extends Polymer.Element {
 
       static get is() { return 'shop-home'; }
+
+      ready() {
+        super.ready()
+      }
 
       static get properties() { return {
         search: {

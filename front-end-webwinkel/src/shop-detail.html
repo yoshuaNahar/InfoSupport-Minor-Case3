@@ -158,10 +158,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </paper-dialog>
 
     <div id="content" hidden$="[[failure]]">
-      <shop-image alt="[[item.title]]" src="[[item.largeImage]]"></shop-image>
+      <shop-image alt="[[item.Naam]]" src="../images/[[item.AfbeeldingUrl]]"></shop-image>
       <div class="detail" has-content$="[[_isDefined(item)]]">
-        <h1>[[item.title]]</h1>
-        <div class="price">[[_formatPrice(item.price)]]</div>
+        <h1>[[item.Naam]]</h1>
+        <div class="price">[[_formatPrice(item.Prijs)]]</div>
         <div class="pickers">
           <!--<shop-select>-->
             <!--<label id="sizeLabel" prefix>Size</label>-->
@@ -192,7 +192,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
         <div class="description">
           <h2>Beschrijving</h2>
-          <p id="desc"></p>
+          <p id="desc">[[item.Beschrijving]]</p>
         </div>
         <shop-button responsive>
           <!--<button on-click="_addToCart" aria-label="Add this item to cart">Add to Cart</button>-->
@@ -215,6 +215,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
 
     class ShopDetail extends Polymer.Element {
+
+      ready() {
+        super.ready()
+      }
 
       static get is() { return 'shop-detail'; }
 
@@ -250,17 +254,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             Polymer.Async.microTask, () => {
               // The item description contains escaped HTML (e.g. "&lt;br&gt;"), so we need to
               // unescape it ("<br>") and set it as innerHTML.
-              let text = item ? item.description : '';
+              let text = item ? item.Beschrijving : '';
               this.$.desc.innerHTML = this._unescapeText(text);
 
               // Reset the select menus.
 //              this.$.quantitySelect.value = '1';
 //              this.$.sizeSelect.value = 'M';
-
+              let category;
+              if (item) {
+                for(let singleCategory in item) {
+                  if(item.Categorieen === this.routeData.category) {
+                    category = singleCategory
+                  }
+                }
+              }
               this.dispatchEvent(new CustomEvent('change-section', {
                 bubbles: true, composed: true, detail: {
-                  category: item ? item.category : '',
-                  title: item ? item.title : ''
+                  category: item ? category : '',
+                  title: item ? item.Naam : ''
                 }}));
             })
         }
@@ -287,20 +298,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 //      }
 
       _setOrder(event) {
-        console.log(event);
-        let order = event.target.dataset.item;
-
         this.shadowRoot.querySelector('#modal').open()
 
         fetch(environment.API.bestellingservice + '/bestelling', {
           method: 'post',
           headers: {
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             gebruikderId: 1,
-            artikelenIds: [order],
-            geplaatsOp: new Date()
+            artikelenIds: [this.item.Artikelnummer],
           })
         }).then(data => {
           return data.json()

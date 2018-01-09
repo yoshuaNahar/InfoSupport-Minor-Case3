@@ -53,9 +53,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <shop-round-image src="[[item.image]]" alt="[[item.title]]" class="item-image"></shop-round-image>
-    <div class="title">[[item.title]]</div>
-    <span class="price">[[_formatPrice(item.price)]]</span>
+    <shop-round-image src="../images/[[item.AfbeeldingUrl]]" alt="[[item.Naam]]" class="item-image"></shop-round-image>
+    <div class="title">[[item.Naam]]</div>
+    <span class="price">[[_formatPrice(item.Prijs)]]</span>
     <span class="stock">Voorraad: [[stock]]</span>
 
   </template>
@@ -77,7 +77,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }}
 
       _formatPrice(price) {
-        return price ? '$' + price.toFixed(2) : '';
+        return price ? '€' + price.toFixed(2) : '';
       }
 
     }

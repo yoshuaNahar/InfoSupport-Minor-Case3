@@ -103,13 +103,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </paper-search-panel>
     <hr>
     <div hidden$="[[_hasItems()]]" class="shop-items">
-      <shop-image
-        alt="[[category.title]]"
-        src="[[category.image]]"
-        class="hero-image"></shop-image>
+      <!--<shop-image-->
+        <!--alt="[[category.naam]]"-->
+        <!--src="../images/[[category.afbeeldingUrl]]"-->
+        <!--class="hero-image"></shop-image>-->
 
       <header>
-        <h1>[[category.title]]</h1>
+        <h1>[[category.naam]]</h1>
         <span>[[_getPluralizedQuantity(category.items.length)]]</span>
       </header>
 
@@ -266,7 +266,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _getItemHref(item) {
         // By returning null when `itemId` is undefined, the href attribute won't be set and
         // the link will be disabled.
-        return item.name ? ['/detail', this.category.name, item.name].join('/') : null;
+        return item.Artikelnummer ? ['/detail', this.category.naam, item.Naam].join('/') : null;
       }
 
       _getPluralizedQuantity(quantity) {
