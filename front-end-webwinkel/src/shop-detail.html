@@ -157,6 +157,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </paper-dialog>
 
+    <paper-dialog id="modalFail" modal>
+      <p>Het is niet gelukt om uw bestelling te plaatsen!</p>
+      <p>Probeer het nogmaals</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Sluiten</paper-button>
+      </div>
+    </paper-dialog>
+
     <div id="content" hidden$="[[failure]]">
       <shop-image alt="[[item.Naam]]" src="../images/[[item.AfbeeldingUrl]]"></shop-image>
       <div class="detail" has-content$="[[_isDefined(item)]]">
@@ -224,6 +232,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get properties() { return {
 
+        loading: {
+          type: Boolean,
+          value: false
+        },
+
         item: Object,
 
         route: Object,
@@ -250,6 +263,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _itemChanged(item, visible) {
         if (visible) {
+          this.set('item.category', this.routeData.category)
           this._itemChangeDebouncer = Polymer.Debouncer.debounce(this._itemChangeDebouncer,
             Polymer.Async.microTask, () => {
               // The item description contains escaped HTML (e.g. "&lt;br&gt;"), so we need to
@@ -260,17 +274,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               // Reset the select menus.
 //              this.$.quantitySelect.value = '1';
 //              this.$.sizeSelect.value = 'M';
-              let category;
-              if (item) {
-                for(let singleCategory in item) {
-                  if(item.Categorieen === this.routeData.category) {
-                    category = singleCategory
-                  }
-                }
-              }
+              console.log(item)
               this.dispatchEvent(new CustomEvent('change-section', {
                 bubbles: true, composed: true, detail: {
-                  category: item ? category : '',
+                  category: item ? item.category : '',
                   title: item ? item.Naam : ''
                 }}));
             })
@@ -298,8 +305,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 //      }
 
       _setOrder(event) {
-        this.shadowRoot.querySelector('#modal').open();
-
+        this.loading = true;
         fetch(environment.API.bestellingservice + '/bestelling', {
           method: 'post',
           headers: {
@@ -311,7 +317,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             artikelenIds: [this.item.Artikelnummer],
           })
         }).then(data => {
-          return
+          this.loading = false;
+          this.shadowRoot.querySelector('#modal').open();
+        }).catch(() => {
+          this.loading = false;
+          this.shadowRoot.querySelector('#modalFail').open();
+
         })
       }
 
@@ -328,7 +339,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this._tryReconnect();
         }
       }
-
     }
 
     customElements.define(ShopDetail.is, ShopDetail);
