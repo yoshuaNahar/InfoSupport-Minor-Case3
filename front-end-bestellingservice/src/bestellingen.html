@@ -1,0 +1,92 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="bestellingen-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      h2 {
+        color: black;
+      }
+    </style>
+
+    <h1>Bestellingen</h1>
+
+    <dom-repeat items="[[bestellingen]]">
+      <template strip-whitespace>
+        <div class="card">
+          <div class="circle">[[item.id]]</div>
+          <h1>Bestelling geplaatst op [[item.geplaatstOp]]</h1>
+          <h3>Artikelen:</h3>
+
+          <dom-repeat items="[[item.artikelen]]">
+            <template strip-whitespace>
+              <b>Naam: </b>[[item.naam]]<br>
+              <b>Beschrijving: </b>[[item.beschrijving]]<br>
+              <b>Prijs: </b>[[item.prijs]]<br>
+              <b>Leverancier: </b>[[item.leverancier]]<br><br>
+
+            </template>
+          </dom-repeat>
+        </div>
+      </template>
+    </dom-repeat>
+
+
+  </template>
+
+  <script>
+    class Bestellingen extends Polymer.Element {
+      static get is() {
+        return 'bestellingen-view';
+      }
+
+      static get properties() {
+        return {
+          bestellingen: {
+            value: this.bestellingen
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+        let url = environment.API.bestellingservice + "/bestelling";
+        fetch(url).then(data => {
+          console.log(data, 'data');
+
+          return data.json()
+        }).then(bestellingen => {
+          console.log(bestellingen, "bestellingen");
+
+          bestellingen.forEach(bestelling => {
+            let date = bestelling.geplaatstOp.substring(0, bestelling.geplaatstOp.indexOf("T"));
+            let time = bestelling.geplaatstOp.substring(bestelling.geplaatstOp.indexOf("T") + 1, bestelling.geplaatstOp.length);
+
+            bestelling.geplaatstOp = date + " " + time;
+          });
+
+
+          this.bestellingen = bestellingen;
+        });
+      }
+    }
+
+    window.customElements.define(Bestellingen.is, Bestellingen);
+  </script>
+</dom-module>

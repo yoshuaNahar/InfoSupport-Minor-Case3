@@ -1,5 +1,6 @@
 package nl.kantilever.bestellingservice.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
@@ -22,6 +23,8 @@ public class Bestelling {
 
   @ElementCollection
   private List<Long> artikelenIds;
+
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime geplaatstOp;
 
   public Bestelling() {

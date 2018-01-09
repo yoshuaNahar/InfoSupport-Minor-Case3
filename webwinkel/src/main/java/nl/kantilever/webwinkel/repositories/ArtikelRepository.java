@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import java.sql.Date;
+import java.util.Date;
 
 import java.util.List;
 
@@ -27,9 +27,9 @@ public interface ArtikelRepository extends CrudRepository<Artikel, String> {
   @Query(value = "select * from artikelen where prijs between :minPrice and :maxPrice", nativeQuery = true)
   List<Artikel> findArtikelenInPriceRange(@Param("minPrice") double minPrice, @Param("maxPrice") double maxPrice);
 
-  @Query(value = "select * from artikelen where leverbaar_vanaf > :leverbaar_vanaf", nativeQuery = true)
+  @Query(value = "select * from artikelen where leverbaar_vanaf >= :leverbaar_vanaf", nativeQuery = true)
   List<Artikel> findArtikelenLeverbaarVanaf(@Param("leverbaar_vanaf") Date leverbaar_vanaf);
 
-  @Query(value = "select * from artikelen where leverbaar_tot < :leverbaar_tot", nativeQuery = true)
+  @Query(value = "select * from artikelen where leverbaar_tot <= :leverbaar_tot", nativeQuery = true)
   List<Artikel> findArtikelenLeverbaarTot(@Param("leverbaar_tot") Date leverbaar_tot);
 }

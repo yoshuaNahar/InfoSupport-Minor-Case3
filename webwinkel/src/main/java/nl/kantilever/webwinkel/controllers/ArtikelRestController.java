@@ -9,9 +9,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.sql.Date;
 import java.util.List;
 
 /**
@@ -31,8 +36,8 @@ public class ArtikelRestController {
     try { //TEMP SAVE CODE
       categorieService.save(new Categorie("Onderdelen", "fork_small.gif"));
       categorieService.save(new Categorie("Roestvrijstaal", "no_image_available_small.gif"));
-      artikelService.save(new Artikel(115, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1))));
-      artikelService.save(new Artikel(116, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(new Categorie("fietstas"), new Categorie("green"))));
+      artikelService.save(new Artikel(115L, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1))));
+      artikelService.save(new Artikel(116L, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(new Categorie("fietstas"), new Categorie("green"))));
     } catch (Exception e) {
       System.out.println("Temp data is al aangemaakt");
     } //TEMP SAVE CODE
@@ -65,7 +70,7 @@ public class ArtikelRestController {
     List<Artikel> artikelLijst = new ArrayList<Artikel>();
 
     if (matchendeCategorie != null) {
-      artikelLijst = categorieService.findCategorieByNaam(matchendeCategorie.getNaam()).getArtikelen();
+      artikelLijst = categorieService.findCategorieByNaam(matchendeCategorie.getNaam()).getArtikellen();
     } else {
       System.out.println("Categorie not found");
     }
@@ -90,12 +95,12 @@ public class ArtikelRestController {
   }
 
   @RequestMapping(value = "artikelen/leverbaar_vanaf/{leverbaar_vanaf}", method = RequestMethod.GET)
-  public List<Artikel> findArtikelenLeverbaarVanaf(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date leverbaar_vanaf) {
+  public List<Artikel> findArtikelenLeverbaarVanaf(Model model, @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") java.util.Date leverbaar_vanaf) {
     return artikelService.findArtikelenLeverbaarVanaf(leverbaar_vanaf);
   }
 
   @RequestMapping(value = "artikelen/leverbaar_tot/{leverbaar_tot}", method = RequestMethod.GET)
-  public List<Artikel> findArtikelenLeverbaarTot(Model model, @PathVariable Date leverbaar_tot) {
+  public List<Artikel> findArtikelenLeverbaarTot(Model model, @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") java.util.Date leverbaar_tot) {
     return artikelService.findArtikelenLeverbaarTot(leverbaar_tot);
   }
 }

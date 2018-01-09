@@ -1,17 +1,14 @@
 package nl.kantilever.bestellingservice.controllers;
 
 import nl.kantilever.bestellingservice.entities.Bestelling;
+import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.services.BestellingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class BestellingController {
@@ -27,16 +24,29 @@ public class BestellingController {
 
   @PostMapping("/bestelling")
   public ResponseEntity addBestelling(@RequestBody Bestelling bestelling) {
+    logger.debug("addBestelling: {}", bestelling);
+
     bestellingService.addBestelling(bestelling);
 
-    bestellingService.getArtikelen(bestelling);
+    bestellingService.saveBestellingView(bestelling);
 
     return new ResponseEntity(HttpStatus.CREATED); // 201 Created
   }
 
+  @CrossOrigin
   @GetMapping("/bestelling/{id}")
-  public Bestelling getBestelling(@PathVariable("id") Long bestellingId) {
+  public BestellingSnapshot getBestelling(@PathVariable("id") Long bestellingId) {
+    logger.debug("getBestelling: {}", bestellingId);
+
     return bestellingService.findById(bestellingId);
+  }
+
+  @CrossOrigin
+  @GetMapping("/bestelling")
+  public ResponseEntity getAllBestellingen() {
+    logger.debug("getAllBestellingen: {}");
+
+    return ResponseEntity.ok().body(bestellingService.findAll());
   }
 
 }

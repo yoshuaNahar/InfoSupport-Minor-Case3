@@ -1,50 +1,29 @@
 package nl.kantilever.replayservice.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ReplayEventsCommand {
-  public String ExchangeName;
-  public long FromTimestamp;
-  public long ToTimestamp;
-  public String EventType;
-  public String Topic;
+  private String exchangeName;
+  private long fromTimestamp;
+  private long toTimestamp;
+  private String eventType;
+  private String topic;
 
-  public String getExchangeName() {
-    return ExchangeName;
+  public ReplayEventsCommand(String exchangeName, long fromTimestamp, long toTimestamp, String eventType, String topic) {
+    this.exchangeName = exchangeName;
+    this.fromTimestamp = fromTimestamp;
+    this.toTimestamp = toTimestamp;
+    this.eventType = eventType;
+    this.topic = topic;
   }
-
-  public void setExchangeName(String exchangeName) {
-    ExchangeName = exchangeName;
+  public ReplayEventsCommand() {
+    this.exchangeName = "KantileverBus";
+    this.fromTimestamp = 0;
+    this.toTimestamp= 999999999999999999L;
+    this.eventType = "Kantilever.CatalogusService.ArtikelAanCatalogusToegevoegd";
+    this.topic = "#";
   }
-
-  public long getFromTimestamp() {
-    return FromTimestamp;
-  }
-
-  public void setFromTimestamp(long fromTimestamp) {
-    FromTimestamp = fromTimestamp;
-  }
-
-  public long getToTimestamp() {
-    return ToTimestamp;
-  }
-
-  public void setToTimestamp(long toTimestamp) {
-    ToTimestamp = toTimestamp;
-  }
-
-  public String getEventType() {
-    return EventType;
-  }
-
-  public void setEventType(String eventType) {
-    EventType = eventType;
-  }
-
-  public String getTopic() {
-    return Topic;
-  }
-
-  public void setTopic(String topic) {
-    Topic = topic;
-  }
-
 }
