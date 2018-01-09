@@ -7,6 +7,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+    
+  rabbitmq:
+    username: Kantilever
+    password: Kant1lever
+    host: 192.168.178.158
+    port: 8920
+
 
 server:
   port: 8922
