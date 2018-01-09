@@ -60,6 +60,7 @@ public class BestellingService {
   public void saveBestellingSnapshot(Bestelling bestelling) {
     List<Artikel> artikelen = new ArrayList<>();
 
+    // NOTE: webwinkel + replayservice draaien
     bestelling.getArtikelenIds().forEach(id ->
       artikelen.add(restTemplate
         .getForObject("http://" + webwinkelUrl + "artikel/artikelnummer/" + id, Artikel.class)
