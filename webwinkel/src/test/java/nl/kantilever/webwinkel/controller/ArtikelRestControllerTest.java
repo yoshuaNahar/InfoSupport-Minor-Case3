@@ -58,7 +58,7 @@ public class ArtikelRestControllerTest {
     try {
       categorieService.save(new Categorie("Onderdelen", "fork_small.gif"));
       categorieService.save(new Categorie("Roestvrijstaal", "no_image_available_small.gif"));
-      artikelService.save(new Artikel(115L, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1))));
+      artikelService.save(new Artikel(115L, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), "12345", "Henk & Nagel B.V.", Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1))));
     } catch (Exception e) {
       System.out.println("Temp data is al aangemaakt");
     }
@@ -78,7 +78,7 @@ public class ArtikelRestControllerTest {
   @Test
   @Ignore
   public void test2() throws Exception {
-    System.out.println(categorieService.findAll().get(0).getArtikellen());
+    System.out.println(categorieService.findAll().get(0).getArtikelen());
 
     mockMvc.perform(get("/artikelen")
       .contentType(MediaType.APPLICATION_JSON))
@@ -90,8 +90,8 @@ public class ArtikelRestControllerTest {
   @Test
   @Ignore
   public void test3() throws Exception {
-    Iterable<Artikel> testList = Arrays.asList(new Artikel(115L, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(new Categorie("Roestvrijstaal", "Image_URL"), new Categorie("Onderdelen", "Image_URL"))), new Artikel());
-    when(categorieService.findAll().get(0).getArtikellen()).thenReturn((List<Artikel>) testList);
+    Iterable<Artikel> testList = Arrays.asList(new Artikel(115L, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), "12345", "Henk & Nagel B.V.", Arrays.asList(new Categorie("Roestvrijstaal", "Image_URL"), new Categorie("Onderdelen", "Image_URL"))), new Artikel());
+    when(categorieService.findAll().get(0).getArtikelen()).thenReturn((List<Artikel>) testList);
     mockMvc.perform(MockMvcRequestBuilders
       .get("/artikel/artikelnummer/115"))
 
