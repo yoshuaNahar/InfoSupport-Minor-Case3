@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface BestellingSnapshotRepository extends CrudRepository<BestellingSnapshot, Long> {
   @Query(value = "select * from bestelling_snapshot where gebruikerId = :gebruikerId", nativeQuery = true)
-  List<BestellingSnapshot> findBestellingenByGebruiker(@Param("naam") int gebruikerId);
+  List<BestellingSnapshot> findBestellingenByGebruiker(@Param("gebruikerId") int gebruikerId);
 }
