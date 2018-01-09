@@ -48,4 +48,9 @@ public class BestellingController {
     return ResponseEntity.ok().body(bestellingService.findAll());
   }
 
+  @GetMapping("/test")
+  public void test() {
+    bestellingService.getBestellingenGebruiker(1);
+  }
+
 }
