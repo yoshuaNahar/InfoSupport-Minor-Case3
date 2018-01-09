@@ -70,11 +70,14 @@ public class BestellingService {
 
     artikelenRepository.save(artikelen);
 
+    Double bestellingTotal = artikelen.stream().mapToDouble(Artikel::getPrijs).sum();
+
     BestellingSnapshot bestellingSnapshot = new BestellingSnapshot();
     bestellingSnapshot.setId(bestelling.getId());
     bestellingSnapshot.setGebruikerId(bestelling.getGebruikerId());
     bestellingSnapshot.setArtikelen(artikelen);
-    bestellingSnapshot.setStatus("geplaatsd");
+    bestellingSnapshot.setTotal(bestellingTotal);
+    bestellingSnapshot.setStatus("geplaatst");
 
     bestellingSnapshotRepository.save(bestellingSnapshot);
 

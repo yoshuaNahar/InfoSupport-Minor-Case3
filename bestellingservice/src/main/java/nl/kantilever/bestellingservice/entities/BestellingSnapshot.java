@@ -31,6 +31,8 @@ public class BestellingSnapshot {
 
   private String status;
 
+  private Double total;
+
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @Column(name = "date", nullable = false, insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
 //  @Temporal(TemporalType.TIMESTAMP)
@@ -72,6 +74,14 @@ public class BestellingSnapshot {
     this.status = status;
   }
 
+  public Double getTotal() {
+    return total;
+  }
+
+  public void setTotal(Double total) {
+    this.total = total;
+  }
+
   public LocalDateTime getGeplaatstOp() {
     return geplaatstOp;
   }
@@ -83,6 +93,7 @@ public class BestellingSnapshot {
       ", gebruikerId=" + gebruikerId +
       ", artikelen=" + artikelen +
       ", status='" + status + '\'' +
+      ", total=" + total +
       ", geplaatstOp=" + geplaatstOp +
       '}';
   }
