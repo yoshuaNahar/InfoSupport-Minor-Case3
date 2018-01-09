@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @CrossOrigin
 @RestController
 public class BestellingController {
@@ -67,9 +69,14 @@ public class BestellingController {
     return ResponseEntity.ok().body(bestellingService.findAll());
   }
 
-//  @GetMapping("/test")
-//  public void test() {
-//    bestellingService.getBestellingenGebruiker(1);
-//  }
+  @GetMapping("/bestelling/gebruiker/{id}")
+  public List<BestellingSnapshot> getBestellingenGebruiker(@PathVariable("id") int gebruikerId){
+    return bestellingService.getBestellingenGebruiker(gebruikerId);
+  }
 
+  @GetMapping("/bestelling/gebruiker/totaalwaarde/{id}")
+  public Double getTotaalwaardeBestellingen(@PathVariable("id") int gebruikerId){
+    System.out.println(bestellingService.getTotaalwaardeBestellingen(gebruikerId));
+    return bestellingService.getTotaalwaardeBestellingen(gebruikerId);
+  }
 }
