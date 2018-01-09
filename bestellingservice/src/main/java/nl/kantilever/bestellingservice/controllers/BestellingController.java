@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin
 @RestController
 public class BestellingController {
@@ -37,9 +39,6 @@ public class BestellingController {
   @GetMapping("/bestelling/{id}")
   public BestellingSnapshot getBestelling(@PathVariable("id") Long bestellingId) {
     logger.debug("getBestelling: {}", bestellingId);
-    logger.debug("sdafasfsasfas");
-    logger.debug("woww");
-
     return bestellingService.findById(bestellingId);
   }
 
@@ -50,9 +49,14 @@ public class BestellingController {
     return ResponseEntity.ok().body(bestellingService.findAll());
   }
 
-//  @GetMapping("/test")
-//  public void test() {
-//    bestellingService.getBestellingenGebruiker(1);
-//  }
+  @GetMapping("/bestelling/gebruiker/{id}")
+  public List<BestellingSnapshot> getBestellingenGebruiker(@PathVariable("id") int gebruikerId){
+    return bestellingService.getBestellingenGebruiker(gebruikerId);
+  }
 
+  @GetMapping("/bestelling/gebruiker/totaalwaarde/{id}")
+  public Double getTotaalwaardeBestellingen(@PathVariable("id") int gebruikerId){
+    System.out.println(bestellingService.getTotaalwaardeBestellingen(gebruikerId));
+    return bestellingService.getTotaalwaardeBestellingen(gebruikerId);
+  }
 }
