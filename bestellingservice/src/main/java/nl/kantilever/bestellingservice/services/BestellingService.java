@@ -84,4 +84,13 @@ public class BestellingService {
     logger.info("artikelen hier ophalen obv artikellenId, {}", bestelling);
   }
 
+  public void getBestellingenGebruiker(int id){
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
+    if(bestellingenByGebruiker != null){
+      bestellingenByGebruiker.get(0).toString();
+    }
+
+  }
+
+
 }
