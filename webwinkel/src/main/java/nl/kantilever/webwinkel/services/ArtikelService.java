@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -45,5 +46,23 @@ public class ArtikelService {
 
   public List<Artikel> findArtikelenByLeverancier(String leverancier) {
     return artikelRepository.findArtikelenByLeverancier(leverancier);
+  }
+
+
+
+  public List<Artikel> findArtikelenByBeschrijving(String beschrijving) {
+    return artikelRepository.findArtikelenByBeschrijving(beschrijving);
+  }
+
+  public List<Artikel> findArtikelenInPriceRange(double minPrice, double maxPrice) {
+    return artikelRepository.findArtikelenInPriceRange(minPrice, maxPrice);
+  }
+
+  public List<Artikel> findArtikelenLeverbaarVanaf(Date leverbaar_vanaf) {
+    return artikelRepository.findArtikelenLeverbaarVanaf(leverbaar_vanaf);
+  }
+
+  public List<Artikel> findArtikelenLeverbaarTot(Date leverbaar_tot) {
+    return artikelRepository.findArtikelenLeverbaarTot(leverbaar_tot);
   }
 }

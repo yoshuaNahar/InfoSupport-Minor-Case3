@@ -2,17 +2,11 @@ package nl.kantilever.webwinkel.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.sql.Date;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "artikelen")
@@ -41,10 +35,14 @@ public class Artikel {
 
   @JsonProperty("LeverbaarVanaf")
   @Column(name = "leverbaarVanaf")
+  @DateTimeFormat(pattern = "dd-MM-yyyy")
+  @Temporal(TemporalType.DATE)
   private Date leverbaarVanaf;
 
   @JsonProperty("LeverbaarTot")
   @Column(name = "leverbaarTot")
+  @DateTimeFormat(pattern = "dd-MM-yyyy")
+  @Temporal(TemporalType.DATE)
   private Date leverbaarTot;
 
   @JsonProperty("Leveranciercode")
@@ -58,6 +56,10 @@ public class Artikel {
   @JsonProperty("Categorieen")
   @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<Categorie> categorieen;
+
+  public Artikel(String naam) {
+    this.naam = naam;
+  }
 
   public Artikel() {
   }
@@ -184,7 +186,7 @@ public class Artikel {
       ", leverbaarTot=" + leverbaarTot +
       ", leverancierCode=" + leverancierCode +
       ", leverancier='" + leverancier + '\'' +
-      ", categorieen=" + categorieen +
+      ", categorieen='" + categorieen + '\'' +
       '}';
   }
 

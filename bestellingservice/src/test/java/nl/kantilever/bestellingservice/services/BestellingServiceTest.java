@@ -76,7 +76,7 @@ public class BestellingServiceTest {
 
   @Test
   @Ignore("Should mock the RestTemplate but do this later....")
-  public void saveBestellingViewGivenBestellingExpectArtikellenAndBestellingViewSaved() {
+  public void saveBestellingViewGivenBestellingExpectArtikelenAndBestellingViewSaved() {
     bestellingService.saveBestellingSnapshot(bestelling);
     entityManager.flush();
     entityManager.clear();
