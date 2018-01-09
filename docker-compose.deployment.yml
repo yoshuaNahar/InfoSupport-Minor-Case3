@@ -63,6 +63,7 @@ services:
       - "8930:8082"
     environment:
       - spring_datasource_url=jdbc:mysql://de-jong-bestellingservice-mysql:3306/bestellingservice
+      - urls_webwinkel=de-jong-webwinkel:8081
     depends_on:
       - de-jong-webwinkel-mysql
 
@@ -83,11 +84,11 @@ services:
    links:
      - de-jong-bestellingservice-mysql:db
 
-  de-jong-front-end-bestellingservice:
+  de-jong-front-end-commercieel-manager:
      build:
        context: .
        dockerfile: ops/Polymer/Dockerfile
        args:
-         - DIRECTORY=front-end-bestellingservice
+         - DIRECTORY=front-end-commercieel-manager
      ports:
        - "8933:80"

@@ -135,13 +135,13 @@ public class ArtikelRestControllerTest {
   public void getArtikelenByCategorieExpectOkAnd2ArtikelenAsJson() throws Exception {
     List<Artikel> artikelArray = Arrays.asList(new Artikel("Fietsketting 3"), new Artikel("Fietsband 17 inch"));
     Categorie categorie = new Categorie("fietsonderdelen");
-    categorie.setArtikellen(artikelArray);
+    categorie.setArtikelen(artikelArray);
 
     when(categorieService.findCategorieByNaam("fietsonderdelen")).thenReturn(categorie);
     this.mockMvc.perform(get("/artikelen/categorie/fietsonderdelen")
     ).andDo(print()).andExpect(status().isOk())
       .andExpect(content().contentType("application/json;charset=UTF-8"))
-      .andExpect(content().json((mapper.writeValueAsString(categorie.getArtikellen()))));
+      .andExpect(content().json((mapper.writeValueAsString(categorie.getArtikelen()))));
   }
 
 

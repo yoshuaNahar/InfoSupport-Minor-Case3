@@ -21,7 +21,6 @@ public class BestellingService {
   private static final Logger logger = LoggerFactory.getLogger(BestellingService.class);
 
   private BestellingRepository bestellingRepository;
-
   private BestellingSnapshotRepository bestellingSnapshotRepository;
   private ArtikelenRepository artikelenRepository;
 
@@ -58,26 +57,40 @@ public class BestellingService {
     return bestellingSnapshotRepository.findAll();
   }
 
-  public void saveBestellingView(Bestelling bestelling) {
+  public void saveBestellingSnapshot(Bestelling bestelling) {
     List<Artikel> artikelen = new ArrayList<>();
 
+    // NOTE: webwinkel + replayservice draaien
     bestelling.getArtikelenIds().forEach(id ->
-      artikelen.add(restTemplate.getForObject("http://" + webwinkelUrl + "artikel/artikelnummer/" + id, Artikel.class)
-    ));
+      artikelen.add(restTemplate
+        .getForObject("http://" + webwinkelUrl + "artikel/artikelnummer/" + id, Artikel.class)
+      ));
 
     logger.info("artikkelen list: {}", artikelen);
 
     artikelenRepository.save(artikelen);
 
-    BestellingSnapshot bestellingView = new BestellingSnapshot();
-    bestellingView.setId(bestelling.getId());
-    bestellingView.setGebruikerId(bestelling.getGebruikerId());
-    bestellingView.setGeplaatstOp(bestelling.getGeplaatstOp());
-    bestellingView.setArtikelen(artikelen);
+    Double bestellingTotal = artikelen.stream().mapToDouble(Artikel::getPrijs).sum();
 
-    bestellingSnapshotRepository.save(bestellingView);
+    BestellingSnapshot bestellingSnapshot = new BestellingSnapshot();
+    bestellingSnapshot.setId(bestelling.getId());
+    bestellingSnapshot.setGebruikerId(bestelling.getGebruikerId());
+    bestellingSnapshot.setArtikelen(artikelen);
+    bestellingSnapshot.setTotal(bestellingTotal);
+    bestellingSnapshot.setStatus("geplaatst");
+
+    bestellingSnapshotRepository.save(bestellingSnapshot);
 
     logger.info("artikelen hier ophalen obv artikellenId, {}", bestelling);
   }
+
+  public void getBestellingenGebruiker(int id){
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
+    if(bestellingenByGebruiker != null){
+      bestellingenByGebruiker.get(0).toString();
+    }
+
+  }
+
 
 }

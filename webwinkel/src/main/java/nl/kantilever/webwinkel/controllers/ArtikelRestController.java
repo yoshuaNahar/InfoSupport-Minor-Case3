@@ -32,15 +32,6 @@ public class ArtikelRestController {
   public ArtikelRestController(ArtikelService artikelService, CategorieService categorieService) {
     this.artikelService = artikelService;
     this.categorieService = categorieService;
-
-    try { //TEMP SAVE CODE
-      categorieService.save(new Categorie("Onderdelen", "fork_small.gif"));
-      categorieService.save(new Categorie("Roestvrijstaal", "no_image_available_small.gif"));
-      artikelService.save(new Artikel(115L, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1))));
-      artikelService.save(new Artikel(116L, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1999999999), 1989, "Henk & Nagel B.V.", Arrays.asList(new Categorie("fietstas"), new Categorie("green"))));
-    } catch (Exception e) {
-      System.out.println("Temp data is al aangemaakt");
-    } //TEMP SAVE CODE
   }
 
   @RequestMapping(value = "artikel/artikelnummer/{artikelnummer}", method = RequestMethod.GET)
@@ -70,7 +61,7 @@ public class ArtikelRestController {
     List<Artikel> artikelLijst = new ArrayList<Artikel>();
 
     if (matchendeCategorie != null) {
-      artikelLijst = categorieService.findCategorieByNaam(matchendeCategorie.getNaam()).getArtikellen();
+      artikelLijst = categorieService.findCategorieByNaam(matchendeCategorie.getNaam()).getArtikelen();
     } else {
       System.out.println("Categorie not found");
     }
