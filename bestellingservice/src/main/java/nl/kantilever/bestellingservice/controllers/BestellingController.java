@@ -37,6 +37,8 @@ public class BestellingController {
   @GetMapping("/bestelling/{id}")
   public BestellingSnapshot getBestelling(@PathVariable("id") Long bestellingId) {
     logger.debug("getBestelling: {}", bestellingId);
+    logger.debug("sdafasfsasfas");
+    logger.debug("woww");
 
     return bestellingService.findById(bestellingId);
   }
@@ -48,9 +50,9 @@ public class BestellingController {
     return ResponseEntity.ok().body(bestellingService.findAll());
   }
 
-  @GetMapping("/test")
-  public void test() {
-    bestellingService.getBestellingenGebruiker(1);
-  }
+//  @GetMapping("/test")
+//  public void test() {
+//    bestellingService.getBestellingenGebruiker(1);
+//  }
 
 }

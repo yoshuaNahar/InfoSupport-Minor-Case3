@@ -33,10 +33,10 @@ public class BestellingSnapshot {
 
   private Double total;
 
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  @Column(name = "date", nullable = false, insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-//  @Temporal(TemporalType.TIMESTAMP)
-  private LocalDateTime geplaatstOp;
+//  //  @Temporal(TemporalType.TIMESTAMP)
+//  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//  @Column(name = "date", nullable = false, insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+//  private LocalDateTime geplaatstOp;
 
   public BestellingSnapshot() {
     // Needed for JPA
@@ -82,9 +82,9 @@ public class BestellingSnapshot {
     this.total = total;
   }
 
-  public LocalDateTime getGeplaatstOp() {
-    return geplaatstOp;
-  }
+//  public LocalDateTime getGeplaatstOp() {
+//    return geplaatstOp;
+//  }
 
   @Override
   public String toString() {
@@ -94,7 +94,7 @@ public class BestellingSnapshot {
       ", artikelen=" + artikelen +
       ", status='" + status + '\'' +
       ", total=" + total +
-      ", geplaatstOp=" + geplaatstOp +
+//      ", geplaatstOp=" + geplaatstOp +
       '}';
   }
 
