@@ -27,8 +27,8 @@ public class Categorie {
   private String afbeeldingURL;
 
   @JsonIgnore
-  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categorieen")
-  private List<Artikel> artikellen;
+  @ManyToMany(fetch = FetchType.EAGER, mappedBy = "categorieen")
+  private List<Artikel> artikelen;
 
   public Categorie() {
   }
@@ -43,10 +43,10 @@ public class Categorie {
   }
 
   public Categorie(String naam, String afbeeldingURL,
-    List<Artikel> artikellen) {
+    List<Artikel> artikelen) {
     this.naam = naam;
     this.afbeeldingURL = afbeeldingURL;
-    this.artikellen = artikellen;
+    this.artikelen = artikelen;
   }
 
   public int getId() {
@@ -73,12 +73,12 @@ public class Categorie {
     this.afbeeldingURL = afbeeldingURL;
   }
 
-  public List<Artikel> getArtikellen() {
-    return artikellen;
+  public List<Artikel> getArtikelen() {
+    return artikelen;
   }
 
-  public void setArtikellen(List<Artikel> artikellen) {
-    this.artikellen = artikellen;
+  public void setArtikelen(List<Artikel> artikelen) {
+    this.artikelen = artikelen;
   }
 
   @Override
@@ -87,7 +87,7 @@ public class Categorie {
       "id=" + id +
       ", naam='" + naam + '\'' +
       ", afbeeldingURL='" + afbeeldingURL + '\'' +
-      ", artikellen=" + artikellen +
+      ", artikelen=" + artikelen +
       '}';
   }
 

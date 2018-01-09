@@ -1,7 +1,5 @@
 package nl.kantilever.bestellingservice.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -11,6 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Bestelling from the frontend with the artikellen ids. In the BestellingSnapshot
+ * we get the actual artikellen.
+ */
 @Entity
 @Table(name = "bestelling")
 public class Bestelling {
@@ -19,13 +21,11 @@ public class Bestelling {
   @Column(name = "bestelling_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
   private Long gebruikerId;
 
   @ElementCollection
   private List<Long> artikelenIds;
-
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime geplaatstOp;
 
   public Bestelling() {
     // Needed for JPA
@@ -55,21 +55,12 @@ public class Bestelling {
     this.artikelenIds = artikelenIds;
   }
 
-  public LocalDateTime getGeplaatstOp() {
-    return geplaatstOp;
-  }
-
-  public void setGeplaatstOp(LocalDateTime geplaatstOp) {
-    this.geplaatstOp = geplaatstOp;
-  }
-
   @Override
   public String toString() {
     return "Bestelling{" +
       "id=" + id +
       ", gebruikerId=" + gebruikerId +
       ", artikelenIds=" + artikelenIds +
-      ", geplaatstOp=" + geplaatstOp +
       '}';
   }
 

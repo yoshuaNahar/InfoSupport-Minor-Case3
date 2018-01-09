@@ -21,6 +21,7 @@ spring:
 urls:
   webwinkel: "localhost:8081"
 
+
 logging:
   level:
     nl:
