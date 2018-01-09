@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
 public class BestellingController {
 
@@ -28,12 +29,11 @@ public class BestellingController {
 
     bestellingService.addBestelling(bestelling);
 
-    bestellingService.saveBestellingView(bestelling);
+    bestellingService.saveBestellingSnapshot(bestelling);
 
     return new ResponseEntity(HttpStatus.CREATED); // 201 Created
   }
 
-  @CrossOrigin
   @GetMapping("/bestelling/{id}")
   public BestellingSnapshot getBestelling(@PathVariable("id") Long bestellingId) {
     logger.debug("getBestelling: {}", bestellingId);
@@ -41,10 +41,9 @@ public class BestellingController {
     return bestellingService.findById(bestellingId);
   }
 
-  @CrossOrigin
   @GetMapping("/bestelling")
   public ResponseEntity getAllBestellingen() {
-    logger.debug("getAllBestellingen: {}");
+    logger.debug("getAllBestellingen");
 
     return ResponseEntity.ok().body(bestellingService.findAll());
   }
