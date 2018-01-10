@@ -12,24 +12,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="shop-button.html">
 <link rel="import" href="shop-image.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../bower_components/paper-search/paper-search-panel.html">
 <link rel="import" href="../bower_components/polymer/lib/utils/async.html">
 
 <dom-module id="shop-home">
 
   <template>
 
-    <style include="shop-button iron-flex iron-flex-alignment">
-
-      .banner {
-        position: relative;
-        height: 280px;
-        overflow: hidden;
-        margin-bottom: 32px;
+    <style include="shop-common-styles shop-button iron-flex iron-flex-alignment">
+      #searchform,
+      #min_price,
+      #max_price,
+      #leverbaar_vanaf,
+      #leverbaar_tot {
         width: 100%;
       }
+
+
       .image-link {
         outline: none;
+      }
+
+      .search {
+        width: 20%;
+      }
+
+      .categories {
+        width: 100%;
       }
 
       .image-link > shop-image::after {
@@ -64,15 +72,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         height: 200px;
       }
 
-      h2 {
-        font-size: 1.3em;
-        font-weight: 500;
-        margin: 32px 0;
-      }
+      /*h2 {*/
+        /*font-size: 1.3em;*/
+        /*font-weight: 500;*/
+        /*margin: 32px 0;*/
+      /*}*/
 
-      @media (max-width: 767px) {
-        .banner {
-          height: 160px;
+      @media (max-width: 800px) {
+        .search {
+          width: 50%;
         }
 
         shop-image {
@@ -94,67 +102,75 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <img class="banner" src="../images/Kantilever%208%20Banner.png"/>
+    <div class="horizontal around-justified wrap layout">
+      <div class="search">
+        <h1>Zoeken</h1>
+        <input id="searchform" type="text" value="[[search]]">
+        <button class="search-button">Zoeken</button>
+        <br>
+        <hr>
+        <span>Minimum prijs</span>
+        <br>
+        <input id="min_price" type="number" value="[[search]]">
+        <br>
+        <span>Maximum prijs</span>
+        <br>
+        <input id="max_price" type="number" value="[[search]]">
+        <br>
+        <span>leverbaar vanaf:</span>
+        <br>
+        <input id="leverbaar_vanaf" type="date" value="[[search]]">
+        <br>
+        <span>leverbaar tot:</span>
+        <br>
+        <input id="leverbaar_tot" type="date" value="[[search]]">
+          <h2>Leveranciers</h2>
+          <template is="dom-repeat" items="{{searchLeverancierList}}" as="value">
+            <p>
+              <input type="checkbox" name="[[value]]">
+              <span>[[value]]</span>
+            </p>
+          </template>
 
-    <paper-search-panel
-      placeholder="Zoek naar artikelen.."
-      search="{{search}}"
-      items="{{items}}"
-      has-more="[[hasMore]]"
-      loading="[[loading]]"
-      filters="[[filters]]"
-      selected-filters="{{selectedFilters}}"
-      no-results-text="Er zijn geen resultaten gevonden bij het zoeken.">
-      <div id="results">
-        <h1>Resultaten</h1>
-          <dom-repeat items="[[items]]">
+        <h2>Categorieen</h2>
+        <template is="dom-repeat" items="{{searchCategoriesList}}" as="value">
+          <p>
+            <input type="checkbox" name="[[value.name]]">
+            <span>[[value.name]]</span>
+          </p>
+        </template>
+      </div>
+      <div class="categories flex">
+        <h1>Categorieen</h1>
+        <div class="horizontal layout wrap">
+          <dom-repeat items="[[categories]]">
             <template strip-whitespace>
               <div class="item">
-                <a class="image-link" href$="[[_getItemHref(item)]]">
-                  <shop-image src="[[item.afbeeldingUrl]]" alt="[[item.naam]]"></shop-image>
+                <a class="image-link" href$="/list/[[item.naam]]">
+                  <shop-image src="../images/[[item.afbeeldingURL]]" alt="[[item.naam]]"></shop-image>
                 </a>
                 <h2>[[item.naam]]</h2>
+                <shop-button>
+                  <a aria-label$="[[item.naam]] Shop Now" href$="/list/[[item.naam]]"> Bekijken</a>
+                </shop-button>
               </div>
             </template>
           </dom-repeat>
-        <hr>
+        </div>
       </div>
-    </paper-search-panel>
-
-    <h1>Categorieen</h1>
-    <hr>
-    <div class="layout horizontal around-justified wrap">
-      <dom-repeat items="[[categories]]">
-        <template strip-whitespace>
-          <div class="item">
-            <a class="image-link" href$="/list/[[item.name]]">
-              <shop-image src="[[item.image]]" alt="[[item.title]]"></shop-image>
-            </a>
-            <h2>[[item.title]]</h2>
-            <shop-button>
-              <a aria-label$="[[item.title]] Shop Now" href$="/list/[[item.name]]"> Bekijken</a>
-            </shop-button>
-          </div>
-        </template>
-      </dom-repeat>
     </div>
+    <hr>
+
   </template>
 
   <script>
-
     class ShopHome extends Polymer.Element {
 
       static get is() { return 'shop-home'; }
 
       ready() {
+        this._getLeveranciersObject()
         super.ready()
-        if(this.search ==="") {
-          Polymer.Async.microTask.run(() => {
-            const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel')
-            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none'
-            searchShadowDom.querySelector('#results').style.display='none'
-          })
-        }
       }
 
       static get properties() { return {
@@ -173,8 +189,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: []
         },
 
-        filters: {
-          type: Object
+        searchCategoriesList: {
+          type: Array,
+          computed: '_getCategoriesSearchObject(categories)'
+        },
+
+        searchLeverancierList: {
+          type: Array,
+          value: [],
         },
 
         selectedFilters: {
@@ -194,6 +216,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Boolean
         }
       }}
+
+      _getCategoriesSearchObject(categoryList) {
+        let categories = [];
+        for(let category of categoryList) {
+          categories.push({
+            id: category.naam,
+            name: category.naam
+          })
+        }
+        return categories
+      }
+
+      _getLeveranciersObject() {
+        fetch(environment.API.webwinkel + '/leveranciers')
+          .then(data => {
+            return data.json()
+          }).then(data => {
+            this.searchLeverancierList = [...new Set(data.map(item => item.leverancier))]
+        })
+      }
 
       _visibleChanged(visible) {
         if (visible) {
