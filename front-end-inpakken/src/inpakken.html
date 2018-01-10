@@ -1,0 +1,112 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="inpakken-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      h2 {
+        color: black;
+      }
+    </style>
+
+    <div class="container">
+      <h1>Bestelling</h1>
+      <table class="table">
+        <tr>
+          <th style="width: 100%;">Artikel</th>
+          <th>Ingepakt</th>
+        </tr>
+        <template is="dom-repeat" items="[[currentBestelling.artikelen]]">
+          <tr>
+            <td style="border-bottom: 0px;">[[item.name]]</td>
+            <td style="border-bottom: 0px;"><paper-checkbox style="border-bottom: 0px;" on-click="setArtikelIngepakt" data-item$="[[item]]"></paper-checkbox></td>
+          </tr>
+        </template>
+      </table>
+
+      <br>
+      <paper-button raised class="mat-blue">Sticker</paper-button> <paper-button raised class="mat-blue">Factuur</paper-button>
+
+      <div class="seperation-line"></div>
+      <paper-button raised class="mat-green" id="ingepaktButton" style="float: right;">✔</paper-button>
+
+    </div>
+
+
+  </template>
+
+  <script>
+    class Inpakken extends Polymer.Element {
+      static get is() {
+        return 'inpakken-view';
+      }
+
+      static get properties() {
+        return {
+          currentBestelling: {
+            value: this.currentBestelling
+          },
+        };
+      }
+
+      ready() {
+        super.ready();
+        this._getGoedgekeurdeBestellingen();
+      }
+
+      _getGoedgekeurdeBestellingen() {
+        let url = environment.API.bestellingservice + "/bestelling?status=goedgekeurd";
+
+        let bestellingen = [{artikelen: [{name: "test"}]}, {artikelen: {name: "test"}}];
+
+        //
+//        fetch(url).then(data => {
+//          return data.json()
+//        }).then(bestellingen => {
+        this.bestellingen = bestellingen;
+        this._bumpCurrentBestelling();
+//        });
+      }
+
+      _bumpCurrentBestelling() {
+        if (this.bestellingen.length > 0) {
+          this.currentBestelling = this.bestellingen[0];
+          console.log('currentBestelling', this.currentBestelling);
+        } else {
+          this._getGoedgekeurdeBestellingen();
+        }
+      }
+
+      setBestellingIngepakt() {
+        let ingepakteBestellingId = this.bestellingen.indexOf(this.currentBestelling);
+        this.bestellingen.pop(ingepakteBestellingId);
+
+        // TODO put request to set bestelling status to ingepakt.
+        this._bumpCurrentBestelling();
+      }
+
+      setArtikelIngepakt(event) {
+        console.log('event', event);
+        console.log('data', event.target.dataset.item);
+      }
+    }
+
+    window.customElements.define(Inpakken.is, Inpakken);
+  </script>
+</dom-module>

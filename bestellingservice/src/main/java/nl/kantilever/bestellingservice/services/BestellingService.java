@@ -50,7 +50,7 @@ public class BestellingService {
   }
 
   public BestellingSnapshot findById(Long bestellingId) {
-    return bestellingSnapshotRepository.findOne(bestellingId);
+    return bestellingSnapshotRepository.findById(bestellingId);
   }
 
   public Iterable<BestellingSnapshot> findAll() {
@@ -84,12 +84,25 @@ public class BestellingService {
     logger.info("artikelen hier ophalen obv artikellenId, {}", bestelling);
   }
 
-  public void getBestellingenGebruiker(int id){
+  public List<BestellingSnapshot> getBestellingenGebruiker(int id){
     List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
     if(bestellingenByGebruiker != null){
-      bestellingenByGebruiker.get(0).toString();
+       return bestellingenByGebruiker;
     }
+    return null;
+  }
 
+  public Double getTotaalwaardeBestellingen(int id){
+    Double totaalWaarde = 0.0;
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
+    if(bestellingenByGebruiker != null){
+      for (BestellingSnapshot bestellingSnapshot : bestellingenByGebruiker) {
+        if(!bestellingSnapshot.getStatus().equals("betaald")){
+          totaalWaarde = totaalWaarde + bestellingSnapshot.getTotal();
+        }
+      }
+    }
+    return totaalWaarde;
   }
 
 
