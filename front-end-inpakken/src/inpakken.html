@@ -32,6 +32,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <tr>
             <th>Ingepakt</th>
             <th style="width: 100%;">Artikel</th>
+            <th style="width: 100%;">Leverancier</th>
+            <th style="width: 100%;">LeverancierCode</th>
           </tr>
           <template is="dom-repeat" items="[[currentBestelling.artikelen]]">
             <tr>
@@ -40,6 +42,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                 data-item$="[[item]]"></paper-checkbox>
               </td>
               <td style="border-bottom: 0px;">[[item.Naam]]</td>
+              <td style="border-bottom: 0px;">[[item.Leverancier]]</td>
+              <td style="border-bottom: 0px;">[[item.Leveranciercode]]</td>
+
             </tr>
           </template>
         </table>
@@ -49,7 +54,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-button raised class="mat-blue" id="factuurButton" on-click="printFactuur" disabled>Factuur</paper-button>
 
         <div class="seperation-line"></div>
-        <paper-button raised class="mat-green" id="ingepaktButton" on-click="setBestellingIngepakt" style="float: right;" disabled>✔</paper-button>
+        <paper-button raised class="mat-green" id="ingepaktButton" on-click="setBestellingIngepakt"
+                      style="float: right;" disabled>✔
+        </paper-button>
       </template>
 
 
@@ -77,38 +84,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       ready() {
-        this.getGoedgekeurdeBestellingen();
+        this.requiredActions = {
+          allArtikelenIngepakt: false,
+          printedSticker: false,
+          printedFactuur: false
+        };
+        this.getGoedgekeurdeBestelling();
       }
 
-      getGoedgekeurdeBestellingen() {
-        let url = environment.API.bestellingservice + "/bestelling+?status=goedgekeurd";
+      getGoedgekeurdeBestelling() {
+        let url = environment.API.bestellingservice + "/bestelling?status=goedgekeurd&limit=1";
 
         fetch(url).then(data => {
           return data.json()
         }).then(bestellingen => {
-          this.bestellingen = bestellingen;
-
-          if (bestellingen && bestellingen.length > 0) {
-            this._bumpCurrentBestelling();
+          if (bestellingen.length > 0) {
+            this.currentBestelling = bestellingen[0];
           }
 
           super.ready();
         }).catch(err => {
           alert(err);
         })
-      }
-
-      _bumpCurrentBestelling() {
-        if (this.bestellingen.length > 0) {
-          this.currentBestelling = this.bestellingen[0];
-          this.requiredActions = {
-            allArtikelenIngepakt: false,
-            printedSticker: false,
-            printedFactuur: false
-          };
-        } else {
-          this.reloadPage();
-        }
       }
 
       showTable() {
@@ -122,18 +119,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       setBestellingIngepakt() {
-        console.log(this.bestellingen);
+        let url = environment.API.bestellingservice + "/bestelling/" + this.currentBestelling.id + "/setIngepakt";
 
-        let ingepakteBestellingIndex = this.bestellingen.indexOf(this.currentBestelling);
-        console.log(ingepakteBestellingIndex);
-        this.bestellingen.splice(ingepakteBestellingIndex, 1);
-
-        console.log(this.bestellingen);
-
-
-        // TODO put request to set bestelling status to ingepakt.
-        this._bumpCurrentBestelling();
-        console.log(this.currentBestelling);
+        fetch(url, {method: 'PUT'}).then(() => {
+          this.reloadPage();
+        }).catch(err => {
+          alert(err);
+        });
       }
 
       setArtikelIngepakt(event) {

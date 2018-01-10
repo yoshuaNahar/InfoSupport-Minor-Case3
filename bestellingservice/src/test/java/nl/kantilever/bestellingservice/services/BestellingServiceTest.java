@@ -92,5 +92,4 @@ public class BestellingServiceTest {
     assertThat(expected.getId(), is(actual.getGebruikerId()));
     assertThat(expected.getGebruikerId(), is(actual.getGebruikerId()));
   }
-
 }
