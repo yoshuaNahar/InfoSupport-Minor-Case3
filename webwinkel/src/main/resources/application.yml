@@ -9,6 +9,12 @@ spring:
     password: Kant1lever
     host: 192.168.178.158
     port: 8920
+    listener:
+      simple:
+        retry:
+          enabled: false
+
+
 
   jpa:
     hibernate:

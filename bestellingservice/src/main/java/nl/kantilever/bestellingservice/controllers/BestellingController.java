@@ -8,7 +8,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -27,20 +34,32 @@ public class BestellingController {
   public ResponseEntity addBestelling(@RequestBody Bestelling bestelling) {
     logger.debug("addBestelling: {}", bestelling);
 
-    bestellingService.addBestelling(bestelling);
+    try {
+      bestellingService.addBestelling(bestelling);
 
-    bestellingService.saveBestellingSnapshot(bestelling);
+      bestellingService.saveBestellingSnapshot(bestelling);
 
-    return new ResponseEntity(HttpStatus.CREATED); // 201 Created
+      return new ResponseEntity(HttpStatus.CREATED); // 201 Created
+    } catch (Exception e) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
+    }
   }
 
   @GetMapping("/bestelling/{id}")
-  public BestellingSnapshot getBestelling(@PathVariable("id") Long bestellingId) {
+  public ResponseEntity getBestelling(@PathVariable("id") Long bestellingId) {
     logger.debug("getBestelling: {}", bestellingId);
-    logger.debug("sdafasfsasfas");
-    logger.debug("woww");
 
-    return bestellingService.findById(bestellingId);
+    if (bestellingId == null) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    BestellingSnapshot bestellingSnapshot = bestellingService.findById(bestellingId);
+
+    if (bestellingSnapshot == null) {
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+
+    return new ResponseEntity<>(bestellingSnapshot, HttpStatus.OK );
   }
 
   @GetMapping("/bestelling")
@@ -54,9 +73,14 @@ public class BestellingController {
     }
   }
 
-//  @GetMapping("/test")
-//  public void test() {
-//    bestellingService.getBestellingenGebruiker(1);
-//  }
+  @GetMapping("/bestelling/gebruiker/{id}")
+  public List<BestellingSnapshot> getBestellingenGebruiker(@PathVariable("id") int gebruikerId){
+    return bestellingService.getBestellingenGebruiker(gebruikerId);
+  }
 
+  @GetMapping("/bestelling/gebruiker/totaalwaarde/{id}")
+  public Double getTotaalwaardeBestellingen(@PathVariable("id") int gebruikerId){
+    System.out.println(bestellingService.getTotaalwaardeBestellingen(gebruikerId));
+    return bestellingService.getTotaalwaardeBestellingen(gebruikerId);
+  }
 }

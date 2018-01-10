@@ -88,12 +88,26 @@ public class BestellingService {
     logger.info("artikelen hier ophalen obv artikellenId, {}", bestelling);
   }
 
-//  public void getBestellingenGebruiker(int id){
-//    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
-//    if(bestellingenByGebruiker != null){
-//      bestellingenByGebruiker.get(0).toString();
-//    }
-//  }
+  public List<BestellingSnapshot> getBestellingenGebruiker(int id){
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
+    if(bestellingenByGebruiker != null){
+       return bestellingenByGebruiker;
+    }
+    return null;
+  }
+
+  public Double getTotaalwaardeBestellingen(int id){
+    Double totaalWaarde = 0.0;
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
+    if(bestellingenByGebruiker != null){
+      for (BestellingSnapshot bestellingSnapshot : bestellingenByGebruiker) {
+        if(!bestellingSnapshot.getStatus().equals("betaald")){
+          totaalWaarde = totaalWaarde + bestellingSnapshot.getTotal();
+        }
+      }
+    }
+    return totaalWaarde;
+  }
 
 
 }
