@@ -84,26 +84,27 @@ public class BestellingService {
     logger.info("artikelen hier ophalen obv artikellenId, {}", bestelling);
   }
 
-  public List<BestellingSnapshot> getBestellingenGebruiker(int id){
-    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
-    if(bestellingenByGebruiker != null){
-       return bestellingenByGebruiker;
+  public List<BestellingSnapshot> getBestellingenGebruiker(int id) {
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository
+      .findBestellingenByGebruiker(id);
+    if (bestellingenByGebruiker != null) {
+      return bestellingenByGebruiker;
     }
     return null;
   }
 
-  public Double getTotaalwaardeBestellingen(int id){
+  public Double getTotaalwaardeBestellingen(int id) {
     Double totaalWaarde = 0.0;
-    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
-    if(bestellingenByGebruiker != null){
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository
+      .findBestellingenByGebruiker(id);
+    if (bestellingenByGebruiker != null) {
       for (BestellingSnapshot bestellingSnapshot : bestellingenByGebruiker) {
-        if(!bestellingSnapshot.getStatus().equals("betaald")){
+        if (!bestellingSnapshot.getStatus().equals("betaald")) {
           totaalWaarde = totaalWaarde + bestellingSnapshot.getTotal();
         }
       }
     }
     return totaalWaarde;
   }
-
 
 }
