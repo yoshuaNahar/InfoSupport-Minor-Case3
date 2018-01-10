@@ -44,10 +44,14 @@ public class BestellingController {
   }
 
   @GetMapping("/bestelling")
-  public ResponseEntity getAllBestellingen() {
+  public ResponseEntity getAllBestellingen(@RequestParam(value = "status", required = false) String status) {
     logger.debug("getAllBestellingen");
 
-    return ResponseEntity.ok().body(bestellingService.findAll());
+    if (status == null || status.trim().isEmpty()) {
+      return ResponseEntity.ok().body(bestellingService.findAll());
+    } else {
+      return ResponseEntity.ok().body(bestellingService.findAllWithStatus(status));
+    }
   }
 
 //  @GetMapping("/test")

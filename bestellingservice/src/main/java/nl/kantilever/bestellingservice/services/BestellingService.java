@@ -57,6 +57,10 @@ public class BestellingService {
     return bestellingSnapshotRepository.findAll();
   }
 
+  public Iterable<BestellingSnapshot> findAllWithStatus(String status) {
+    return bestellingSnapshotRepository.findAllByStatus(status);
+  }
+
   public void saveBestellingSnapshot(Bestelling bestelling) {
     List<Artikel> artikelen = new ArrayList<>();
 

@@ -14,4 +14,6 @@ public interface BestellingSnapshotRepository extends CrudRepository<BestellingS
 //  List<BestellingSnapshot> findBestellingenByGebruiker(@Param("gebruikerId") int gebruikerId);
 
   BestellingSnapshot findById(long id);
+
+  Iterable<BestellingSnapshot> findAllByStatus(String status);
 }
