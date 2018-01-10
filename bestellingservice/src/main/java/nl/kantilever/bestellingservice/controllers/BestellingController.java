@@ -56,7 +56,6 @@ public class BestellingController {
 
   @GetMapping("/bestelling/gebruiker/totaalwaarde/{id}")
   public Double getTotaalwaardeBestellingen(@PathVariable("id") int gebruikerId){
-    System.out.println(bestellingService.getTotaalwaardeBestellingen(gebruikerId));
     return bestellingService.getTotaalwaardeBestellingen(gebruikerId);
   }
 }
