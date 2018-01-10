@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Bestelling from the frontend with the artikellen ids. In the BestellingSnapshot
- * we get the actual artikellen.
+ * Bestelling from the frontend with the artikelen ids. In the BestellingSnapshot
+ * we get the actual artikelen.
  */
 @Entity
 @Table(name = "bestelling")
