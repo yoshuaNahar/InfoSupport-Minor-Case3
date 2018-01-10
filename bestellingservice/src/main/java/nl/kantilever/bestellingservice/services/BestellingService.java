@@ -102,7 +102,6 @@ public class BestellingService {
 
   @Transactional
   public void setBestellingIngepakt(Long bestellingId) {
-    logger.debug(bestellingId + "");
     bestellingSnapshotRepository.setStatusIngepakt(bestellingId);
   }
 
