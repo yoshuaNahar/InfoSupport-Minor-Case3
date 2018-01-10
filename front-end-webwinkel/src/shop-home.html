@@ -98,8 +98,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="search">
         <h1>Zoeken</h1>
         <input id="searchform" type="text" value="[[search]]">
-        </input>
         <button class="search-button">Zoeken</button>
+        <template is="dom-repeat" items="{{filters}}" as="filter">
+          <h2>[[filter.name]]</h2>
+          <template is="dom-repeat" items="{{filter.values}}" as="value">
+            <p>
+              <input type="radio" name="[[value.name]]">
+              <span>[[value.name]]</span>
+            </p>
+          </template>
+        </template>
+        </input>
+
       </div>
       <div class="categories flex">
         <h1>Categorieen</h1>
