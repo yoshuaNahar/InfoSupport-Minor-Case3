@@ -86,7 +86,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .menu-btn {
-        display: none;
+        display: inline;
       }
 
       .cart-btn-container {
@@ -101,6 +101,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       :host(:not([page=detail])) .back-btn {
+        display: none;
+      }
+
+      :host([page=detail]) .menu-btn {
         display: none;
       }
 
@@ -154,6 +158,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .drawer-list {
+        height: 100%;
+        overflow: auto;
         background-color: var(--app-accent-color);
         margin: 0 20px;
       }
@@ -291,23 +297,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <!--</a>-->
           <!--<div class="cart-badge" aria-hidden="true" hidden$="[[!numItems]]">[[numItems]]</div>-->
         <!--</div>-->
-        <div id="tabContainer" sticky$="[[_shouldShowTabs]]" hidden$="[[!_shouldShowTabs]]">
-          <dom-if if="[[_shouldRenderTabs]]">
-            <template>
-              <shop-tabs
-                selected="[[categoryName]]"
-                attr-for-selected="name">
-                <dom-repeat items="[[categories]]" as="category" initial-count="4">
-                  <template>
-                    <shop-tab name="[[category.naam]]">
-                      <a href="/list/[[category.naam]]">[[category.naam]]</a>
-                    </shop-tab>
-                  </template>
-                </dom-repeat>
-              </shop-tabs>
-            </template>
-          </dom-if>
-        </div>
+        <!--<div id="tabContainer" sticky$="[[_shouldShowTabs]]" hidden$="[[!_shouldShowTabs]]">-->
+          <!--<dom-if if="[[_shouldRenderTabs]]">-->
+            <!--<template>-->
+              <!--<shop-tabs-->
+                <!--selected="[[categoryName]]"-->
+                <!--attr-for-selected="name">-->
+                <!--<dom-repeat items="[[categories]]" as="category" initial-count="4">-->
+                  <!--<template>-->
+                    <!--<shop-tab name="[[category.naam]]">-->
+                      <!--<a href="/list/[[category.naam]]">[[category.naam]]</a>-->
+                    <!--</shop-tab>-->
+                  <!--</template>-->
+                <!--</dom-repeat>-->
+              <!--</shop-tabs>-->
+            <!--</template>-->
+          <!--</dom-if>-->
+        <!--</div>-->
       </app-toolbar>
 
       <!-- Lazy-create the tabs for larger screen sizes. -->
@@ -319,13 +325,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <template>
       <!-- Two-way bind `drawerOpened` since app-drawer can update `opened` itself. -->
       <app-drawer opened="{{drawerOpened}}" swipe-open tabindex="0">
-        <iron-selector role="navigation" class="drawer-list" selected="[[categoryName]]" attr-for-selected="name">
-          <dom-repeat items="[[categories]]" as="category" initial-count="4">
-            <template>
-              <a name="[[category.naam]]" href="/list/[[category.naam]]">[[category.naam]]</a>
-            </template>
-          </dom-repeat>
-        </iron-selector>
+        <div style="height: 100%; overflow: auto;">
+          <iron-selector role="navigation" class="drawer-list" selected="[[categoryName]]" attr-for-selected="name">
+            <h1>Categorieen</h1>
+            <dom-repeat items="[[categories]]" as="category" initial-count="4">
+              <template>
+                <a name="[[category.naam]]" href="/list/[[category.naam]]">[[category.naam]]</a>
+              </template>
+            </dom-repeat>
+          </iron-selector>
+        </div>
       </app-drawer>
       </template>
     </dom-if>
@@ -384,7 +393,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         _shouldRenderDrawer: {
-          computed: '_computeShouldRenderDrawer(smallScreen, loadComplete)'
+          computed: '_computeShouldRenderDrawer(loadComplete)'
         }
       }}
 
@@ -584,8 +593,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return _shouldShowTabs && loadComplete;
       }
 
-      _computeShouldRenderDrawer(smallScreen, loadComplete) {
-        return smallScreen && loadComplete;
+      _computeShouldRenderDrawer(loadComplete) {
+        return loadComplete
       }
 
       _computePluralizedQuantity(quantity) {

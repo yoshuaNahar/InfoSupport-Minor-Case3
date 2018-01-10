@@ -99,17 +99,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <h1>Zoeken</h1>
         <input id="searchform" type="text" value="[[search]]">
         <button class="search-button">Zoeken</button>
-        <template is="dom-repeat" items="{{filters}}" as="filter">
-          <h2>[[filter.name]]</h2>
-          <template is="dom-repeat" items="{{filter.values}}" as="value">
+        <br>
+        <hr>
+        <span>Minimum prijs</span>
+        <br>
+        <input id="min_price" type="number" value="[[search]]">
+        <br>
+        <span>Maximum prijs</span>
+        <br>
+        <input id="max_price" type="number" value="[[search]]">
+        <br>
+        <span>leverbaar vanaf:</span>
+        <br>
+        <input id="leverbaar_vanaf" type="date" value="[[search]]">
+        <br>
+        <span>leverbaar tot:</span>
+        <br>
+        <input id="leverbaar_tot" type="date" value="[[search]]">
+          <h2>Leveranciers</h2>
+          <template is="dom-repeat" items="{{searchLeverancierList}}" as="value">
             <p>
-              <input type="radio" name="[[value.name]]">
-              <span>[[value.name]]</span>
+              <input type="checkbox" name="[[value]]">
+              <span>[[value]]</span>
             </p>
           </template>
-        </template>
-        </input>
 
+        <h2>Categorieen</h2>
+        <template is="dom-repeat" items="{{searchCategoriesList}}" as="value">
+          <p>
+            <input type="checkbox" name="[[value.name]]">
+            <span>[[value.name]]</span>
+          </p>
+        </template>
       </div>
       <div class="categories flex">
         <h1>Categorieen</h1>
@@ -140,6 +161,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       static get is() { return 'shop-home'; }
 
       ready() {
+        this._getLeveranciersObject()
         super.ready()
       }
 
@@ -159,34 +181,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: []
         },
 
-        filters: {
-          type: Object,
-          value: [
-            {
-              id:'categorie',
-              name:'Categorie',
-              values: [
-                {
-                  id: 'road bike',
-                  name: 'Road bike'
-                },
-                {
-                  id:'onderdelen',
-                  name:'Onderdelen'
-                }
-              ]
-            },
-            {
-              id: 'merk',
-              name: 'Merk',
-              values: [
-                {
-                  id: 'batavus',
-                  name: 'Batavus'
-                }
-              ]
-            }
-          ]
+        searchCategoriesList: {
+          type: Array,
+          computed: '_getCategoriesSearchObject(categories)'
+        },
+
+        searchLeverancierList: {
+          type: Array,
+          value: [],
         },
 
         selectedFilters: {
@@ -206,6 +208,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Boolean
         }
       }}
+
+      _getCategoriesSearchObject(categoryList) {
+        let categories = [];
+        for(let category of categoryList) {
+          categories.push({
+            id: category.naam,
+            name: category.naam
+          })
+        }
+        return categories
+      }
+
+      _getLeveranciersObject() {
+        fetch(environment.API.webwinkel + '/leveranciers')
+          .then(data => {
+            return data.json()
+          }).then(data => {
+            this.searchLeverancierList = [...new Set(data.map(item => item.leverancier))]
+        })
+      }
 
       _visibleChanged(visible) {
         if (visible) {
@@ -241,11 +263,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _getMatchingArticles(value) {
-        fetch('https://jsonplaceholder.typicode.com/photos').then(data => {
-          return data.json()
-        }).then(data => {
-          console.log(data)
-        })
       }
     }
 

@@ -2,8 +2,10 @@ package nl.kantilever.webwinkel.controllers;
 
 import nl.kantilever.webwinkel.domain.Artikel;
 import nl.kantilever.webwinkel.domain.Categorie;
+import nl.kantilever.webwinkel.domain.Leverancier;
 import nl.kantilever.webwinkel.services.ArtikelService;
 import nl.kantilever.webwinkel.services.CategorieService;
+import nl.kantilever.webwinkel.services.LeverancierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
@@ -28,11 +30,13 @@ import java.util.List;
 public class ArtikelRestController {
   private ArtikelService artikelService;
   private CategorieService categorieService;
+  private LeverancierService leverancierService;
 
   @Autowired
-  public ArtikelRestController(ArtikelService artikelService, CategorieService categorieService) {
+  public ArtikelRestController(ArtikelService artikelService, CategorieService categorieService, LeverancierService leverancierService) {
     this.artikelService = artikelService;
     this.categorieService = categorieService;
+    this.leverancierService = leverancierService;
   }
 
   @RequestMapping(value = "artikel/artikelnummer/{artikelnummer}", method = RequestMethod.GET)
@@ -94,5 +98,10 @@ public class ArtikelRestController {
   @RequestMapping(value = "artikelen/leverbaar_tot/{leverbaar_tot}", method = RequestMethod.GET)
   public List<Artikel> findArtikelenLeverbaarTot(Model model, @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") java.util.Date leverbaar_tot) {
     return artikelService.findArtikelenLeverbaarTot(leverbaar_tot);
+  }
+
+  @RequestMapping(value= "leveranciers", method=RequestMethod.GET)
+  public List<Leverancier> findAllLeveranciers () {
+    return leverancierService.findAllLeveranciers();
   }
 }
