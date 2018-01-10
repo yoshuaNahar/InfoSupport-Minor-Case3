@@ -18,7 +18,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template>
 
-    <style include="shop-button iron-flex iron-flex-alignment">
+    <style include="shop-common-styles shop-button iron-flex iron-flex-alignment">
+      #searchform,
+      #min_price,
+      #max_price,
+      #leverbaar_vanaf,
+      #leverbaar_tot {
+        width: 100%;
+      }
+
 
       .image-link {
         outline: none;
@@ -64,13 +72,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         height: 200px;
       }
 
-      h2 {
-        font-size: 1.3em;
-        font-weight: 500;
-        margin: 32px 0;
-      }
+      /*h2 {*/
+        /*font-size: 1.3em;*/
+        /*font-weight: 500;*/
+        /*margin: 32px 0;*/
+      /*}*/
 
-      @media (max-width: 767px) {
+      @media (max-width: 800px) {
         .search {
           width: 50%;
         }

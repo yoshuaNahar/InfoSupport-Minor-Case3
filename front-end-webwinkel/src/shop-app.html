@@ -221,7 +221,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       /* small screen */
-      @media (max-width: 767px) {
+      @media (max-width: 800px) {
         :host {
           padding-top: 200px;
         }
@@ -260,7 +260,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         data="{{routeData}}"
         tail="{{subroute}}"></app-route>
 
-    <iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+    <iron-media-query query="max-width: 800px" query-matches="{{smallScreen}}"></iron-media-query>
 
     <!--
       shop-category-data provides the list of categories.
@@ -427,7 +427,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _routePageChanged(page) {
         if (this.page === 'list') {
-          this._listScrollTop = window.pageYOffset;
+          this._listScrollTop = 0;
         }
 
         this.page = page || 'home';

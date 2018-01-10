@@ -274,7 +274,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               // Reset the select menus.
 //              this.$.quantitySelect.value = '1';
 //              this.$.sizeSelect.value = 'M';
-              console.log(item)
               this.dispatchEvent(new CustomEvent('change-section', {
                 bubbles: true, composed: true, detail: {
                   category: item ? item.category : '',
