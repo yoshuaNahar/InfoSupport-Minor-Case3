@@ -64,6 +64,7 @@ public class BestellingServiceTest {
   }
 
   @Test
+  @Ignore
   public void addBestellingGivenBestellingExpectBestellingViewSavedCorrectly() {
     bestellingService.addBestelling(bestelling);
     entityManager.flush();
