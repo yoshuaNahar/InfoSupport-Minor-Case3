@@ -20,6 +20,7 @@ import nl.kantilever.webwinkel.domain.Artikel;
 import nl.kantilever.webwinkel.domain.Categorie;
 import nl.kantilever.webwinkel.services.ArtikelService;
 import nl.kantilever.webwinkel.services.CategorieService;
+import nl.kantilever.webwinkel.services.LeverancierService;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -60,6 +61,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ArtikelRestControllerTest {
   @MockBean
   private CategorieService categorieService;
+
+  @MockBean
+  private LeverancierService leverancierService;
 
   @MockBean
   private ArtikelService artikelService;
