@@ -151,7 +151,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="categories flex">
           <template is="dom-if" if="{{searchResults}}.length === 0">
             <hr>
-            <h1>Er zijn geen resultaten gevonden</h1>
+            <h1 style="text-align: center">Er zijn geen resultaten gevonden</h1>
             <hr>
             <h1>Categorieen</h1>
             <div class="horizontal layout wrap">
@@ -170,7 +170,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </dom-repeat>
             </div>
           </template>
-
+          <template is="dom-if" if="{{searchResults}}.length > 0">
+            <h1>Resultaten</h1>
+            <div class="horizontal layout wrap">
+              <dom-repeat items="[[searchResults]]">
+                <template strip-whitespace>
+                  <div class="item">
+                    <a class="image-link" href$="/list/[[item.Naam]]">
+                      <shop-image src="../images/[[item.AfbeeldingURL]]" alt="[[item.Naam]]"></shop-image>
+                    </a>
+                    <h2>[[item.Naam]]</h2>
+                    <shop-button>
+                      <a aria-label$="[[item.Naam]] Shop Now" href$="/list/[[item.Naam]]"> Bekijken</a>
+                    </shop-button>
+                  </div>
+                </template>
+              </dom-repeat>
+            </div>
+          </template>
         </div>
       </template>
       <template is="dom-if" if="{{!hasSearched}}">
