@@ -54,9 +54,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * Created by Tinne on 21-12-2017.
- */
+
 @RunWith(SpringRunner.class)
 @WebMvcTest(ArtikelRestController.class)
 public class ArtikelRestControllerTest {

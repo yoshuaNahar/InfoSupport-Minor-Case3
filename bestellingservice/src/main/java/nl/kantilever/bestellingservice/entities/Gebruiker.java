@@ -1,39 +1,44 @@
 package nl.kantilever.bestellingservice.entities;
 
-import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.*;
 
 @Entity
-@Table("gebruiker")
+@Table(name = "gebruiker")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Gebruiker {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private String gebruikerId;
+  private long gebruikerId;
 
+  @Column(name = "voornaam")
   private String voornaam;
 
+  @Column(name = "achternaam")
   private String achternaam;
 
+  @Column(name = "adres")
   private String adres;
 
+  @Column(name = "bedrijfNaam")
   private String bedrijfNaam;
 
+  @Column(name = "telefoonNummer")
   private String telefoonNummer;
 
-  @OneToMany
-  private List<BestellingSnapshot> bestellingSnapshots;
+  @Column(name = "maxCrediet")
+  private int maxCrediet;
 
-  public String getGebruikerId() {
+  @Column (name = "huidigCrediet")
+  private int huidigCrediet;
+
+  public long getGebruikerId() {
     return gebruikerId;
   }
 
-  public void setGebruikerId(String gebruikerId) {
+  public void setGebruikerId(long gebruikerId) {
     this.gebruikerId = gebruikerId;
   }
 
@@ -77,25 +82,33 @@ public class Gebruiker {
     this.telefoonNummer = telefoonNummer;
   }
 
-  public List<BestellingSnapshot> getBestellingSnapshots() {
-    return bestellingSnapshots;
+  public int getMaxCrediet() {
+    return maxCrediet;
   }
 
-  public void setBestellingSnapshots(
-    List<BestellingSnapshot> bestellingSnapshots) {
-    this.bestellingSnapshots = bestellingSnapshots;
+  public void setMaxCrediet(int maxCrediet) {
+    this.maxCrediet = maxCrediet;
+  }
+
+  public int getHuidigCrediet() {
+    return huidigCrediet;
+  }
+
+  public void setHuidigCrediet(int huidigCrediet) {
+    this.huidigCrediet = huidigCrediet;
   }
 
   @Override
   public String toString() {
     return "Gebruiker{" +
-      "gebruikerId='" + gebruikerId + '\'' +
+      "gebruikerId=" + gebruikerId +
       ", voornaam='" + voornaam + '\'' +
       ", achternaam='" + achternaam + '\'' +
       ", adres='" + adres + '\'' +
       ", bedrijfNaam='" + bedrijfNaam + '\'' +
       ", telefoonNummer='" + telefoonNummer + '\'' +
-      ", bestellingSnapshots=" + bestellingSnapshots +
+      ", maxCrediet=" + maxCrediet +
+      ", huidigCrediet=" + huidigCrediet +
       '}';
   }
 }

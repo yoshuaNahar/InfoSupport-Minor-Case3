@@ -10,6 +10,7 @@ import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.repositories.ArtikelenRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;
+import nl.kantilever.bestellingservice.repositories.GebruikerRepository;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,13 +32,19 @@ import org.springframework.web.client.RestTemplate;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BestellingServiceTest {
 
+  @Autowired
   private BestellingService bestellingService;
 
   @Autowired
   private BestellingRepository bestellingRepository;
 
   @Autowired
+  private GebruikerRepository gebruikerRepository;
+  @Autowired
   private BestellingSnapshotRepository bestellingSnapshotRepository;
+
+  @Autowired
+  private GebruikerService gebruikerService;
 
   @Autowired
   private ArtikelenRepository artikelenRepository;
@@ -56,7 +63,9 @@ public class BestellingServiceTest {
       bestellingRepository,
       bestellingSnapshotRepository,
       artikelenRepository,
-      restTemplate);
+      restTemplate,
+      gebruikerService,
+      gebruikerRepository);
 
     bestelling = new Bestelling();
     bestelling.setGebruikerId(1L);

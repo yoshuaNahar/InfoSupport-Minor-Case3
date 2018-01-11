@@ -1,6 +1,7 @@
 package nl.kantilever.bestellingservice.repositories;
 
 import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
+import nl.kantilever.bestellingservice.entities.Gebruiker;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
