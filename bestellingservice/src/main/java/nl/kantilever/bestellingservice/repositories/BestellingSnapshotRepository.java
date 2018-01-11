@@ -2,17 +2,27 @@ package nl.kantilever.bestellingservice.repositories;
 
 import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.entities.Gebruiker;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface BestellingSnapshotRepository extends CrudRepository<BestellingSnapshot, Long> {
+public interface BestellingSnapshotRepository extends PagingAndSortingRepository<BestellingSnapshot, Long> {
   @Query(value = "select * from bestelling_snapshot where gebruiker_id = :gebruikerId", nativeQuery = true)
   List<BestellingSnapshot> findBestellingenByGebruiker(@Param("gebruikerId") int gebruikerId);
 
-  BestellingSnapshot findById(long id);
+  BestellingSnapshot findFirstById(long id);
+
+  Page<BestellingSnapshot> findAllByStatus(String status, Pageable pageable);
+
+  @Modifying
+  @Query("UPDATE BestellingSnapshot bestellingSnapshot SET bestellingSnapshot.status = 'ingepakt' WHERE bestellingSnapshot.id = :bestellingId")
+  void setStatusIngepakt(@Param("bestellingId") Long bestellingId);
 }

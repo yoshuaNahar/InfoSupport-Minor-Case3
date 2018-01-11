@@ -26,26 +26,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="container">
-      <h1>Bestelling</h1>
-      <table class="table">
-        <tr>
-          <th style="width: 100%;">Artikel</th>
-          <th>Ingepakt</th>
-        </tr>
-        <template is="dom-repeat" items="[[currentBestelling.artikelen]]">
+      <template is="dom-if" if="{{showTable()}}">
+        <h1>Bestelling #{{currentBestelling.id}}</h1>
+        <table class="table">
           <tr>
-            <td style="border-bottom: 0px;">[[item.name]]</td>
-            <td style="border-bottom: 0px;"><paper-checkbox style="border-bottom: 0px;" on-click="setArtikelIngepakt" data-item$="[[item]]"></paper-checkbox></td>
+            <th>Ingepakt</th>
+            <th style="width: 100%;">Artikel</th>
+            <th style="width: 100%;">Leverancier</th>
+            <th style="width: 100%;">LeverancierCode</th>
           </tr>
-        </template>
-      </table>
+          <template is="dom-repeat" items="[[currentBestelling.artikelen]]">
+            <tr>
+              <td style="border-bottom: 0px;">
+                <paper-checkbox style="border-bottom: 0px;" on-click="setArtikelIngepakt"
+                                data-item$="[[item]]"></paper-checkbox>
+              </td>
+              <td style="border-bottom: 0px;">[[item.Naam]]</td>
+              <td style="border-bottom: 0px;">[[item.Leverancier]]</td>
+              <td style="border-bottom: 0px;">[[item.Leveranciercode]]</td>
 
-      <br>
-      <paper-button raised class="mat-blue">Sticker</paper-button> <paper-button raised class="mat-blue">Factuur</paper-button>
+            </tr>
+          </template>
+        </table>
 
-      <div class="seperation-line"></div>
-      <paper-button raised class="mat-green" id="ingepaktButton" style="float: right;">✔</paper-button>
+        <br>
+        <paper-button raised class="mat-blue" id="stickerButton" on-click="printSticker" disabled>Sticker</paper-button>
+        <paper-button raised class="mat-blue" id="factuurButton" on-click="printFactuur" disabled>Factuur</paper-button>
 
+        <div class="seperation-line"></div>
+        <paper-button raised class="mat-green" id="ingepaktButton" on-click="setBestellingIngepakt"
+                      style="float: right;" disabled>✔
+        </paper-button>
+      </template>
+
+
+      <template is="dom-if" if="{{!showTable()}}">
+        <h2>Geen bestellingen om in te pakken</h2>
+        <paper-button raised class="mat-blue" on-click="reloadPage">Refresh</paper-button>
+      </template>
     </div>
 
 
@@ -66,45 +84,107 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       ready() {
-        super.ready();
-        this._getGoedgekeurdeBestellingen();
+        this.requiredActions = {
+          allArtikelenIngepakt: false,
+          printedSticker: false,
+          printedFactuur: false
+        };
+        this.getGoedgekeurdeBestelling();
       }
 
-      _getGoedgekeurdeBestellingen() {
-        let url = environment.API.bestellingservice + "/bestelling?status=goedgekeurd";
+      getGoedgekeurdeBestelling() {
+        let url = environment.API.bestellingservice + "/bestelling?status=goedgekeurd&limit=1";
 
-        let bestellingen = [{artikelen: [{name: "test"}]}, {artikelen: {name: "test"}}];
+        fetch(url).then(data => {
+          return data.json()
+        }).then(bestellingen => {
+          if (bestellingen.length > 0) {
+            this.currentBestelling = bestellingen[0];
+          }
 
-        //
-//        fetch(url).then(data => {
-//          return data.json()
-//        }).then(bestellingen => {
-        this.bestellingen = bestellingen;
-        this._bumpCurrentBestelling();
-//        });
+          super.ready();
+        }).catch(err => {
+          alert(err);
+        })
       }
 
-      _bumpCurrentBestelling() {
-        if (this.bestellingen.length > 0) {
-          this.currentBestelling = this.bestellingen[0];
-          console.log('currentBestelling', this.currentBestelling);
-        } else {
-          this._getGoedgekeurdeBestellingen();
+      showTable() {
+        if (this.currentBestelling) {
+          return true;
         }
       }
 
-      setBestellingIngepakt() {
-        let ingepakteBestellingId = this.bestellingen.indexOf(this.currentBestelling);
-        this.bestellingen.pop(ingepakteBestellingId);
+      reloadPage() {
+        location.reload();
+      }
 
-        // TODO put request to set bestelling status to ingepakt.
-        this._bumpCurrentBestelling();
+      setBestellingIngepakt() {
+        let url = environment.API.bestellingservice + "/bestelling/" + this.currentBestelling.id + "/setIngepakt";
+
+        fetch(url, {method: 'PUT'}).then(() => {
+          this.reloadPage();
+        }).catch(err => {
+          alert(err);
+        });
       }
 
       setArtikelIngepakt(event) {
-        console.log('event', event);
-        console.log('data', event.target.dataset.item);
+        let artikel = JSON.parse(event.target.dataset.item);
+        let artikelIndex = this._findIndexByKey(this.currentBestelling.artikelen, 'Artikelnummer', artikel.Artikelnummer);
+
+        this.currentBestelling.artikelen[artikelIndex].ingepakt = !this.currentBestelling.artikelen[artikelIndex].ingepakt;
+
+        let allArtikelenIngepakt = true;
+        for (let i = 0; i < this.currentBestelling.artikelen.length; i++) {
+          if (!this.currentBestelling.artikelen[i].ingepakt) {
+            allArtikelenIngepakt = false;
+            break;
+          }
+        }
+        this.requiredActions.allArtikelenIngepakt = allArtikelenIngepakt;
+        this._toggleIngepaktButton();
       }
+
+      printFactuur() {
+        this.requiredActions.printedFactuur = true;
+        this._toggleIngepaktButton();
+      }
+
+      printSticker() {
+        this.requiredActions.printedSticker = true;
+        this._toggleIngepaktButton();
+      }
+
+      _toggleIngepaktButton() {
+        if (this.requiredActions.allArtikelenIngepakt) {
+          this.shadowRoot.querySelector('#stickerButton').disabled = undefined;
+          this.shadowRoot.querySelector('#factuurButton').disabled = undefined;
+
+          let ingepaktButtonState = true;
+          for (let c in this.requiredActions) {
+            if (!this.requiredActions[c]) {
+              ingepaktButtonState = undefined;
+              break;
+            }
+          }
+          this.shadowRoot.querySelector('#ingepaktButton').disabled = !ingepaktButtonState;
+
+        } else {
+          this.shadowRoot.querySelector('#stickerButton').disabled = true;
+          this.shadowRoot.querySelector('#factuurButton').disabled = true;
+        }
+
+      }
+
+      _findIndexByKey(array, key, value) {
+        for (let i = 0; i < array.length; i++) {
+          if (array[i][key] === value) {
+            return i;
+          }
+        }
+        return null;
+      }
+
     }
 
     window.customElements.define(Inpakken.is, Inpakken);

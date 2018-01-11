@@ -216,10 +216,10 @@ public class ArtikelRestControllerTest {
 //  }
 
 
-  @Test
-  public void getArtikelenBeforeLeverbaarTotDateExpectOkAnd2ArtikelenAsJson() throws Exception {
-
-  }
+//  @Test
+//  public void getArtikelenBeforeLeverbaarTotDateExpectOkAnd2ArtikelenAsJson() throws Exception {
+//
+//  }
 //  @RequestMapping(value = "artikelen/leverbaar_tot/{leverbaar_tot}", method = RequestMethod.GET)
 //  public List<Artikel> findArtikelenLeverbaarTot(Model model, @PathVariable Date leverbaar_tot) {
 //    return artikelService.findArtikelenLeverbaarTot(leverbaar_tot);
