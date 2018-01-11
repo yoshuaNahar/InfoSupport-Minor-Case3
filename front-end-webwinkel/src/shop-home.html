@@ -110,19 +110,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <button on-click='_getSearchResults'class="search-button">Zoeken</button>
         <br>
         <hr>
-        <span>Minimum prijs</span>
+        <span>Minimum prijs (in euro's)</span>
         <br>
         <input id="min_price" type="number" value="[[search]]">
         <br>
-        <span>Maximum prijs</span>
+        <span>Maximum prijs (in euro's)</span>
         <br>
         <input id="max_price" type="number" value="[[search]]">
         <br>
-        <span>leverbaar vanaf:</span>
+        <span>Leverbaar vanaf:</span>
         <br>
         <input id="leverbaar_vanaf" type="date" value="[[search]]">
         <br>
-        <span>leverbaar tot:</span>
+        <span>Leverbaar tot:</span>
         <br>
         <input id="leverbaar_tot" type="date" value="[[search]]">
 
@@ -150,9 +150,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <template is="dom-if" if="{{hasSearched}}">
         <div class="categories flex">
           <template is="dom-if" if="{{searchResults}}.length === 0">
-            <hr>
-            <h1 style="text-align: center">Er zijn geen resultaten gevonden</h1>
-            <hr>
             <h1>Categorieen</h1>
             <div class="horizontal layout wrap">
               <dom-repeat items="[[categories]]">
@@ -172,21 +169,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </template>
           <template is="dom-if" if="{{searchResults}}.length > 0">
             <h1>Resultaten</h1>
+            <p>[[_getPluralizedQuantity(searchResults.length)]]</p>
             <div class="horizontal layout wrap">
               <dom-repeat items="[[searchResults]]">
-                <template strip-whitespace>
+                <template>
                   <div class="item">
-                    <a class="image-link" href$="/list/[[item.Naam]]">
-                      <shop-image src="../images/[[item.AfbeeldingURL]]" alt="[[item.Naam]]"></shop-image>
+                    <a href$="[[_getItemHref(item)]]">
+                      <shop-list-item item="[[item]]"></shop-list-item>
                     </a>
-                    <h2>[[item.Naam]]</h2>
-                    <shop-button>
-                      <a aria-label$="[[item.Naam]] Shop Now" href$="/list/[[item.Naam]]"> Bekijken</a>
-                    </shop-button>
                   </div>
                 </template>
               </dom-repeat>
-            </div>
           </template>
         </div>
       </template>
@@ -265,10 +258,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: false
         },
 
-        searchObject: {
-          type: Object
-        },
-
         searchResults: {
           type: Array
         }
@@ -345,16 +334,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
           }
         }
-
-        console.log(queryString)
+        let encodedQueryString = encodeURIComponent(queryString);
+        console.log(queryString);
         if(queryString !== 'search=') {
-          fetch(environment.API.webwinkel + '/artikelen?' + queryString)
+          fetch(environment.API.webwinkel + '/artikelen?' + encodedQueryString)
             .then(data => {
               data.json()
             }).then(data => {
             this.searchResults = data
           })
         }
+      }
+
+      _getPluralizedQuantity(quantity) {
+        if (!quantity) {
+          return '';
+        }
+        let pluralizedQ = quantity === 1 ? 'item' : 'items';
+        return '(' + quantity + ' ' + pluralizedQ + ')';
+      }
+
+      _getItemHref(item) {
+        // By returning null when `itemId` is undefined, the href attribute won't be set and
+        // the link will be disabled.
+        return item.Artikelnummer ? ['/detail', this.category.naam, item.Naam].join('/') : null;
       }
 
       _visibleChanged(visible) {

@@ -30,6 +30,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .subtotal {
+        color: black;
         margin: 0 64px 0 24px;
       }
 
@@ -45,13 +46,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div class="main-frame">
       <div class="subsection" visible$="[[!_hasItems]]">
-        <p class="empty-cart">Your <iron-icon icon="shopping-cart"></iron-icon> is empty.</p>
+        <p class="empty-cart">Je <iron-icon icon="shopping-cart"></iron-icon> is leeg.</p>
       </div>
       <div class="subsection" visible$="[[_hasItems]]">
-        <header>
-          <h1>Your Cart</h1>
+        <div style="text-align: center">
+          <h1>Je winkelwagen</h1>
           <span>([[_getPluralizedQuantity(cart.length)]])</span>
-        </header>
+        </div>
         <div class="list">
           <dom-repeat items="[[cart]]" as="entry">
             <template>
@@ -60,7 +61,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dom-repeat>
         </div>
         <div class="checkout-box">
-          Total: <span class="subtotal">[[_formatTotal(total)]]</span>
+          Totaal: <span class="subtotal">[[_formatTotal(total)]]</span>
           <shop-button responsive>
             <a href="/checkout">Checkout</a>
           </shop-button>
@@ -95,7 +96,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }}
 
       _formatTotal(total) {
-        return isNaN(total) ? '' : '$' + total.toFixed(2);
+        return isNaN(total) ? '' : '€' + total.toFixed(2);
       }
 
       _computeHasItem(cartLength) {
@@ -113,7 +114,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             bubbles: true, composed: true, detail: { title: 'Your cart' }}));
         }
       }
-
     }
 
     customElements.define(ShopCart.is, ShopCart);

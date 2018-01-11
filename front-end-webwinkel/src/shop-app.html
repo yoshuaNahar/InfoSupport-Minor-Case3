@@ -19,6 +19,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="shop-category-data.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <!-- Since 'home' is the default route, eagerly load it. -->
 <link rel="import" href="shop-home.html">
 
@@ -85,11 +86,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 40px;
       }
 
-      .menu-btn {
-        display: inline;
+      .cart-btn-container {
+        position: relative;
+        width: 40px;
       }
 
-      .cart-btn-container {
+      .account-container {
         position: relative;
         width: 40px;
       }
@@ -147,7 +149,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         right: 0;
         width: 20px;
         height: 20px;
-        background-color: var(--app-accent-color);
+        background-color: red;
         border-radius: 50%;
         color: white;
         font-size: 12px;
@@ -291,29 +293,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-icon-button icon="arrow-back" aria-label="Go back"></paper-icon-button>
           </a>
         </div>
-        <!--<div class="cart-btn-container">-->
-          <!--<a href="/cart" tabindex="-1">-->
-            <!--<paper-icon-button icon="shopping-cart" aria-label$="Shopping cart: [[_computePluralizedQuantity(numItems)]]"></paper-icon-button>-->
-          <!--</a>-->
-          <!--<div class="cart-badge" aria-hidden="true" hidden$="[[!numItems]]">[[numItems]]</div>-->
-        <!--</div>-->
-        <!--<div id="tabContainer" sticky$="[[_shouldShowTabs]]" hidden$="[[!_shouldShowTabs]]">-->
-          <!--<dom-if if="[[_shouldRenderTabs]]">-->
-            <!--<template>-->
-              <!--<shop-tabs-->
-                <!--selected="[[categoryName]]"-->
-                <!--attr-for-selected="name">-->
-                <!--<dom-repeat items="[[categories]]" as="category" initial-count="4">-->
-                  <!--<template>-->
-                    <!--<shop-tab name="[[category.naam]]">-->
-                      <!--<a href="/list/[[category.naam]]">[[category.naam]]</a>-->
-                    <!--</shop-tab>-->
-                  <!--</template>-->
-                <!--</dom-repeat>-->
-              <!--</shop-tabs>-->
-            <!--</template>-->
-          <!--</dom-if>-->
-        <!--</div>-->
+        <div main-title style="color: whitesmoke">Kantilever</div>
+        <div class="cart-btn-container">
+          <a href="/cart" tabindex="-1">
+            <paper-icon-button icon="shopping-cart" aria-label$="Shopping cart: [[_computePluralizedQuantity(numItems)]]"></paper-icon-button>
+          </a>
+          <div class="cart-badge" aria-hidden="true" hidden$="[[!numItems]]">[[numItems]]</div>
+        </div>
+        <div class="account-container">
+          <a href="/register">
+            <paper-icon-button icon="account-circle" aria-label="register"></paper-icon-button>
+          </a>
+        </div>
       </app-toolbar>
 
       <!-- Lazy-create the tabs for larger screen sizes. -->
@@ -350,6 +341,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <shop-cart name="cart" cart="[[cart]]" total="[[total]]"></shop-cart>
       <!-- checkout view -->
       <shop-checkout name="checkout" cart="[[cart]]" total="[[total]]" route="{{subroute}}"></shop-checkout>
+      <!-- Registration view -->
+      <shop-register name="register" route="[[subroute]]"></shop-register>
+      <!-- Login -->
+      <shop-login name="login" route="[[subroute]]"></shop-login>
 
       <shop-404-warning name="404"></shop-404-warning>
     </iron-pages>

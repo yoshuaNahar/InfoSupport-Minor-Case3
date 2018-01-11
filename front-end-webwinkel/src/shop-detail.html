@@ -170,6 +170,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="detail" has-content$="[[_isDefined(item)]]">
         <h1>[[item.Naam]]</h1>
         <div class="price">[[_formatPrice(item.Prijs)]]</div>
+        <h2>Leverancier</h2>
+        <p>[[item.Leverancier]]</p>
+        <h2>Voorraad</h2><span>420</span>
         <div class="pickers">
           <!--<shop-select>-->
             <!--<label id="sizeLabel" prefix>Size</label>-->
@@ -204,7 +207,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
         <shop-button responsive>
           <!--<button on-click="_addToCart" aria-label="Add this item to cart">Add to Cart</button>-->
-          <button on-click="_setOrder" data-item$="[[item]]" aria-label="Bestellen">Bestellen</button>
+          <button on-click="_addToCart" data-item$="[[item]]" aria-label="Bestellen">Bestellen</button>
         </shop-button>
       </div>
     </div>
@@ -293,15 +296,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return price ? '€' + price.toFixed(2) : '';
       }
 
-//      _addToCart() {
-//        // This event will be handled by shop-app.
-//        this.dispatchEvent(new CustomEvent('add-cart-item', {
-//          bubbles: true, composed: true, detail: {
-//            item: this.item,
-//            quantity: parseInt(this.$.quantitySelect.value, 10),
-//            size: this.$.sizeSelect.value
-//          }}));
-//      }
+      _addToCart() {
+        // This event will be handled by shop-app.
+        this.dispatchEvent(new CustomEvent('add-cart-item', {
+          bubbles: true, composed: true, detail: {
+            item: this.item,
+            quantity: 1,
+          }}));
+      }
 
       _setOrder(event) {
         this.loading = true;
