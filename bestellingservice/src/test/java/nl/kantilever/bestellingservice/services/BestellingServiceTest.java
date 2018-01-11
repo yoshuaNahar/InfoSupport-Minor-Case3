@@ -76,16 +76,24 @@ public class BestellingServiceTest {
     entityManager.clear();
 
     Bestelling bestellingFromDb = bestellingService.findBestellingById(1L);
-
     assertBestelling(bestellingFromDb, bestelling);
   }
 
   @Test
-  @Ignore("Should mock the RestTemplate but do this later....")
-  public void saveBestellingViewGivenBestellingExpectArtikelenAndBestellingViewSaved() {
-    bestellingService.saveBestellingSnapshot(bestelling);
+  public void saveBestellingSnapshotGivenBestellingExpectArtikelenAndBestellingSnapshotSaved() {
+    Artikel a = new Artikel();
+    a.setPrijs(12.0);
+
+    bestellingService.addBestelling(bestelling);
     entityManager.flush();
-    entityManager.clear();
+    Bestelling bestellingFromDb = bestellingService.findBestellingById(1L);
+
+    doReturn(a).when(restTemplate).getForObject(any(String.class), eq(Artikel.class));
+    bestellingService.saveBestellingSnapshot(bestellingFromDb);
+
+    Bestelling bestellingSnapshotFromDb = bestellingService.findBestellingById(1L);
+    assertBestelling(bestellingSnapshotFromDb, bestelling);
+    assertThat(bestelling.getArtikelenIds(), is(bestellingSnapshotFromDb.getArtikelenIds()));
   }
 
   // We should create our own matcher that does this.

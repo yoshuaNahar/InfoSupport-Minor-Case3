@@ -55,7 +55,7 @@ public class BestellingController {
   }
 
   @GetMapping("/bestelling/{id}")
-  public ResponseEntity getBestelling(@PathVariable("id") Long bestellingId) {
+  public ResponseEntity getBestellingById(@PathVariable("id") Long bestellingId) {
     logger.debug("getBestelling: {}", bestellingId);
 
     if (bestellingId == null) {
@@ -83,13 +83,20 @@ public class BestellingController {
   }
 
   @GetMapping("/bestelling/gebruiker/{id}")
-  public List<BestellingSnapshot> getBestellingenGebruiker(@PathVariable("id") int gebruikerId){
-    return bestellingService.getBestellingenGebruiker(gebruikerId);
+  public ResponseEntity getBestellingenGebruiker(@PathVariable("id") Integer gebruikerId) {
+    if (gebruikerId == null) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    return ResponseEntity.ok().body(bestellingService.getBestellingenGebruiker(gebruikerId));
   }
 
   @GetMapping("/bestelling/gebruiker/totaalwaarde/{id}")
-  public Double getTotaalwaardeBestellingen(@PathVariable("id") int gebruikerId){
-    System.out.println(bestellingService.getTotaalwaardeBestellingen(gebruikerId));
-    return bestellingService.getTotaalwaardeBestellingen(gebruikerId);
+  public ResponseEntity getTotaalwaardeBestellingen(@PathVariable("id") Integer gebruikerId){
+    if (gebruikerId == null) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    return ResponseEntity.ok().body(bestellingService.getTotaalwaardeBestellingen(gebruikerId));
   }
 }
