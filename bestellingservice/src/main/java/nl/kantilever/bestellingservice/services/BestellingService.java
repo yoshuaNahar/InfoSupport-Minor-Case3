@@ -12,7 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -50,11 +53,23 @@ public class BestellingService {
   }
 
   public BestellingSnapshot findById(Long bestellingId) {
-    return bestellingSnapshotRepository.findById(bestellingId);
+    return bestellingSnapshotRepository.findFirstById(bestellingId);
   }
 
-  public Iterable<BestellingSnapshot> findAll() {
-    return bestellingSnapshotRepository.findAll();
+  public List<BestellingSnapshot> findAll(Integer limit) {
+    Pageable pageLimit = new PageRequest(0, Integer.MAX_VALUE);
+    if (limit != null) {
+      pageLimit = new PageRequest(0, limit);
+    }
+    return bestellingSnapshotRepository.findAll(pageLimit).getContent();
+  }
+
+  public List<BestellingSnapshot> findAllByStatus(String status, Integer limit) {
+    Pageable pageLimit = new PageRequest(0, Integer.MAX_VALUE);
+    if (limit != null) {
+      pageLimit = new PageRequest(0, limit);
+    }
+    return bestellingSnapshotRepository.findAllByStatus(status, pageLimit).getContent();
   }
 
   public void saveBestellingSnapshot(Bestelling bestelling) {
@@ -84,27 +99,31 @@ public class BestellingService {
     logger.info("artikelen hier ophalen obv artikellenId, {}", bestelling);
   }
 
-  public List<BestellingSnapshot> getBestellingenGebruiker(int id) {
-    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository
-      .findBestellingenByGebruiker(id);
-    if (bestellingenByGebruiker != null) {
-      return bestellingenByGebruiker;
+  @Transactional
+  public void setBestellingIngepakt(Long bestellingId) {
+    bestellingSnapshotRepository.setStatusIngepakt(bestellingId);
+  }
+
+  public List<BestellingSnapshot> getBestellingenGebruiker(int id){
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
+    if(bestellingenByGebruiker != null){
+       return bestellingenByGebruiker;
     }
     return null;
   }
 
-  public Double getTotaalwaardeBestellingen(int id) {
+  public Double getTotaalwaardeBestellingen(int id){
     Double totaalWaarde = 0.0;
-    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository
-      .findBestellingenByGebruiker(id);
-    if (bestellingenByGebruiker != null) {
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
+    if(bestellingenByGebruiker != null){
       for (BestellingSnapshot bestellingSnapshot : bestellingenByGebruiker) {
-        if (!bestellingSnapshot.getStatus().equals("betaald")) {
+        if(!bestellingSnapshot.getStatus().equals("betaald")){
           totaalWaarde = totaalWaarde + bestellingSnapshot.getTotal();
         }
       }
     }
     return totaalWaarde;
   }
+
 
 }

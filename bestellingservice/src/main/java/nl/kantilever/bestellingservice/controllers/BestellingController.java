@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @CrossOrigin("*")
 @RestController
@@ -45,8 +45,22 @@ public class BestellingController {
     }
   }
 
+  @PutMapping("/bestelling/{id}/setIngepakt")
+  public ResponseEntity setBestellingIngepakt(@PathVariable("id") Long bestellingId) {
+    logger.debug("setBestellingIngepakt: {}", bestellingId);
+
+    try {
+      bestellingService.setBestellingIngepakt(bestellingId);
+
+      return new ResponseEntity(HttpStatus.OK); // 200 OK
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
+    }
+  }
+
   @GetMapping("/bestelling/{id}")
-  public ResponseEntity getBestelling(@PathVariable("id") Long bestellingId) {
+  public ResponseEntity getBestellingById(@PathVariable("id") Long bestellingId) {
     logger.debug("getBestelling: {}", bestellingId);
 
     if (bestellingId == null) {
@@ -63,20 +77,31 @@ public class BestellingController {
   }
 
   @GetMapping("/bestelling")
-  public ResponseEntity getAllBestellingen() {
+  public ResponseEntity getAllBestellingen(@RequestParam(value = "status", required = false) String status, @RequestParam(value = "limit", required = false) Integer limit) {
     logger.debug("getAllBestellingen");
 
-    return ResponseEntity.ok().body(bestellingService.findAll());
+    if (status == null || status.trim().isEmpty()) {
+      return ResponseEntity.ok().body(bestellingService.findAll(limit));
+    } else {
+      return ResponseEntity.ok().body(bestellingService.findAllByStatus(status, limit));
+    }
   }
 
   @GetMapping("/bestelling/gebruiker/{id}")
-  public List<BestellingSnapshot> getBestellingenGebruiker(@PathVariable("id") int gebruikerId){
-    return bestellingService.getBestellingenGebruiker(gebruikerId);
+  public ResponseEntity getBestellingenGebruiker(@PathVariable("id") Integer gebruikerId) {
+    if (gebruikerId == null) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    return ResponseEntity.ok().body(bestellingService.getBestellingenGebruiker(gebruikerId));
   }
 
   @GetMapping("/bestelling/gebruiker/totaalwaarde/{id}")
-  public Double getTotaalwaardeBestellingen(@PathVariable("id") int gebruikerId){
-    System.out.println(bestellingService.getTotaalwaardeBestellingen(gebruikerId));
-    return bestellingService.getTotaalwaardeBestellingen(gebruikerId);
+  public ResponseEntity getTotaalwaardeBestellingen(@PathVariable("id") Integer gebruikerId){
+    if (gebruikerId == null) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    return ResponseEntity.ok().body(bestellingService.getTotaalwaardeBestellingen(gebruikerId));
   }
 }
