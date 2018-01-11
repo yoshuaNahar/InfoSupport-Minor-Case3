@@ -14,7 +14,7 @@ public class LeverancierService {
   private ArtikelRepository artikelRepository;
 
   @Autowired
-  public void setArtikelRepository(ArtikelRepository artikelRepository, CategorieService categorieService) {
+  public void setArtikelRepository(ArtikelRepository artikelRepository) {
     this.artikelRepository = artikelRepository;
   }
 
