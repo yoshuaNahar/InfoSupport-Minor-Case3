@@ -1,5 +1,7 @@
 package nl.kantilever.accountservice;
 
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +23,8 @@ public class AccountServiceApp {
   }
 
   @Bean
-  public KeyFactory keyFactory() throws NoSuchAlgorithmException {
-    return KeyFactory.getInstance("RSA");
+  public JwtParser jwtParser() {
+    return Jwts.parser();
   }
 
 }

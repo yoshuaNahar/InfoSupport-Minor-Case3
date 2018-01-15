@@ -27,21 +27,21 @@ public class AuthController {
   @Autowired
   private BCryptPasswordEncoder bCrypt;
 
-  @Autowired
-  private KeyFactory keyFactory;
-
   @Value("${tokens.refreshToken.secret}")
   private String refreshTokenSecret;
 
   @Value("${tokens.accessToken.secret}")
   private String accessTokenSecret;
 
+  @Autowired
+  private JwtParser jwtParser;
+
   @PostMapping("/refresh")
   public ResponseEntity refresh(@RequestHeader("Refresh-Token") String refreshToken) {
     logger.debug("refresh: {}", refreshToken);
 
     try {
-      Jws<Claims> parsedRefreshToken = Jwts.parser().setSigningKey(this.refreshTokenSecret).parseClaimsJws(refreshToken);
+      Jws<Claims> parsedRefreshToken = jwtParser.setSigningKey(this.refreshTokenSecret).parseClaimsJws(refreshToken);
 
       // Retrieve user from database.
       long id =  Integer.valueOf(parsedRefreshToken.getBody().getSubject());
@@ -66,6 +66,8 @@ public class AuthController {
     } catch (SignatureException e) {
       return new ResponseEntity(HttpStatus.UNAUTHORIZED);
       //don't trust the JWT!
+    } catch (Exception e) {
+      return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -89,8 +91,6 @@ public class AuthController {
       if (!bCrypt.matches(account.getPassword(), accountFromDB.getPassword())) {
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
       }
-
-      System.out.println(this.refreshTokenSecret);
 
       // Build RefreshToken
       String refreshToken = Jwts.builder()
