@@ -14,6 +14,7 @@
 		<module>webwinkel</module>
     <module>replayservice</module>
     <module>bestellingservice</module>
+    <module>accountservice</module>
   </modules>
 
 	<parent>

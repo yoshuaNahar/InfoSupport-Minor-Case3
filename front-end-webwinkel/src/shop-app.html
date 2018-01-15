@@ -470,7 +470,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (!this.loadComplete) {
           Polymer.RenderStatus.afterNextRender(this, () => {
             Polymer.importHref(this.resolveUrl('lazy-resources.html'), () => {
-              // Register service worker if supported.
+              // Register services worker if supported.
               if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('service-worker.js', {scope: '/'});
               }
