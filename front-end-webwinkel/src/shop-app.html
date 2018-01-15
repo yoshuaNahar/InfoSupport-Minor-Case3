@@ -91,11 +91,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 40px;
       }
 
-      .account-container {
+      .inlog-container {
+        color: var(--app-primary-color);
+        text-align: center;
         position: relative;
-        width: 40px;
+        width: 70px;
       }
 
+      .register-container {
+        text-align: center;
+        position: relative;
+        width: 120px;
+      }
+
+      .register-container a {
+        color: var(--app-primary-color);
+      }
+
+      .inlog-container a {
+        color: var(--app-primary-color);
+      }
+      
       .announcer {
         position: fixed;
         height: 0;
@@ -177,10 +193,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .drawer-list a.iron-selected {
         color: black;
         font-weight: bold;
-      }
-
-      shop-cart-modal {
-        z-index: 3;
       }
 
       app-drawer {
@@ -294,16 +306,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </a>
         </div>
         <div main-title style="color: whitesmoke">Kantilever</div>
+        <div class="register-container">
+          <a href="/register">
+            <p>Registreren</p>
+          </a>
+        </div>
+        <div class="inlog-container">
+          <a href="/login">
+            <p>Login</p>
+          </a>
+        </div>
         <div class="cart-btn-container">
           <a href="/cart" tabindex="-1">
             <paper-icon-button icon="shopping-cart" aria-label$="Shopping cart: [[_computePluralizedQuantity(numItems)]]"></paper-icon-button>
           </a>
           <div class="cart-badge" aria-hidden="true" hidden$="[[!numItems]]">[[numItems]]</div>
-        </div>
-        <div class="account-container">
-          <a href="/register">
-            <paper-icon-button icon="account-circle" aria-label="register"></paper-icon-button>
-          </a>
         </div>
 
       </app-toolbar>
