@@ -37,19 +37,17 @@
 
       </div>
         <div class="input-fields vertical">
-          <iron-form id="loginForm">
-            <form>
+            <form on-submit="submit">
               <div>
-                <p>Gebruikersnaam: </p><input type="text" name="username" required>
+                <p>Gebruikersnaam: </p><input type="text" name="username" id="username" required>
               </div>
               <div>
-                <p>Password: </p><input type="password" name="password" required>
+                <p>Password: </p><input type="password" name="password" id="password" required>
               </div>
               <shop-button responsive>
-                <button on-click="submit">Login</button>
+                <input type="submit">
               </shop-button>
             </form>
-          </iron-form>
         </div>
     </div>
   </template>
@@ -68,37 +66,31 @@
         super.ready()
       }
 
-      submit(e) {
+      submit(event) {
         this.loginFailed = false;
-        this.$.loginForm.addEventListener('iron-form-presubmit', (event) => {
-          event.target.request.headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          };
-        });
-
-        this.$.loginForm.addEventListener('iron-form-submit', (event) => {
-          console.log(event)
-          fetch(environment.API.gebruikerservice + '/authenticate',
-            {
-              method: 'post',
-
-              body: JSON.stringify({
-                username: event.detail.username,
-                password: event.detail.password
-              })
+        event.preventDefault();
+        console.log(event)
+        fetch(environment.API.gebruikerservice + '/authenticate',
+          {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: this.shadowRoot.querySelector('#username').value,
+              password: this.shadowRoot.querySelector('#password').value
             })
-            .then(data => {
-              if(!data.ok) {
-                throw Error(data.statusText)
-              }
-              return data.json()
-            }).then(data => {
-            this.$.loginForm.submit();
-            this.dispatchEvent(new CustomEvent('login', data))
-          }).catch(error => {
-            this.loginFailed = true
           })
+          .then(data => {
+            if(!data.ok) {
+              throw Error(data.statusText)
+            }
+            return data.json()
+          }).then(data => {
+            this.dispatchEvent(new CustomEvent('login', data))
+        }).catch(error => {
+          this.loginFailed = true
         })
       }
     }

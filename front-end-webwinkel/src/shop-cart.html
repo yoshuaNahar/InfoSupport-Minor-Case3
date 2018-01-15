@@ -128,7 +128,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let artikelIds = []
         for(let artikel of this.cart) {
           for(let i = 0; i < artikel.quantity; i++) {
-            artikelIds.push(artikel.id)
+            artikelIds.push(artikel.item.Artikelnummer)
           }
         }
         fetch(environment.API.bestellingservice + '/bestelling', {
@@ -154,7 +154,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (visible) {
           // Notify the section's title
           this.dispatchEvent(new CustomEvent('change-section', {
-            bubbles: true, composed: true, detail: { title: 'Your cart' }}));
+            bubbles: true, composed: true, detail: { title: 'Winkelwagen' }}));
         }
       }
     }
