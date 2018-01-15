@@ -64,6 +64,10 @@
             <outputFormat>XML</outputFormat>
             <outputFormat>HTML</outputFormat>
           </outputFormats>
+          <excludedClasses>
+            <excludedClass>nl.kantilever.bestellingservice.config.Config</excludedClass>
+            <excludedClass>nl.kantilever.bestellingservice.entities.*</excludedClass>
+          </excludedClasses>
         </configuration>
       </plugin>
 		</plugins>
