@@ -14,13 +14,16 @@ public class GebruikerService {
   private GebruikerRepository gebruikerRepository;
 
   @Autowired
-  public GebruikerService(
-    GebruikerRepository gebruikerRepository) {
+  public GebruikerService(GebruikerRepository gebruikerRepository) {
     this.gebruikerRepository = gebruikerRepository;
   }
 
   public void createGebruiker(Gebruiker gebruiker){
     gebruikerRepository.save(gebruiker);
+  }
+
+  public List<Gebruiker> getGebruikersBoven500(){
+    return gebruikerRepository.findGebruikersBoven500();
   }
 
   public Gebruiker getGebruikerById(long id){

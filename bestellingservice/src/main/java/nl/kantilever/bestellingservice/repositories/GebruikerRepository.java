@@ -1,13 +1,14 @@
 package nl.kantilever.bestellingservice.repositories;
 
-import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.entities.Gebruiker;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface GebruikerRepository extends CrudRepository<Gebruiker, Long> {
   @Query("SELECT p FROM Gebruiker p WHERE (p.gebruikerId) = (:gebruikerId)")
   public Gebruiker find(@Param("gebruikerId") long gebruikerId);

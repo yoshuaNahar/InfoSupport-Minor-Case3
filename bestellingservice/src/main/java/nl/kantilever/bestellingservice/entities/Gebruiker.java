@@ -98,6 +98,16 @@ public class Gebruiker {
     this.huidigCrediet = huidigCrediet;
   }
 
+  public Gebruiker(long gebruikerId, String voornaam, String achternaam) {
+    this.gebruikerId = gebruikerId;
+    this.voornaam = voornaam;
+    this.achternaam = achternaam;
+  }
+
+  public Gebruiker() {
+
+  }
+
   @Override
   public String toString() {
     return "Gebruiker{" +

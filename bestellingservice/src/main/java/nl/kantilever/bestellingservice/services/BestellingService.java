@@ -1,25 +1,23 @@
 package nl.kantilever.bestellingservice.services;
 
-import java.util.ArrayList;
-import java.util.List;
 import nl.kantilever.bestellingservice.entities.Artikel;
 import nl.kantilever.bestellingservice.entities.Bestelling;
 import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.entities.Gebruiker;
-import nl.kantilever.bestellingservice.repositories.ArtikelenRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;
-import nl.kantilever.bestellingservice.repositories.GebruikerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BestellingService {
@@ -28,10 +26,8 @@ public class BestellingService {
 
   private BestellingRepository bestellingRepository;
   private BestellingSnapshotRepository bestellingSnapshotRepository;
-  private ArtikelenRepository artikelenRepository;
-  private GebruikerRepository gebruikerRepository;
+  private ArtikelService artikelService;
   private GebruikerService gebruikerService;
-
   private RestTemplate restTemplate;
 
   @Value("${urls.webwinkel}")
@@ -41,16 +37,14 @@ public class BestellingService {
   public BestellingService(
     BestellingRepository bestellingRepository,
     BestellingSnapshotRepository bestellingSnapshotRepository,
-    ArtikelenRepository artikelenRepository,
     RestTemplate restTemplate,
     GebruikerService gebruikerService,
-    GebruikerRepository gebruikerRepository) {
+    ArtikelService artikelService) {
     this.bestellingRepository = bestellingRepository;
     this.bestellingSnapshotRepository = bestellingSnapshotRepository;
-    this.artikelenRepository = artikelenRepository;
     this.restTemplate = restTemplate;
     this.gebruikerService = gebruikerService;
-    this.gebruikerRepository = gebruikerRepository;
+    this.artikelService = artikelService;
   }
 
   public void addBestelling(Bestelling bestelling) {
@@ -92,7 +86,7 @@ public class BestellingService {
 
     logger.info("artikkelen list: {}", artikelen);
 
-    artikelenRepository.save(artikelen);
+    artikelService.saveArtikelen(artikelen);
     Gebruiker gebruiker = gebruikerService.getGebruikerById(bestelling.getGebruikerId());
     Double bestellingTotal = artikelen.stream().mapToDouble(Artikel::getPrijs).sum();
 
@@ -135,9 +129,7 @@ public class BestellingService {
   }
 
   public List<Gebruiker> getGebruikersMetBestellingenBoven500() {
-    List<Gebruiker> gebruikers = (List<Gebruiker>) gebruikerRepository.findGebruikersBoven500();
-    System.out.println(gebruikers.get(0).toString());
-    return gebruikers;
+    return gebruikerService.getGebruikersBoven500();
   }
 
 }
