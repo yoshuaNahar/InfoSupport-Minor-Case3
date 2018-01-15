@@ -90,27 +90,27 @@ public class BestellingServiceTest {
 
   @Test
   public void addBestellingGivenBestellingExpectBestellingViewSavedCorrectly() {
-    Mockito.when(bestellingRepository.findOne(1l)).thenReturn(bestelling);
+    Mockito.when(bestellingRepository.findOne(Mockito.anyLong())).thenReturn(bestelling);
     bestellingService.addBestelling(bestelling);
-    Bestelling bestellingFromDb = bestellingService.findBestellingById(1L);
+    Bestelling bestellingFromDb = bestellingService.findBestellingById(Mockito.anyLong());
     assertBestelling(bestellingFromDb, bestelling);
   }
 
   @Test
   public void saveBestellingSnapshotGivenBestellingExpectBestellingAndBestellingsnapshotSavedAndSameGebruikerId() {
-    Mockito.when(bestellingRepository.findOne(1l)).thenReturn(bestelling);
-    Mockito.when(bestellingSnapshotRepository.findFirstById(1L)).thenReturn(bestellingSnapshot);
-    Mockito.when(gebruikerService.getGebruikerById(Mockito.anyLong())).thenReturn(new Gebruiker(1, "Thom", "van Oorschot"));
+    Mockito.when(bestellingRepository.findOne(Mockito.anyLong())).thenReturn(bestelling);
+    Mockito.when(bestellingSnapshotRepository.findFirstById(Mockito.anyLong())).thenReturn(bestellingSnapshot);
+    Mockito.when(gebruikerService.getGebruikerById(Mockito.anyLong())).thenReturn(new Gebruiker(Mockito.anyLong(), "Thom", "van Oorschot"));
 
     bestellingService.addBestelling(bestelling);
-    Bestelling bestellingFromDb = bestellingService.findBestellingById(1L);
+    Bestelling bestellingFromDb = bestellingService.findBestellingById(Mockito.anyLong());
 
     Artikel a = new Artikel();
     a.setPrijs(12.0);
     doReturn(a).when(restTemplate).getForObject(any(String.class), eq(Artikel.class));
     bestellingService.saveBestellingSnapshot(bestellingFromDb);
 
-    BestellingSnapshot bestellingSnapshotFromDb = bestellingService.findById(1L);
+    BestellingSnapshot bestellingSnapshotFromDb = bestellingService.findById(Mockito.anyLong());
     assertBestelling(bestellingSnapshotFromDb, bestelling);
   }
 
