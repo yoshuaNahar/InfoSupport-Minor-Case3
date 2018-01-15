@@ -305,6 +305,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-icon-button icon="account-circle" aria-label="register"></paper-icon-button>
           </a>
         </div>
+
       </app-toolbar>
 
       <!-- Lazy-create the tabs for larger screen sizes. -->
@@ -379,6 +380,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: 0
         },
 
+        authenticated: {
+          type: Boolean
+        },
+
         _shouldShowTabs: {
           computed: '_computeShouldShowTabs(page, smallScreen)'
         },
@@ -413,6 +418,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.addEventListener('announce', (e)=>this._onAnnounce(e));
         this.addEventListener('dom-change', (e)=>this._domChange(e));
         this.addEventListener('show-invalid-url-warning', (e)=>this._onFallbackSelectionTriggered(e));
+        this.addEventListener('login', (e) => this._login(e));
         // listen for online/offline
         Polymer.RenderStatus.afterNextRender(this, () => {
           window.addEventListener('online', (e)=>this._notifyNetworkStatus(e));
@@ -595,6 +601,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _computePluralizedQuantity(quantity) {
         return quantity + ' ' + (quantity === 1 ? 'item' : 'items');
       }
+
+    _login(e) {
+      console.log(e)
+    }
 
     }
 
