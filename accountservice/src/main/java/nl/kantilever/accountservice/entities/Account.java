@@ -14,6 +14,9 @@ public class Account {
   private String password;
   private String role = "USER";
 
+  @OneToOne(mappedBy = "account")
+  private Gebruiker gebruiker;
+
   public String getUsername() {
     return username;
   }

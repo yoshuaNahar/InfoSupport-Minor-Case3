@@ -32,28 +32,28 @@
 
     <h1>Registreer een account</h1>
 
-    <form>
+    <form id="registration-form" on-submit="submit">
       <div class="form-div">
         Aanhef*<br>
-        <input type="radio" name="salutation" value="[[salutation]]"/>De heer
-        <input type="radio" name="salutation" value="[[salutation]]"/>Mevrouw<br>
+        <input type="radio" id="salutation0" name="salutation" value="De Heer" required/>De heer
+        <input type="radio" id="salutation1" name="salutation" value="Mevrouw" required/>Mevrouw<br>
         <br>
 
         <div class="row">
           <div>Voornaam*<br>
-            <input type="text" id="firstName" value="[[firstName]]" required>
+            <input type="text" id="firstName" required>
           </div>
           <div style="padding-left: 5px; padding-right: 5px;">Tussenvoegsel<br>
-            <input type="text" id="prefix" value="[[prefix]]">
+            <input type="text" id="prefix">
           </div>
           <div>Achternaam*<br>
-            <input type="text" id="suffix" value="[[suffix]]" required>
+            <input type="text" id="lastName" required>
           </div>
         </div>
         <br>
 
         Telefoonnummer*<br>
-        <input type="tel" name="telephone" value="[[telephone]]" required/>
+        <input type="tel" id="telephone" name="telephone" required/>
 
       </div>
 
@@ -62,12 +62,12 @@
         <div class="row">
           <div style="padding-right: 5px;">
             Straat*<br>
-            <input type="text" name="street" value="[[street]]" required/><br>
+            <input type="text" id="street" name="street" required/><br>
           </div>
 
           <div>
             Huisnummer*<br>
-            <input type="number" min="1" name="streetNumber" value="[[streetNumber]]" required/><br>
+            <input type="number" min="1" id="streetNumber" name="streetNumber" required/><br>
           </div>
         </div>
         <br>
@@ -75,30 +75,30 @@
         <div class="row">
           <div style="padding-right: 5px;">
             Postcode*<br>
-            <input type="text" minlength="6" maxlength="6" name="zipCode" value="[[zipCode]]" required/>
+            <input type="text" minlength="6" maxlength="6" id="zipCode" name="zipCode" required/>
           </div>
           <div>
             Stad*<br>
-            <input type="text" name="city" value="[[city]]" required/>
+            <input type="text" id="city" name="city" required/>
           </div>
         </div>
         <br>
 
         Land*<br>
-        <input type="text" name="country" value="[[country]]" required/><br>
+        <input type="text" id="country" name="country" required/><br>
       </div>
 
       <div class="form-div">
         E-mailadres*<br>
-        <input type="email" name="email" value="[[email]]" required/><br>
+        <input type="email" id="email" name="email" required/><br>
         <br>
 
         Wachtwoord*<br>
-        <input type="password" name="password" value="[[password]]" required/><br>
+        <input type="password" id="password" name="password" required/><br>
       </div>
 
-      <button>Annuleer</button>
-      <button style="float: right" onsubmit="test">Registreer</button>
+      <button on-click="goToHome">Annuleer</button>
+      <button style="float: right;">Registreer</button>
     </form>
 
 
@@ -110,8 +110,61 @@
         return 'shop-register';
       }
 
-      test() {
-        console.log("test");
+      goToHome() {
+        window.history.pushState({}, null, '/');
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      }
+
+      goToLogin() {
+        window.history.pushState({}, null, '/login');
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      }
+
+      submit(event) {
+        event.preventDefault();
+
+        let account = {
+          username: this.shadowRoot.querySelector('#email').value,
+          password: this.shadowRoot.querySelector('#password').value
+        };
+
+        let salutation;
+        let firstSalutationField = this.shadowRoot.querySelector('#salutation0');
+        if (firstSalutationField.checked) {
+          salutation = firstSalutationField.value;
+        } else {
+          salutation = this.shadowRoot.querySelector('#salutation1').value;
+        }
+
+        let gebruiker = {
+          account: account,
+          aanhef: salutation,
+          voornaam: this.shadowRoot.querySelector('#firstName').value,
+          tussenvoegsel: this.shadowRoot.querySelector('#prefix').value,
+          achternaam: this.shadowRoot.querySelector('#lastName').value,
+          straatnaam: this.shadowRoot.querySelector('#street').value,
+          huisnummer: this.shadowRoot.querySelector('#streetNumber').value,
+          postcode: this.shadowRoot.querySelector('#zipCode').value,
+          stad: this.shadowRoot.querySelector('#city').value,
+          land: this.shadowRoot.querySelector('#country').value,
+          telefoonnummer: this.shadowRoot.querySelector('#telephone').value,
+        };
+
+        let headers = new Headers({'content-type': 'application/json'});
+        let url = environment.API.accountservice + "/gebruiker";
+        fetch(url, {method: 'POST', body: JSON.stringify(gebruiker), headers: headers}).then(data => {
+          if (data.status >= 300) { // Error Response
+            return data.text() // Check if a special response was given.
+          } else {
+            this.goToLogin();
+          }
+        }).then(message => {
+          if (message === "UsernameTaken") {
+            alert("Er bestaat al een account met het E-mailadres \'" + account.username + "\'")
+          }
+        }).catch(err => {
+          alert(err);
+        });
       }
 
     }
