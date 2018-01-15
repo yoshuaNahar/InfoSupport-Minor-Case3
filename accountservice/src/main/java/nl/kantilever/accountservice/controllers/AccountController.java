@@ -42,9 +42,9 @@ public class AccountController {
       }
 
       account.setPassword(bCrypt.encode(account.getPassword()));
-      accountService.save(account);
+      long accountId = accountService.save(account);
 
-      return new ResponseEntity(HttpStatus.OK);
+      return ResponseEntity.status(HttpStatus.OK).body(accountId);
     } catch (Exception e) {
       e.printStackTrace();
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request

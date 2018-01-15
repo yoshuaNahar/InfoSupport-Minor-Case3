@@ -23,8 +23,8 @@ public class AccountService {
     return this.accountRepository.findById(id);
   }
 
-  public void save(Account account) {
-    this.accountRepository.save(account);
+  public long save(Account account) {
+    return this.accountRepository.save(account).getId();
   }
 
 }

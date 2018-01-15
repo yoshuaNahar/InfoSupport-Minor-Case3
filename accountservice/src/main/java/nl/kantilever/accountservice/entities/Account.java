@@ -12,7 +12,7 @@ public class Account {
   @Column(unique = true)
   private String username;
   private String password;
-  private String role;
+  private String role = "USER";
 
   public String getUsername() {
     return username;

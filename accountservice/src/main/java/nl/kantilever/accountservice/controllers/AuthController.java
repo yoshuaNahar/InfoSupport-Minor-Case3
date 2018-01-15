@@ -10,10 +10,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.KeyFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
@@ -26,40 +27,42 @@ public class AuthController {
   @Autowired
   private BCryptPasswordEncoder bCrypt;
 
-  @Value("tokens_refreshToken_privateKey")
-  private String refreshTokenPrivateKey;
+  @Autowired
+  private KeyFactory keyFactory;
 
-  @Value("tokens_refreshToken_publicKey")
-  private String refreshTokenPublicKey;
+  @Value("${tokens.refreshToken.secret}")
+  private String refreshTokenSecret;
 
-  @Value("tokens_accessToken_privateKey")
-  private String accessTokenPrivateKey;
+  @Value("${tokens.accessToken.secret}")
+  private String accessTokenSecret;
 
-  @PostMapping
-  public ResponseEntity refresh(@RequestBody String refreshToken) {
+  @PostMapping("/refresh")
+  public ResponseEntity refresh(@RequestHeader("Refresh-Token") String refreshToken) {
+    logger.debug("refresh: {}", refreshToken);
+
     try {
-      Jws<Claims> parsedRefreshToken = Jwts.parser().setSigningKey(this.refreshTokenPublicKey).parseClaimsJws(refreshToken);
-      //OK, we can trust this JWT
-
-      System.out.println(parsedRefreshToken);
+      Jws<Claims> parsedRefreshToken = Jwts.parser().setSigningKey(this.refreshTokenSecret).parseClaimsJws(refreshToken);
 
       // Retrieve user from database.
-//      long id =  parsedRefreshToken.getClaims();
-//      Account account = accountService.findById(id);
-//
-//      // Configure claims
-//      Map<String, Object> claims = new HashMap();
-//      claims.put("role", account.getRole());
-//
-//      // Build AccessToken
-//      String accessToken = Jwts.builder()
-//        .setSubject(account.getId() + "")
-//        .addClaims(claims)
-//        .signWith(SignatureAlgorithm.RS256, this.accessTokenPrivateKey)
-//        .compact();
-//
-//      return ResponseEntity.ok().body(accessToken);
-      return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
+      long id =  Integer.valueOf(parsedRefreshToken.getBody().getSubject());
+      Account account = accountService.findById(id);
+
+      if (account == null) {
+        return new ResponseEntity(HttpStatus.UNAUTHORIZED); // No account for this subject.
+      }
+
+      // Configure claims
+      HashMap<String, Object> claims = new HashMap();
+      claims.put("role", account.getRole());
+
+      // Build AccessToken
+      String accessToken = Jwts.builder()
+        .setSubject(account.getId() + "")
+        .addClaims(claims)
+        .signWith(SignatureAlgorithm.HS256, this.accessTokenSecret)
+        .compact();
+
+      return ResponseEntity.ok().body(accessToken);
     } catch (SignatureException e) {
       return new ResponseEntity(HttpStatus.UNAUTHORIZED);
       //don't trust the JWT!
@@ -83,16 +86,16 @@ public class AuthController {
         return new ResponseEntity(HttpStatus.NOT_FOUND); // 404 Not Found
       }
 
-      System.out.println(accountFromDB);
-
       if (!bCrypt.matches(account.getPassword(), accountFromDB.getPassword())) {
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
       }
 
+      System.out.println(this.refreshTokenSecret);
+
       // Build RefreshToken
       String refreshToken = Jwts.builder()
         .setSubject(accountFromDB.getId() + "")
-        .signWith(SignatureAlgorithm.RS256, this.refreshTokenPrivateKey)
+        .signWith(SignatureAlgorithm.HS256, this.refreshTokenSecret)
         .compact();
 
       return ResponseEntity.ok().body(refreshToken); // 200 OK
@@ -101,6 +104,5 @@ public class AuthController {
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
     }
   }
-
 
 }

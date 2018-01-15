@@ -5,6 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+
 @SpringBootApplication
 public class AccountServiceApp {
 
@@ -15,6 +18,11 @@ public class AccountServiceApp {
   @Bean
   public BCryptPasswordEncoder bCryptPasswordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public KeyFactory keyFactory() throws NoSuchAlgorithmException {
+    return KeyFactory.getInstance("RSA");
   }
 
 }
