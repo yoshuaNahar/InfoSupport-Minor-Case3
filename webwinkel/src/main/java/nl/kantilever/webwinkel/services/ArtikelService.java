@@ -31,11 +31,8 @@ public class ArtikelService {
     return artikelRepository;
   }
 
-
   @Autowired
   private EntityManager entityManager;
-
-
 
   @Transactional
   public void save(Artikel artikel) {
@@ -63,7 +60,9 @@ public class ArtikelService {
     return artikelRepository.findArtikelenByLeverancier(leverancier);
   }
 
-
+  public List<Artikel> findArtikelenByCategorieID(int categorieID) {
+    return artikelRepository.findArtikelenByCategorieID(categorieID);
+  }
 
   public List<Artikel> findArtikelenByBeschrijving(String beschrijving) {
     return artikelRepository.findArtikelenByBeschrijving(beschrijving);

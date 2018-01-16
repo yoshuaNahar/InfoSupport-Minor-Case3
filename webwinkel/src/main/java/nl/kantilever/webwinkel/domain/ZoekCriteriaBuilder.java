@@ -3,10 +3,7 @@ package nl.kantilever.webwinkel.domain;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,18 +12,24 @@ import java.util.List;
  */
 public class ZoekCriteriaBuilder {
 
-  private final List<ZoekCriterium> zoekCriteria;
+  private List<ZoekCriterium> zoekCriteria;
+
+  private List<Categorie> categorieen;
+
+  private int minPrice = 0;
+  private int maxPrice = 999999999;
 
   public ZoekCriteriaBuilder() {
     zoekCriteria = new ArrayList<ZoekCriterium>();
+    categorieen = new ArrayList<Categorie>();
   }
 
   public void voegZoekCriteriumToe(String key, String operation, Object value) {
     zoekCriteria.add(new ZoekCriterium(key, operation, value));
   }
 
-  public void voegZoekCriteriumToe(String key, String operation, Object value, boolean isAnd) {
-    zoekCriteria.add(new ZoekCriterium(key, operation, value, isAnd));
+  public void voegCategorieToe(Categorie categorie) {
+    categorieen.add(categorie);
   }
 
   public Specification<Artikel> build() { //Bouwt een specificatie met zoekcriteria en bijbehorend compositietype (AND/OR)
@@ -39,12 +42,32 @@ public class ZoekCriteriaBuilder {
       specs.add(new ArtikelSpecificatie(param));
     }
 
-    Specification<Artikel> result = null;
-    for (int i = 0; i < specs.size(); i++) {
-      result = Specifications.where(result).or(specs.get(i));
+    Specification<Artikel> result = specs.get(0);
+    for (int i = 1; i < specs.size(); i++) {
+      if (categorieen.size() > 0) {
+        result = Specifications.where(result).or(specs.get(i)).and(isArtikelInCategorieen(categorieen));
+      } else {
+        result = Specifications.where(result).or(specs.get(i));
+      }
     }
-
-
     return result;
   }
+
+  public static Specification<Artikel> isArtikelInCategorieen(List<Categorie> categorieen) {
+    return new Specification<Artikel>() {
+      public Predicate toPredicate(Root<Artikel> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        final Path<Categorie> group = root.get("categorieen");
+        return group.in(categorieen);
+      }
+    };
+  }
+//
+//  public static Specification<Artikel> isArtikelInPriceRange(int minPrice, int maxPrice) {
+//    return new Specification<Artikel>() {
+//      public Predicate toPredicate(Root<Artikel> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+//        final Path<Categorie> group = root.get("categorieen");
+//        return group.(categorieen);
+//      }
+//    };
+//  }
 }

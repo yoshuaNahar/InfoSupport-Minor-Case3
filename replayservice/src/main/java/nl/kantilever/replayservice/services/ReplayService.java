@@ -18,7 +18,7 @@ import java.util.List;
 public class ReplayService {
 
   private RestTemplate restTemplate;
-  private static final String REST_SERVICE_URI = "http://dormin02:8922/api/ReplayEvents";
+  private static final String REST_SERVICE_URI = "http://192.168.178.158:8922/api/ReplayEvents";
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   @Autowired

@@ -25,6 +25,7 @@ import nl.kantilever.webwinkel.domain.*;
 import nl.kantilever.webwinkel.repositories.ArtikelRepository;
 import nl.kantilever.webwinkel.services.ArtikelService;
 import nl.kantilever.webwinkel.services.CategorieService;
+import nl.kantilever.webwinkel.services.LeverancierService;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,6 +39,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -50,6 +52,9 @@ import org.springframework.test.web.servlet.MockMvc;
 public class ArtikelRestControllerTest {
   @MockBean
   private CategorieService categorieService;
+
+  @MockBean
+  private LeverancierService leverancierService;
 
   @MockBean
   private ArtikelService artikelService;
@@ -257,5 +262,13 @@ public class ArtikelRestControllerTest {
       .andExpect(content().contentType("application/json;charset=UTF-8"))
       .andExpect(content().json((mapper.writeValueAsString(artikelArray))));
   }
+//  @Test
+//  public void getArtikelenBeforeLeverbaarTotDateExpectOkAnd2ArtikelenAsJson() throws Exception {
+//
+//  }
+//  @RequestMapping(value = "artikelen/leverbaar_tot/{leverbaar_tot}", method = RequestMethod.GET)
+//  public List<Artikel> findArtikelenLeverbaarTot(Model model, @PathVariable Date leverbaar_tot) {
+//    return artikelService.findArtikelenLeverbaarTot(leverbaar_tot);
+//  }
 }
 

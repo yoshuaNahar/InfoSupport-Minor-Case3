@@ -54,7 +54,7 @@ public class Artikel {
   String leverancier;
 
   @JsonProperty("Categorieen")
-  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Categorie> categorieen;
 
   public Artikel(String naam) {

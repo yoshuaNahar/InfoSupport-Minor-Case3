@@ -22,6 +22,8 @@ public interface ArtikelRepository extends CrudRepository<Artikel, String>, JpaS
   @Query(value = "select * from artikelen where leverancier like %:leverancier%", nativeQuery = true)
   List<Artikel> findArtikelenByLeverancier(@Param("leverancier") String leverancier);
 
+  @Query(value = "select * FROM artikelen JOIN artikelen_categorieen ON artikelen.artikelnummer where artikelen_categorieen.artikelen_artikelnummer = :categorieID", nativeQuery = true)
+  List<Artikel> findArtikelenByCategorieID(@Param("categorieID") int categorieID);
 
   @Query(value = "select * from artikelen where beschrijving like %:beschrijving%", nativeQuery = true)
   List<Artikel> findArtikelenByBeschrijving(@Param("beschrijving") String beschrijving);

@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin
 @RestController
 public class BestellingController {
@@ -27,30 +29,74 @@ public class BestellingController {
   public ResponseEntity addBestelling(@RequestBody Bestelling bestelling) {
     logger.debug("addBestelling: {}", bestelling);
 
-    bestellingService.addBestelling(bestelling);
+    try {
+      bestellingService.addBestelling(bestelling);
 
-    bestellingService.saveBestellingSnapshot(bestelling);
+      bestellingService.saveBestellingSnapshot(bestelling);
 
-    return new ResponseEntity(HttpStatus.CREATED); // 201 Created
+      return new ResponseEntity(HttpStatus.CREATED); // 201 Created
+    } catch (Exception e) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
+    }
+  }
+
+  @PutMapping("/bestelling/{id}/setIngepakt")
+  public ResponseEntity setBestellingIngepakt(@PathVariable("id") Long bestellingId) {
+    logger.debug("setBestellingIngepakt: {}", bestellingId);
+
+    try {
+      bestellingService.setBestellingIngepakt(bestellingId);
+
+      return new ResponseEntity(HttpStatus.OK); // 200 OK
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
+    }
   }
 
   @GetMapping("/bestelling/{id}")
-  public BestellingSnapshot getBestelling(@PathVariable("id") Long bestellingId) {
+  public ResponseEntity getBestellingById(@PathVariable("id") Long bestellingId) {
     logger.debug("getBestelling: {}", bestellingId);
 
-    return bestellingService.findById(bestellingId);
+    if (bestellingId == null) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    BestellingSnapshot bestellingSnapshot = bestellingService.findById(bestellingId);
+
+    if (bestellingSnapshot == null) {
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+
+    return new ResponseEntity<>(bestellingSnapshot, HttpStatus.OK );
   }
 
   @GetMapping("/bestelling")
-  public ResponseEntity getAllBestellingen() {
+  public ResponseEntity getAllBestellingen(@RequestParam(value = "status", required = false) String status, @RequestParam(value = "limit", required = false) Integer limit) {
     logger.debug("getAllBestellingen");
 
-    return ResponseEntity.ok().body(bestellingService.findAll());
+    if (status == null || status.trim().isEmpty()) {
+      return ResponseEntity.ok().body(bestellingService.findAll(limit));
+    } else {
+      return ResponseEntity.ok().body(bestellingService.findAllByStatus(status, limit));
+    }
   }
 
-  @GetMapping("/test")
-  public void test() {
-    bestellingService.getBestellingenGebruiker(1);
+  @GetMapping("/bestelling/gebruiker/{id}")
+  public ResponseEntity getBestellingenGebruiker(@PathVariable("id") Integer gebruikerId) {
+    if (gebruikerId == null) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    return ResponseEntity.ok().body(bestellingService.getBestellingenGebruiker(gebruikerId));
   }
 
+  @GetMapping("/bestelling/gebruiker/totaalwaarde/{id}")
+  public ResponseEntity getTotaalwaardeBestellingen(@PathVariable("id") Integer gebruikerId){
+    if (gebruikerId == null) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
+    return ResponseEntity.ok().body(bestellingService.getTotaalwaardeBestellingen(gebruikerId));
+  }
 }

@@ -27,7 +27,7 @@ public class Categorie {
   private String afbeeldingURL;
 
   @JsonIgnore
-  @ManyToMany(fetch = FetchType.EAGER, mappedBy = "categorieen")
+  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categorieen")
   private List<Artikel> artikelen;
 
   public Categorie() {

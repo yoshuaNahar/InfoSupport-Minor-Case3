@@ -92,3 +92,12 @@ services:
          - DIRECTORY=front-end-commercieel-manager
      ports:
        - "8933:80"
+
+  de-jong-front-end-commercieel-manager:
+    build:
+      context: .
+      dockerfile: ops/Polymer/Dockerfile
+      args:
+        - DIRECTORY=front-end-inpakken
+    ports:
+      - "8934:80"

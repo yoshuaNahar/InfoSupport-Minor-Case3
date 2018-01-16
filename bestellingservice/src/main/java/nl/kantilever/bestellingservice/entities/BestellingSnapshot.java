@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * BestellingSnapshot is used because we want a snapshot of the "artikellen" with the price
+ * BestellingSnapshot is used because we want a snapshot of the "artikelen" with the price
  * of that moment and not the current price.
  */
 @Entity
@@ -34,8 +34,7 @@ public class BestellingSnapshot {
   private Double total;
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  @Column(name = "date", nullable = false, insertable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-//  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "geplaatstOp", nullable = false, insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   private LocalDateTime geplaatstOp;
 
   public BestellingSnapshot() {
