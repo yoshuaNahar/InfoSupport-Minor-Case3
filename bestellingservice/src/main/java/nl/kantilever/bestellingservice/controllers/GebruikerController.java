@@ -1,3 +1,4 @@
+/*
 package nl.kantilever.bestellingservice.controllers;
 
 import nl.kantilever.bestellingservice.entities.Gebruiker;
@@ -36,3 +37,4 @@ public class GebruikerController {
     }
   }
 }
+*/
