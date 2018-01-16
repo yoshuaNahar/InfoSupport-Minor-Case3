@@ -1,5 +1,9 @@
 package nl.kantilever.bestellingservice.services;
 
+import java.util.List;
+
+import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
+import nl.kantilever.bestellingservice.entities.Gebruiker;
 import nl.kantilever.bestellingservice.repositories.GebruikerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,17 +14,24 @@ public class GebruikerService {
   private GebruikerRepository gebruikerRepository;
 
   @Autowired
-  public GebruikerService(
-    GebruikerRepository gebruikerRepository) {
+  public GebruikerService(GebruikerRepository gebruikerRepository) {
     this.gebruikerRepository = gebruikerRepository;
   }
 
-//  // TODO: You were here. Set de gebruiker in de bestellingService.
-//  // What Esther sees...
-//  public List<Gebruiker> getGebruikersMetBestellingenBoven500() {
-//    List<Gebruiker> gebruikers = (List<Gebruiker>) gebruikerRepository.findAll();
-//    for (Gebruiker gebruiker : gebruikers) {
-//    }
-//  }
+  public void createGebruiker(Gebruiker gebruiker){
+    gebruikerRepository.save(gebruiker);
+  }
+
+  public List<Gebruiker> getGebruikersBoven500(){
+    return gebruikerRepository.findGebruikersBoven500();
+  }
+
+  public Gebruiker getGebruikerById(long id){
+    return gebruikerRepository.findOne(id);
+  }
+
+  public void updateGebruiker(Gebruiker gebruiker){
+    gebruikerRepository.save(gebruiker);
+  }
 
 }
