@@ -20,19 +20,18 @@ pipeline {
             }
           }
         }
-      }
-    }
-
-    stage('Polymer Test') {
-      steps {
-        dir('front-end-webwinkel') {
-          // sh 'polymer test'
-        }
-        dir('front-end-commercieel-manager') {
-          // sh 'polymer test'
-        }
-        dir('front-end-inpakken') {
-          // sh 'polymer test'
+        stage('Polymer Test') {
+          steps {
+            dir('front-end-webwinkel') {
+              // sh 'polymer test'
+            }
+            dir('front-end-commercieel-manager') {
+              // sh 'polymer test'
+            }
+            dir('front-end-inpakken') {
+              // sh 'polymer test'
+            }
+          }
         }
       }
     }
