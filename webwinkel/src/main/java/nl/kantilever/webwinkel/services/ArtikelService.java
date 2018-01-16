@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +26,16 @@ public class ArtikelService {
     this.artikelRepository = artikelRepository;
     this.categorieService = categorieService;
   }
+
+  public ArtikelRepository getArtikelRepository() {
+    return artikelRepository;
+  }
+
+
+  @Autowired
+  private EntityManager entityManager;
+
+
 
   @Transactional
   public void save(Artikel artikel) {
@@ -64,5 +79,13 @@ public class ArtikelService {
 
   public List<Artikel> findArtikelenLeverbaarTot(Date leverbaar_tot) {
     return artikelRepository.findArtikelenLeverbaarTot(leverbaar_tot);
+  }
+
+  public EntityManager getEntityManager() {
+    return entityManager;
+  }
+
+  public void setEntityManager(EntityManager entityManager) {
+    this.entityManager = entityManager;
   }
 }

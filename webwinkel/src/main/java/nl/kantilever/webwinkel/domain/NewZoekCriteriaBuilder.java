@@ -1,5 +1,7 @@
 package nl.kantilever.webwinkel.domain;
 
+import nl.kantilever.webwinkel.services.ArtikelService;
+import nl.kantilever.webwinkel.services.CategorieService;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 
@@ -14,51 +16,63 @@ import java.util.List;
  * Created by Tinne on 9-1-2018.
  * Maakt een WHERE clause in voorbereiding voor een query in de vorm van een Predicate
  */
-public class ZoekCriteriaBuilder {
+public class NewZoekCriteriaBuilder {
+  private List<ZoekCriterium> artikelSpecifications;
+  private List<ZoekCriterium> categorieSpecifications;
+  private List<ZoekCriterium> priceSpecifications;
 
-  private final List<ZoekCriterium> zoekCriteria;
+  ArtikelService artikelService;
+  CategorieService categorieService;
 
-  public ZoekCriteriaBuilder() {
-    zoekCriteria = new ArrayList<ZoekCriterium>();
+  List<Predicate> predicates;
+
+  CriteriaBuilder qb;
+  CriteriaQuery cq;
+  Root<Artikel> artikel;
+
+  public NewZoekCriteriaBuilder(ArtikelService artikelService, CategorieService categorieService) {
+    this.artikelService = artikelService;
+    this.categorieService = categorieService;
+
+    artikelSpecifications = new ArrayList<>();
+    categorieSpecifications = new ArrayList<>();
+    priceSpecifications = new ArrayList<>();
+    predicates = new ArrayList<>();
+
+    qb = artikelService.getEntityManager().getCriteriaBuilder();
+    cq = qb.createQuery();
+    artikel = cq.from(Artikel.class);
   }
 
-  public void voegZoekCriteriumToe(String key, String operation, Object value) {
-    zoekCriteria.add(new ZoekCriterium(key, operation, value));
+  public void addArtikelSpecification(ZoekCriterium specification) {
+    artikelSpecifications.add(specification);
+
+    predicates.add(qb.equal(artikel.get(specification.getKey()), specification.getWaarde()));
   }
 
-  public Specification<Artikel> build() { //Bouwt een specificatie met zoekcriteria en bijbehorend compositietype (AND/OR)
-    if (zoekCriteria.size() == 0) {
-      return null;
-    }
+  public void addCategorieSpecification(ZoekCriterium specification) {
+    categorieSpecifications.add(specification);
 
-    List<Specification<Artikel>> specs = new ArrayList<Specification<Artikel>>();
-    for (ZoekCriterium param : zoekCriteria) {
-      specs.add(new ArtikelSpecificatie(param));
-    }
-
-    Specification<Artikel> result = specs.get(0);
-    for (int i = 1; i < specs.size(); i++) {
-      result = Specifications.where(result).or(specs.get(i));
-    }
-
-//    Specification<Artikel> result = specs.get(0);
-//
-//    for (int i = 1; i < specs.size(); i++) {
-//      ZoekCriterium currentZoekCriterium = ((ArtikelSpecificatie)result).getZoekCriterium();
-//
-//      if (currentZoekCriterium.getKey().equalsIgnoreCase("leverancier")) {
-//        result = Specifications.where(result).or(specs.get(i));
-//      } else {
-//        result = Specifications.where(result).and(specs.get(i));
-//      }
-//    }
-
-
-    return result;
+    predicates.add(qb.equal(artikel.get(specification.getKey()), specification.getWaarde()));
   }
 
+  public void addPriceRange(ZoekCriterium specification) {
+    priceSpecifications.add(specification);
 
-  public Predicate isArtikelInCategorie(Root<Artikel> root, CriteriaQuery<?> query, CriteriaBuilder builder, List<Categorie> categorieenList) {
-    return null;
+    predicates.add(qb.equal(artikel.get(specification.getKey()), specification.getWaarde()));
+  }
+
+  public List<Artikel> build() { //Bouwt een specificatie met zoekcriteria en bijbehorend compositietype (AND/OR)
+    cq.select(artikel).where(predicates.toArray(new Predicate[predicates.size()]));
+
+    List<Artikel> artikelList = artikelService.getEntityManager().createQuery(cq).getResultList();
+
+    for (Artikel currentArtikel: artikelList) {
+      for(Categorie currentCategorie: currentArtikel.getCategorieen()) {
+        currentCategorie.setArtikelen(new ArrayList<>());
+      }
+    }
+
+    return artikelList;
   }
 }
