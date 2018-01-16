@@ -14,7 +14,6 @@ public class FilterConfig {
   // Now, confgure the Filter implemented above in Spring configuration class. Take a look
   @Bean
   public FilterRegistrationBean myFilterBean() {
-    System.out.println("SDAsaDSDASDAgghsdavsdnhfkhgfkWEJHFVKVHDKSDAHFBKDSFGBSD");
     final FilterRegistrationBean filterRegBean = new FilterRegistrationBean();
     filterRegBean.setFilter(new IsAdminFilter(this.accessTokenSecret));
     filterRegBean.addUrlPatterns("/test");

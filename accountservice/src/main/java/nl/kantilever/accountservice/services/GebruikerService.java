@@ -21,4 +21,9 @@ public class GebruikerService {
     this.gebruikerRepository.save(gebruiker);
   }
 
+  @Transactional
+  public Gebruiker findById(long gebruikerId) {
+    return this.gebruikerRepository.findById(gebruikerId);
+  }
+
 }

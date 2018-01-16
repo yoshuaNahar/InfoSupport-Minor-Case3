@@ -10,6 +10,7 @@ import nl.kantilever.bestellingservice.repositories.BestellingRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;
 import nl.kantilever.bestellingservice.repositories.GebruikerRepository;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -222,7 +223,7 @@ public class BestellingServiceTest {
   public void getGebruikersMetBestellingenBoven500ReturnsGebruikers() throws Exception {
     List<Gebruiker> gebruikers = new ArrayList<>();
     Gebruiker gebruiker = new Gebruiker();
-    gebruiker.setMaxCrediet(500);
+    gebruiker.setMaxKrediet(500);
     gebruikers.add(gebruiker);
     Mockito.when(gebruikerService.getGebruikersBoven500()).thenReturn(gebruikers);
 

@@ -1,15 +1,10 @@
 package nl.kantilever.bestellingservice.entities;
 
-import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.*;
 
 @Entity
-@Table(name = "gebruiker")
 @Table(name = "gebruiker")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Gebruiker {
@@ -18,90 +13,30 @@ public class Gebruiker {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long gebruikerId;
 
-  @Column(name = "voornaam")
+  private String aanhef;
+
   private String voornaam;
 
-  @Column(name = "achternaam")
+  private String tussenvoegsel;
+
   private String achternaam;
 
-  @Column(name = "adres")
-  private String adres;
+  private String straatnaam;
 
-  @Column(name = "bedrijfNaam")
-  private String bedrijfNaam;
+  private int huisnummer;
 
-  @Column(name = "telefoonNummer")
-  private String telefoonNummer;
+  private String postcode;
 
-  @Column(name = "maxCrediet")
-  private int maxCrediet;
+  private String stad;
 
-  @Column (name = "huidigCrediet")
-  private int huidigCrediet;
+  private String land;
 
-  public long getGebruikerId() {
-    return gebruikerId;
-  }
+  private String telefoonnummer;
 
-  public void setGebruikerId(long gebruikerId) {
-    this.gebruikerId = gebruikerId;
-  }
+  private int maxKrediet = 500; // default value
 
-  public String getVoornaam() {
-    return voornaam;
-  }
+  private int huidigKrediet = 0; // default value
 
-  public void setVoornaam(String voornaam) {
-    this.voornaam = voornaam;
-  }
-
-  public String getAchternaam() {
-    return achternaam;
-  }
-
-  public void setAchternaam(String achternaam) {
-    this.achternaam = achternaam;
-  }
-
-  public String getAdres() {
-    return adres;
-  }
-
-  public void setAdres(String adres) {
-    this.adres = adres;
-  }
-
-  public String getBedrijfNaam() {
-    return bedrijfNaam;
-  }
-
-  public void setBedrijfNaam(String bedrijfNaam) {
-    this.bedrijfNaam = bedrijfNaam;
-  }
-
-  public String getTelefoonNummer() {
-    return telefoonNummer;
-  }
-
-  public void setTelefoonNummer(String telefoonNummer) {
-    this.telefoonNummer = telefoonNummer;
-  }
-
-  public int getMaxCrediet() {
-    return maxCrediet;
-  }
-
-  public void setMaxCrediet(int maxCrediet) {
-    this.maxCrediet = maxCrediet;
-  }
-
-  public int getHuidigCrediet() {
-    return huidigCrediet;
-  }
-
-  public void setHuidigCrediet(int huidigCrediet) {
-    this.huidigCrediet = huidigCrediet;
-  }
 
   public Gebruiker(long gebruikerId, String voornaam, String achternaam) {
     this.gebruikerId = gebruikerId;
@@ -113,17 +48,126 @@ public class Gebruiker {
 
   }
 
+  public long getGebruikerId() {
+    return gebruikerId;
+  }
+
+  public void setGebruikerId(long gebruikerId) {
+    this.gebruikerId = gebruikerId;
+  }
+
+  public String getAanhef() {
+    return aanhef;
+  }
+
+  public void setAanhef(String aanhef) {
+    this.aanhef = aanhef;
+  }
+
+  public String getVoornaam() {
+    return voornaam;
+  }
+
+  public void setVoornaam(String voornaam) {
+    this.voornaam = voornaam;
+  }
+
+  public String getTussenvoegsel() {
+    return tussenvoegsel;
+  }
+
+  public void setTussenvoegsel(String tussenvoegsel) {
+    this.tussenvoegsel = tussenvoegsel;
+  }
+
+  public String getAchternaam() {
+    return achternaam;
+  }
+
+  public void setAchternaam(String achternaam) {
+    this.achternaam = achternaam;
+  }
+
+  public String getStraatnaam() {
+    return straatnaam;
+  }
+
+  public void setStraatnaam(String straatnaam) {
+    this.straatnaam = straatnaam;
+  }
+
+  public int getHuisnummer() {
+    return huisnummer;
+  }
+
+  public void setHuisnummer(int huisnummer) {
+    this.huisnummer = huisnummer;
+  }
+
+  public String getPostcode() {
+    return postcode;
+  }
+
+  public void setPostcode(String postcode) {
+    this.postcode = postcode;
+  }
+
+  public String getStad() {
+    return stad;
+  }
+
+  public void setStad(String stad) {
+    this.stad = stad;
+  }
+
+  public String getLand() {
+    return land;
+  }
+
+  public void setLand(String land) {
+    this.land = land;
+  }
+
+  public String getTelefoonnummer() {
+    return telefoonnummer;
+  }
+
+  public void setTelefoonnummer(String telefoonnummer) {
+    this.telefoonnummer = telefoonnummer;
+  }
+
+  public int getMaxKrediet() {
+    return maxKrediet;
+  }
+
+  public void setMaxKrediet(int maxKrediet) {
+    this.maxKrediet = maxKrediet;
+  }
+
+  public int getHuidigKrediet() {
+    return huidigKrediet;
+  }
+
+  public void setHuidigKrediet(int huidigKrediet) {
+    this.huidigKrediet = huidigKrediet;
+  }
+
   @Override
   public String toString() {
     return "Gebruiker{" +
       "gebruikerId=" + gebruikerId +
+      ", aanhef='" + aanhef + '\'' +
       ", voornaam='" + voornaam + '\'' +
+      ", tussenvoegsel='" + tussenvoegsel + '\'' +
       ", achternaam='" + achternaam + '\'' +
-      ", adres='" + adres + '\'' +
-      ", bedrijfNaam='" + bedrijfNaam + '\'' +
-      ", telefoonNummer='" + telefoonNummer + '\'' +
-      ", maxCrediet=" + maxCrediet +
-      ", huidigCrediet=" + huidigCrediet +
+      ", straatnaam='" + straatnaam + '\'' +
+      ", huisnummer=" + huisnummer +
+      ", postcode='" + postcode + '\'' +
+      ", stad='" + stad + '\'' +
+      ", land='" + land + '\'' +
+      ", telefoonnummer='" + telefoonnummer + '\'' +
+      ", maxKrediet=" + maxKrediet +
+      ", huidigKrediet=" + huidigKrediet +
       '}';
   }
 }
