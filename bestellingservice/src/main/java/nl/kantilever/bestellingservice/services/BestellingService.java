@@ -1,23 +1,23 @@
 package nl.kantilever.bestellingservice.services;
 
-import java.util.ArrayList;
-import java.util.List;
 import nl.kantilever.bestellingservice.entities.Artikel;
 import nl.kantilever.bestellingservice.entities.Bestelling;
 import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
-import nl.kantilever.bestellingservice.repositories.ArtikelenRepository;
+import nl.kantilever.bestellingservice.entities.Gebruiker;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BestellingService {
@@ -26,8 +26,8 @@ public class BestellingService {
 
   private BestellingRepository bestellingRepository;
   private BestellingSnapshotRepository bestellingSnapshotRepository;
-  private ArtikelenRepository artikelenRepository;
-
+  private ArtikelService artikelService;
+  private GebruikerService gebruikerService;
   private RestTemplate restTemplate;
 
   @Value("${urls.webwinkel}")
@@ -37,12 +37,14 @@ public class BestellingService {
   public BestellingService(
     BestellingRepository bestellingRepository,
     BestellingSnapshotRepository bestellingSnapshotRepository,
-    ArtikelenRepository artikelenRepository,
-    RestTemplate restTemplate) {
+    RestTemplate restTemplate,
+    GebruikerService gebruikerService,
+    ArtikelService artikelService) {
     this.bestellingRepository = bestellingRepository;
     this.bestellingSnapshotRepository = bestellingSnapshotRepository;
-    this.artikelenRepository = artikelenRepository;
     this.restTemplate = restTemplate;
+    this.gebruikerService = gebruikerService;
+    this.artikelService = artikelService;
   }
 
   public void addBestelling(Bestelling bestelling) {
@@ -84,19 +86,17 @@ public class BestellingService {
 
     logger.info("artikkelen list: {}", artikelen);
 
-    artikelenRepository.save(artikelen);
-
+    artikelService.saveArtikelen(artikelen);
+    Gebruiker gebruiker = gebruikerService.getGebruikerById(bestelling.getGebruikerId());
     Double bestellingTotal = artikelen.stream().mapToDouble(Artikel::getPrijs).sum();
 
     BestellingSnapshot bestellingSnapshot = new BestellingSnapshot();
     bestellingSnapshot.setId(bestelling.getId());
-    bestellingSnapshot.setGebruikerId(bestelling.getGebruikerId());
+    bestellingSnapshot.setGebruikerId(gebruiker.getGebruikerId());
     bestellingSnapshot.setArtikelen(artikelen);
     bestellingSnapshot.setTotal(bestellingTotal);
     bestellingSnapshot.setStatus("geplaatst");
-
     bestellingSnapshotRepository.save(bestellingSnapshot);
-
     logger.info("artikelen hier ophalen obv artikellenId, {}", bestelling);
   }
 
@@ -105,20 +105,22 @@ public class BestellingService {
     bestellingSnapshotRepository.setStatusIngepakt(bestellingId);
   }
 
-  public List<BestellingSnapshot> getBestellingenGebruiker(int id){
-    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
-    if(bestellingenByGebruiker != null){
-       return bestellingenByGebruiker;
+  public List<BestellingSnapshot> getBestellingenGebruiker(int id) {
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository
+      .findBestellingenByGebruiker(id);
+    if (bestellingenByGebruiker != null) {
+      return bestellingenByGebruiker;
     }
     return null;
   }
 
-  public Double getTotaalwaardeBestellingen(int id){
+  public Double getTotaalwaardeBestellingen(int id) {
     Double totaalWaarde = 0.0;
-    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository.findBestellingenByGebruiker(id);
-    if(bestellingenByGebruiker != null){
+    List<BestellingSnapshot> bestellingenByGebruiker = bestellingSnapshotRepository
+      .findBestellingenByGebruiker(id);
+    if (bestellingenByGebruiker != null) {
       for (BestellingSnapshot bestellingSnapshot : bestellingenByGebruiker) {
-        if(!bestellingSnapshot.getStatus().equals("betaald")){
+        if (!bestellingSnapshot.getStatus().equals("betaald")) {
           totaalWaarde = totaalWaarde + bestellingSnapshot.getTotal();
         }
       }
@@ -126,5 +128,8 @@ public class BestellingService {
     return totaalWaarde;
   }
 
+  public List<Gebruiker> getGebruikersMetBestellingenBoven500() {
+    return gebruikerService.getGebruikersBoven500();
+  }
 
 }

@@ -133,7 +133,7 @@ public class BestellingControllerTest {
   public void getTotaalwaardeBestellingenWithGebruikerIdShouldReturnOkResponseEntity() throws Exception {
     int gebruikerId = 1;
 
-    mockMvc.perform(get("/bestelling/gebruiker/totaalwaarde/" + gebruikerId)
+    mockMvc.perform(get("/bestelling/gebruiker/" + gebruikerId + "/totaalwaarde")
       .contentType(MediaType.APPLICATION_JSON)
       .accept(MediaType.APPLICATION_JSON)
     ).andExpect(status().isOk());
@@ -141,7 +141,7 @@ public class BestellingControllerTest {
 
   @Test
   public void getTotaalwaardeBestellingenWithNoGebruikerIdShouldReturnBadRequestResponseEntity() throws Exception {
-    mockMvc.perform(get("/bestelling/gebruiker/totaalwaarde/null")).andExpect(status().isBadRequest());
+    mockMvc.perform(get("/bestelling/gebruiker/null/totaalwaarde")).andExpect(status().isBadRequest());
   }
 }
 

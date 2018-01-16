@@ -2,6 +2,7 @@ package nl.kantilever.bestellingservice.controllers;
 
 import nl.kantilever.bestellingservice.entities.Bestelling;
 import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
+import nl.kantilever.bestellingservice.entities.Gebruiker;
 import nl.kantilever.bestellingservice.services.BestellingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,12 +92,18 @@ public class BestellingController {
     return ResponseEntity.ok().body(bestellingService.getBestellingenGebruiker(gebruikerId));
   }
 
-  @GetMapping("/bestelling/gebruiker/totaalwaarde/{id}")
+  @GetMapping("/bestelling/gebruiker/{id}/totaalwaarde")
   public ResponseEntity getTotaalwaardeBestellingen(@PathVariable("id") Integer gebruikerId){
     if (gebruikerId == null) {
       return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
     return ResponseEntity.ok().body(bestellingService.getTotaalwaardeBestellingen(gebruikerId));
+  }
+
+
+  @GetMapping("/bestelling/gebruikercontrole")
+  public List<Gebruiker> getGebruikersMetBestellingenBoven500(){
+    return bestellingService.getGebruikersMetBestellingenBoven500();
   }
 }
