@@ -48,12 +48,12 @@ public class BestellingController {
     }
   }
 
-  @PutMapping("/bestelling/{id}/setIngepakt")
-  public ResponseEntity setBestellingIngepakt(@PathVariable("id") Long bestellingId) {
+  @PutMapping("/bestelling/{id}/setStatus/{status}")
+  public ResponseEntity setBestellingStatus(@PathVariable("id") Long bestellingId, @PathVariable("status") String status) {
     logger.debug("setBestellingIngepakt: {}", bestellingId);
 
     try {
-      bestellingService.setBestellingIngepakt(bestellingId);
+      bestellingService.setBestellingStatus(bestellingId, status);
 
       return new ResponseEntity(HttpStatus.OK); // 200 OK
     } catch (Exception e) {

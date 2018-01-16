@@ -103,8 +103,8 @@ public class BestellingService {
   }
 
   @Transactional
-  public void setBestellingIngepakt(Long bestellingId) {
-    bestellingSnapshotRepository.setStatusIngepakt(bestellingId);
+  public void setBestellingStatus(Long bestellingId, String status) {
+    bestellingSnapshotRepository.setStatus(bestellingId, status);
   }
 
   public List<BestellingSnapshot> getBestellingenGebruiker(int id) {

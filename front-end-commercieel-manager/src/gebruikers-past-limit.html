@@ -39,7 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <tr>
               <!--Dirty fix, data-item on tabel row didn't work for some reason -->
               <td on-click="goToGebruikerDetail" data-item$="[[item]]">[[item.volledigeNaam]]</td>
-              <td on-click="goToGebruikerDetail"data-item$="[[item]]">[[item.huidigKrediet]]</td>
+              <td on-click="goToGebruikerDetail" data-item$="[[item]]">[[item.huidigKrediet]]</td>
               <td on-click="goToGebruikerDetail" data-item$="[[item]]">[[item.maxKrediet]]</td>
             </tr>
           </template>
@@ -94,9 +94,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       goToGebruikerDetail(event) {
-        let id = JSON.parse(event.target.dataset.item).id;
-        window.history.pushState({}, null, '/gebruiker-detail/' + id);
-        window.dispatchEvent(new CustomEvent('location-changed'));
+        let gebruikerId = JSON.parse(event.target.dataset.item).gebruikerId;
+        location.pathname = '/gebruiker-detail/' + gebruikerId;
       }
 
       showList() {

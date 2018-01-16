@@ -119,7 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       setBestellingIngepakt() {
-        let url = environment.API.bestellingservice + "/bestelling/" + this.currentBestelling.id + "/setIngepakt";
+        let url = environment.API.bestellingservice + "/bestelling/" + this.currentBestelling.id + "/setStatus/ingepakt";
 
         fetch(url, {method: 'PUT'}).then(() => {
           this.reloadPage();
