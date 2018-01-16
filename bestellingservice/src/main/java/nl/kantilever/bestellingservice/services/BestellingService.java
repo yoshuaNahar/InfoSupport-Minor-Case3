@@ -1,5 +1,7 @@
 package nl.kantilever.bestellingservice.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import nl.kantilever.bestellingservice.entities.Artikel;
 import nl.kantilever.bestellingservice.entities.Bestelling;
 import nl.kantilever.bestellingservice.entities.BestellingSnapshot;

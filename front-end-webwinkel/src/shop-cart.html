@@ -12,6 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="shop-button.html">
 <link rel="import" href="shop-common-styles.html">
 <link rel="import" href="shop-form-styles.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 
 <dom-module id="shop-cart">
 
@@ -30,6 +31,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .subtotal {
+        color: black;
         margin: 0 64px 0 24px;
       }
 
@@ -42,16 +44,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
     </style>
+    <paper-dialog id="modal" modal>
+      <p>Uw bestelling is geplaatst</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Sluiten</paper-button>
+      </div>
+    </paper-dialog>
 
+    <paper-dialog id="modalFail" modal>
+      <p>Het is niet gelukt om uw bestelling te plaatsen!</p>
+      <p>Probeer het nogmaals</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Sluiten</paper-button>
+      </div>
+    </paper-dialog>
     <div class="main-frame">
       <div class="subsection" visible$="[[!_hasItems]]">
-        <p class="empty-cart">Your <iron-icon icon="shopping-cart"></iron-icon> is empty.</p>
+        <h1 style="text-align: center">Je <iron-icon icon="shopping-cart"></iron-icon> is leeg.</h1>
       </div>
       <div class="subsection" visible$="[[_hasItems]]">
-        <header>
-          <h1>Your Cart</h1>
+        <div style="text-align: center">
+          <h1>Je winkelwagen</h1>
           <span>([[_getPluralizedQuantity(cart.length)]])</span>
-        </header>
+        </div>
         <div class="list">
           <dom-repeat items="[[cart]]" as="entry">
             <template>
@@ -60,9 +75,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dom-repeat>
         </div>
         <div class="checkout-box">
-          Total: <span class="subtotal">[[_formatTotal(total)]]</span>
+          Totaal: <span class="subtotal">[[_formatTotal(total)]]</span>
           <shop-button responsive>
-            <a href="/checkout">Checkout</a>
+            <button on-click="_setOrder" data-item$="[[cart]]">Bestellen</button>
           </shop-button>
         </div>
       </div>
@@ -82,6 +97,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         cart: Array,
 
+        loading: Boolean,
+
         visible: {
           type: Boolean,
           observer: '_visibleChanged'
@@ -95,7 +112,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }}
 
       _formatTotal(total) {
-        return isNaN(total) ? '' : '$' + total.toFixed(2);
+        return isNaN(total) ? '' : '€' + total.toFixed(2);
       }
 
       _computeHasItem(cartLength) {
@@ -106,6 +123,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return quantity + ' ' + (quantity === 1 ? 'item' : 'items');
       }
 
+      _setOrder(event) {
+        this.loading = true;
+        let artikelIds = []
+        for(let artikel of this.cart) {
+          for(let i = 0; i < artikel.quantity; i++) {
+            artikelIds.push(artikel.id)
+          }
+        }
+        fetch(environment.API.bestellingservice + '/bestelling', {
+          method: 'post',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            gebruikderId: 1,
+            artikelenIds: artikelIds,
+          })
+        }).then(data => {
+          this.loading = false;
+          this.shadowRoot.querySelector('#modal').open();
+        }).catch(() => {
+          this.loading = false;
+          this.shadowRoot.querySelector('#modalFail').open();
+        })
+      }
+
       _visibleChanged(visible) {
         if (visible) {
           // Notify the section's title
@@ -113,7 +157,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             bubbles: true, composed: true, detail: { title: 'Your cart' }}));
         }
       }
-
     }
 
     customElements.define(ShopCart.is, ShopCart);

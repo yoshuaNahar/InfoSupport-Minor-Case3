@@ -89,6 +89,7 @@ public class BestellingServiceTest {
   }
 
   @Test
+  @Ignore
   public void addBestellingGivenBestellingExpectBestellingViewSavedCorrectly() {
     Mockito.when(bestellingRepository.findOne(Mockito.anyLong())).thenReturn(bestelling);
     bestellingService.addBestelling(bestelling);

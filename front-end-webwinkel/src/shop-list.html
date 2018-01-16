@@ -105,10 +105,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
 
         <div class="categoryItems flex" hidden$="[[failure]]">
-          <header>
-            <h1>[[category.naam]]</h1>
-            <p>[[_getPluralizedQuantity(category.items.length)]]</p>
-          </header>
+          <h1 style="text-align: center">[[category.naam]]</h1>
+          <p style="text-align: center">[[_getPluralizedQuantity(category.items.length)]]</p>
           <div class="horizontal layout wrap">
             <dom-repeat items="[[_getListItems(category.items)]]">
               <template>
@@ -167,6 +165,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           searchLeverancierList: {
             type: Array,
             value: [],
+          },
+
+          searchResults: {
+            type: Array
+          },
+
+          hasSearched: {
+            type: Boolean,
+            value: false
           },
 
           categories: {

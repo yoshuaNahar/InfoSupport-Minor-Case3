@@ -19,9 +19,9 @@ handlers:
   static_dir: src
   secure: always
 
-- url: /service-worker.js
-  static_files: service-worker.js
-  upload: service-worker.js
+- url: /services-worker.js
+  static_files: services-worker.js
+  upload: services-worker.js
   secure: always
 
 - url: /manifest.json
