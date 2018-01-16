@@ -11,12 +11,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="klant-view">
+<dom-module id="gebruiker-detail-view">
   <template>
     <app-location route="{{route}}"></app-location>
     <app-route
       route="{{route}}"
-      pattern="/klant/:klantId"
+      pattern="/gebruiker-detail/:id"
       data="{{routeData}}">
     </app-route>
 
@@ -32,8 +32,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <h1>//Name</h1>
-
     <div class="seperation-line"></div>
 
     <div style="float: right;">
@@ -43,18 +41,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    class Klant extends Polymer.Element {
+    class GebruikerDetail extends Polymer.Element {
       static get is() {
-        return 'klant-view';
+        return 'gebruiker-detail-view';
       }
 
       static get properties() {
-        return {routeData: Object};
+        return {
+          routeData: Object,
+          gebruiker: {
+            value: this.gebruiker
+          },
+          bestellingen: {
+            value: this.bestellingen
+          }
+        };
       }
 
       ready() {
         super.ready();
-        console.log('klantId', this.routeData.klantId);
+//        let bestellingenUrl = environment.API.bestellingservice + "/bestelling/gebruiker/" + this.routeData.id;
+//        let gebruikerUrl = environment.API.bestellingservice + "/bestelling/gebruiker/" + this.routeData.id;
+//
+//        fetch(gebruikerUrl).then(data => {
+//          return data.json()
+//        }).then(gebruiker => {
+//          this.gebruiker = gebruiker;
+//          console.log('gebruiker', gebruiker);
+//
+//          return fetch(bestellingenUrl);
+//        }).then(data => {
+//          return data.json();
+//        }).then(bestellingen => {
+//          console.log('bestellingen', bestellingen);
+//          this.bestellingen = bestellingen;
+//        }).catch(err => {
+//          alert(err);
+//        })
       }
 
       confirmOrders() {
@@ -69,6 +92,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     }
 
-    window.customElements.define(Klant.is, Klant);
+    window.customElements.define(GebruikerDetail.is, GebruikerDetail);
   </script>
 </dom-module>
