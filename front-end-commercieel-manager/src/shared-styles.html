@@ -14,6 +14,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="shared-styles">
   <template>
     <style>
+      .container {
+        width: 90%;
+        margin: auto;
+      }
+
       .card {
         margin: 24px;
         padding: 16px;
@@ -40,6 +45,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: #212121;
         font-size: 22px;
       }
+
+      .table {
+        width: 100%;
+        padding: 16px;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .table th {
+        text-align: start;
+      }
+
+      .table tr * {
+        padding: 16px;
+        border-right: 1px solid #757575;
+        border-bottom: 1px solid #757575;
+      }
+
+      .table tr *:last-child {
+        border-right: 0px;
+      }
+
+      .table * tr:last-child * {
+        border-bottom: 0px;
+      }
+
+      .mat-blue {
+        background: #4285f4;
+        color: white;
+      }
+
+      .mat-green {
+        background: #64DD17;
+      }
+
+      .mat-red {
+        background: #D50000;
+        color: white;
+      }
+
+      paper-button[disabled].mat-green {
+        background: #C5E1A5;
+      }
+
+      paper-button[disabled].mat-blue {
+        background: #C5CAE9;
+      }
+
+      .seperation-line {
+        margin-top: 24px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid #757575;
+      }
+
     </style>
   </template>
 </dom-module>

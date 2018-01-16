@@ -11,6 +11,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="shop-button.html">
 <link rel="import" href="shop-category-data.html">
 <link rel="import" href="shop-common-styles.html">
@@ -148,10 +150,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         failure="{{failure}}"></shop-category-data>
 
     <div id="content" hidden$="[[failure]]">
-      <shop-image alt="[[item.title]]" src="[[item.largeImage]]"></shop-image>
+      <shop-image alt="[[item.Naam]]" src="../images/[[item.AfbeeldingUrl]]"></shop-image>
       <div class="detail" has-content$="[[_isDefined(item)]]">
-        <h1>[[item.title]]</h1>
-        <div class="price">[[_formatPrice(item.price)]]</div>
+        <h1>[[item.Naam]]</h1>
+        <div class="price">[[_formatPrice(item.Prijs)]]</div>
+        <h2>Leverancier</h2>
+        <p>[[item.Leverancier]]</p>
+        <h2>Voorraad</h2><span>420</span>
         <div class="pickers">
           <!--<shop-select>-->
             <!--<label id="sizeLabel" prefix>Size</label>-->
@@ -182,11 +187,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
         <div class="description">
           <h2>Beschrijving</h2>
-          <p id="desc"></p>
+          <p id="desc">[[item.Beschrijving]]</p>
         </div>
         <shop-button responsive>
           <!--<button on-click="_addToCart" aria-label="Add this item to cart">Add to Cart</button>-->
-          <button on-click="_setOrder" aria-label="Bestellen">Bestellen</button>
+          <button on-click="_addToCart" data-item$="[[item]]" aria-label="Bestellen">Bestellen</button>
         </shop-button>
       </div>
     </div>
@@ -206,9 +211,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     class ShopDetail extends Polymer.Element {
 
+      ready() {
+        super.ready()
+      }
+
       static get is() { return 'shop-detail'; }
 
       static get properties() { return {
+
+        loading: {
+          type: Boolean,
+          value: false
+        },
 
         item: Object,
 
@@ -236,21 +250,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _itemChanged(item, visible) {
         if (visible) {
+          this.set('item.category', this.routeData.category)
           this._itemChangeDebouncer = Polymer.Debouncer.debounce(this._itemChangeDebouncer,
             Polymer.Async.microTask, () => {
               // The item description contains escaped HTML (e.g. "&lt;br&gt;"), so we need to
               // unescape it ("<br>") and set it as innerHTML.
-              let text = item ? item.description : '';
+              let text = item ? item.Beschrijving : '';
               this.$.desc.innerHTML = this._unescapeText(text);
 
               // Reset the select menus.
 //              this.$.quantitySelect.value = '1';
 //              this.$.sizeSelect.value = 'M';
-
               this.dispatchEvent(new CustomEvent('change-section', {
                 bubbles: true, composed: true, detail: {
                   category: item ? item.category : '',
-                  title: item ? item.title : ''
+                  title: item ? item.Naam : ''
                 }}));
             })
         }
@@ -263,21 +277,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _formatPrice(price) {
-        return price ? '$' + price.toFixed(2) : '';
+        return price ? '€' + price.toFixed(2) : '';
       }
 
-//      _addToCart() {
-//        // This event will be handled by shop-app.
-//        this.dispatchEvent(new CustomEvent('add-cart-item', {
-//          bubbles: true, composed: true, detail: {
-//            item: this.item,
-//            quantity: parseInt(this.$.quantitySelect.value, 10),
-//            size: this.$.sizeSelect.value
-//          }}));
-//      }
+      _addToCart() {
+        // This event will be handled by shop-app.
+        this.dispatchEvent(new CustomEvent('add-cart-item', {
+          bubbles: true, composed: true, detail: {
+            item: this.item,
+            quantity: 1,
+          }}));
+      }
 
-      _setOrder() {
-        return 'hoi';
+      _setOrder(event) {
+        this.loading = true;
+        fetch(environment.API.bestellingservice + '/bestelling', {
+          method: 'post',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            gebruikderId: 1,
+            artikelenIds: [this.item.Artikelnummer],
+          })
+        }).then(data => {
+          this.loading = false;
+          this.shadowRoot.querySelector('#modal').open();
+        }).catch(() => {
+          this.loading = false;
+          this.shadowRoot.querySelector('#modalFail').open();
+        })
       }
 
       _isDefined(item) {
@@ -293,7 +323,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this._tryReconnect();
         }
       }
-
     }
 
     customElements.define(ShopDetail.is, ShopDetail);

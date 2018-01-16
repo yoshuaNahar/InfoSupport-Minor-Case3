@@ -30,8 +30,25 @@ services:
       - MYSQL_DATABASE=bestellingservice
 
   de-jong-bestellingservice-phpmyadmin:
-   image: phpmyadmin/phpmyadmin
-   ports:
+    image: phpmyadmin/phpmyadmin
+    ports:
     - "8932:80"
-   links:
+    links:
      - de-jong-bestellingservice-mysql:db
+
+  de-jong-accountservice-mysql:
+    image: 'bitnami/mysql:latest'
+    container_name: de-jong-accountservice-mysql
+    ports:
+     - "8935:3306"
+    environment:
+     - MYSQL_ROOT_USER=root
+     - MYSQL_ROOT_PASSWORD=root
+     - MYSQL_DATABASE=accountservice
+
+  de-jong-accountservice-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+     - "8936:80"
+    links:
+      - de-jong-accountservice-mysql:db

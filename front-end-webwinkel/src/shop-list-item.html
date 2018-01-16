@@ -16,13 +16,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
 
     <style>
-
-      :host {
-        @apply --layout-vertical;
-        @apply --layout-center-justified;
-        text-align: center;
-        margin: 0 48px;
-      }
+      /*:host {*/
+        /*@apply --layout-vertical;*/
+        /*@apply --layout-center-justified;*/
+        /*text-align: center;*/
+        /*margin: 0 48px;*/
+      /*}*/
 
       shop-round-image {
         margin: 32px 0 16px;
@@ -52,11 +51,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
     </style>
-
-    <shop-round-image src="[[item.image]]" alt="[[item.title]]" class="item-image"></shop-round-image>
-    <div class="title">[[item.title]]</div>
-    <span class="price">[[_formatPrice(item.price)]]</span>
-    <span class="stock">Voorraad: [[stock]]</span>
+      <shop-round-image src="../images/[[item.AfbeeldingUrl]]" alt="[[item.Naam]]" class="item-image"></shop-round-image>
+      <div class="title">[[item.Naam]]</div>
+      <span class="price">[[_formatPrice(item.Prijs)]]</span>
+      <p class="stock">Voorraad: [[stock]]</p>
 
   </template>
 
@@ -77,7 +75,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }}
 
       _formatPrice(price) {
-        return price ? '$' + price.toFixed(2) : '';
+        return price ? '€' + price.toFixed(2) : '';
       }
 
     }

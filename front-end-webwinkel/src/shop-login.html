@@ -1,0 +1,108 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="shop-button.html">
+
+<dom-module id="shop-login">
+  <template>
+    <style include="iron-flex iron-flex-alignment shop-button">
+      .login-field {
+        background-color: white;
+        padding: 10px;
+        margin: auto;
+        width: 80%;
+      }
+
+      .input-fields {
+        width: 80%;
+        margin: auto;
+      }
+
+      .input-fields input {
+        width: 100%;
+      }
+
+      shop-button {
+        float: right;
+      }
+    </style>
+    <app-route
+      route="[[route]]"
+      pattern="/:category"
+      data="{{routeData}}"></app-route>
+
+  <h1 style="text-align: center">Inloggen</h1>
+    <div class="login-field vertical around-justified wrap layout">
+      <div>
+
+      </div>
+        <div class="input-fields vertical">
+          <iron-form id="loginForm">
+            <form>
+              <div>
+                <p>Gebruikersnaam: </p><input type="text" name="username" required>
+              </div>
+              <div>
+                <p>Password: </p><input type="password" name="password" required>
+              </div>
+              <shop-button responsive>
+                <button on-click="submit">Login</button>
+              </shop-button>
+            </form>
+          </iron-form>
+        </div>
+    </div>
+  </template>
+
+  <script>
+    class ShopLogin extends Polymer.Element {
+      static get is() { return 'shop-login'; }
+
+      static get properties() {
+        return {
+          loginFailed: Boolean
+        }
+      }
+
+      ready() {
+        super.ready()
+      }
+
+      submit(e) {
+        this.loginFailed = false;
+        this.$.loginForm.addEventListener('iron-form-presubmit', (event) => {
+          event.target.request.headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          };
+        });
+
+        this.$.loginForm.addEventListener('iron-form-submit', (event) => {
+          console.log(event)
+          fetch(environment.API.gebruikerservice + '/authenticate',
+            {
+              method: 'post',
+
+              body: JSON.stringify({
+                username: event.detail.username,
+                password: event.detail.password
+              })
+            })
+            .then(data => {
+              if(!data.ok) {
+                throw Error(data.statusText)
+              }
+              return data.json()
+            }).then(data => {
+            this.$.loginForm.submit();
+            this.dispatchEvent(new CustomEvent('login', data))
+          }).catch(error => {
+            this.loginFailed = true
+          })
+        })
+      }
+    }
+    customElements.define(ShopLogin.is, ShopLogin);
+  </script>
+
+</dom-module>

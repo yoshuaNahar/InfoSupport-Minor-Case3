@@ -25,29 +25,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <h1>Bestellingen</h1>
+    <div class="container">
+      <!--<template is="dom-if" if="{{showList()}}">-->
+      <h1>Klanten met een overschreden kredietlimiet</h1>
+      <!--<template is="dom-repeat" items="[[bestellingen]]">-->
+      <table class="table">
+        <tr>
+          <th>Klantnaam</th>
+          <th>Kredietlimiet</th>
+        </tr>
+        <tr on-click="goToKlant">
+          <td>Jaap</td>
+          <td>€1200</td>
+        </tr>
 
-    <dom-repeat items="[[bestellingen]]">
-      <template strip-whitespace>
-        <div class="card">
-          <div class="circle">[[item.id]]</div>
-          <h1>Bestelling geplaatst op [[item.geplaatstOp]]</h1>
-          <h3>Artikelen:</h3>
+        <tr>
+          <td>Gerrit</td>
+          <td>€200</td>
+        </tr>
+      </table>
+    </div>
+    <!--</template>-->
+    <!--</template>-->
 
-          <dom-repeat items="[[item.artikelen]]">
-            <template strip-whitespace>
-              <b>Naam: </b>[[item.naam]]<br>
-              <b>Beschrijving: </b>[[item.beschrijving]]<br>
-              <b>Prijs: </b>[[item.prijs]]<br>
-              <b>Leverancier: </b>[[item.leverancier]]<br><br>
-
-            </template>
-          </dom-repeat>
-        </div>
-      </template>
-    </dom-repeat>
-
-
+    <!--<template is="dom-if" if="{{!showList()}}">-->
+    <!--<h2>Geen bestellingen om te keuren</h2>-->
+    <!--<paper-button raised class="mat-blue" on-click="reloadPage">Refresh</paper-button>-->
+    <!--</template>-->
   </template>
 
   <script>
@@ -58,32 +62,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get properties() {
         return {
-          bestellingen: {
-            value: this.bestellingen
+          klanten: {
+            value: this.klanten
           }
         };
       }
 
       ready() {
-        super.ready();
         let url = environment.API.bestellingservice + "/bestelling";
         fetch(url).then(data => {
-          console.log(data, 'data');
-
           return data.json()
-        }).then(bestellingen => {
-          console.log(bestellingen, "bestellingen");
+        }).then(klanten => {
+          this.klanten = klanten;
+          super.ready();
+        }).catch(err => {
+          alert(err);
+        })
+      }
 
-          bestellingen.forEach(bestelling => {
-            let date = bestelling.geplaatstOp.substring(0, bestelling.geplaatstOp.indexOf("T"));
-            let time = bestelling.geplaatstOp.substring(bestelling.geplaatstOp.indexOf("T") + 1, bestelling.geplaatstOp.length);
+      goToKlant() {
+        let klantId = event.target.dataset.item;
+        klantId = 1; // TODO REMOVE THIS LINE
 
-            bestelling.geplaatstOp = date + " " + time;
-          });
+        window.history.pushState({}, null, '/klant/' + klantId);
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      }
 
-
-          this.bestellingen = bestellingen;
-        });
+      showList() {
+        if (this.bestellingen && this.bestellingen.length > 0) {
+          return true;
+        }
       }
     }
 

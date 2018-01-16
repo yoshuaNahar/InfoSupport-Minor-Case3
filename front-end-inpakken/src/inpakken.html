@@ -1,0 +1,192 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="inpakken-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      h2 {
+        color: black;
+      }
+    </style>
+
+    <div class="container">
+      <template is="dom-if" if="{{showTable()}}">
+        <h1>Bestelling #{{currentBestelling.id}}</h1>
+        <table class="table">
+          <tr>
+            <th>Ingepakt</th>
+            <th style="width: 100%;">Artikel</th>
+            <th style="width: 100%;">Leverancier</th>
+            <th style="width: 100%;">LeverancierCode</th>
+          </tr>
+          <template is="dom-repeat" items="[[currentBestelling.artikelen]]">
+            <tr>
+              <td style="border-bottom: 0px;">
+                <paper-checkbox style="border-bottom: 0px;" on-click="setArtikelIngepakt"
+                                data-item$="[[item]]"></paper-checkbox>
+              </td>
+              <td style="border-bottom: 0px;">[[item.Naam]]</td>
+              <td style="border-bottom: 0px;">[[item.Leverancier]]</td>
+              <td style="border-bottom: 0px;">[[item.Leveranciercode]]</td>
+
+            </tr>
+          </template>
+        </table>
+
+        <br>
+        <paper-button raised class="mat-blue" id="stickerButton" on-click="printSticker" disabled>Sticker</paper-button>
+        <paper-button raised class="mat-blue" id="factuurButton" on-click="printFactuur" disabled>Factuur</paper-button>
+
+        <div class="seperation-line"></div>
+        <paper-button raised class="mat-green" id="ingepaktButton" on-click="setBestellingIngepakt"
+                      style="float: right;" disabled>✔
+        </paper-button>
+      </template>
+
+
+      <template is="dom-if" if="{{!showTable()}}">
+        <h2>Geen bestellingen om in te pakken</h2>
+        <paper-button raised class="mat-blue" on-click="reloadPage">Refresh</paper-button>
+      </template>
+    </div>
+
+
+  </template>
+
+  <script>
+    class Inpakken extends Polymer.Element {
+      static get is() {
+        return 'inpakken-view';
+      }
+
+      static get properties() {
+        return {
+          currentBestelling: {
+            value: this.currentBestelling
+          },
+        };
+      }
+
+      ready() {
+        this.requiredActions = {
+          allArtikelenIngepakt: false,
+          printedSticker: false,
+          printedFactuur: false
+        };
+        this.getGoedgekeurdeBestelling();
+      }
+
+      getGoedgekeurdeBestelling() {
+        let url = environment.API.bestellingservice + "/bestelling?status=goedgekeurd&limit=1";
+
+        fetch(url).then(data => {
+          return data.json()
+        }).then(bestellingen => {
+          if (bestellingen.length > 0) {
+            this.currentBestelling = bestellingen[0];
+          }
+
+          super.ready();
+        }).catch(err => {
+          alert(err);
+        })
+      }
+
+      showTable() {
+        if (this.currentBestelling) {
+          return true;
+        }
+      }
+
+      reloadPage() {
+        location.reload();
+      }
+
+      setBestellingIngepakt() {
+        let url = environment.API.bestellingservice + "/bestelling/" + this.currentBestelling.id + "/setIngepakt";
+
+        fetch(url, {method: 'PUT'}).then(() => {
+          this.reloadPage();
+        }).catch(err => {
+          alert(err);
+        });
+      }
+
+      setArtikelIngepakt(event) {
+        let artikel = JSON.parse(event.target.dataset.item);
+        let artikelIndex = this._findIndexByKey(this.currentBestelling.artikelen, 'Artikelnummer', artikel.Artikelnummer);
+
+        this.currentBestelling.artikelen[artikelIndex].ingepakt = !this.currentBestelling.artikelen[artikelIndex].ingepakt;
+
+        let allArtikelenIngepakt = true;
+        for (let i = 0; i < this.currentBestelling.artikelen.length; i++) {
+          if (!this.currentBestelling.artikelen[i].ingepakt) {
+            allArtikelenIngepakt = false;
+            break;
+          }
+        }
+        this.requiredActions.allArtikelenIngepakt = allArtikelenIngepakt;
+        this._toggleIngepaktButton();
+      }
+
+      printFactuur() {
+        this.requiredActions.printedFactuur = true;
+        this._toggleIngepaktButton();
+      }
+
+      printSticker() {
+        this.requiredActions.printedSticker = true;
+        this._toggleIngepaktButton();
+      }
+
+      _toggleIngepaktButton() {
+        if (this.requiredActions.allArtikelenIngepakt) {
+          this.shadowRoot.querySelector('#stickerButton').disabled = undefined;
+          this.shadowRoot.querySelector('#factuurButton').disabled = undefined;
+
+          let ingepaktButtonState = true;
+          for (let c in this.requiredActions) {
+            if (!this.requiredActions[c]) {
+              ingepaktButtonState = undefined;
+              break;
+            }
+          }
+          this.shadowRoot.querySelector('#ingepaktButton').disabled = !ingepaktButtonState;
+
+        } else {
+          this.shadowRoot.querySelector('#stickerButton').disabled = true;
+          this.shadowRoot.querySelector('#factuurButton').disabled = true;
+        }
+
+      }
+
+      _findIndexByKey(array, key, value) {
+        for (let i = 0; i < array.length; i++) {
+          if (array[i][key] === value) {
+            return i;
+          }
+        }
+        return null;
+      }
+
+    }
+
+    window.customElements.define(Inpakken.is, Inpakken);
+  </script>
+</dom-module>

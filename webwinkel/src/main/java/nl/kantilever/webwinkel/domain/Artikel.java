@@ -2,17 +2,11 @@ package nl.kantilever.webwinkel.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.sql.Date;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "artikelen")
@@ -41,29 +35,37 @@ public class Artikel {
 
   @JsonProperty("LeverbaarVanaf")
   @Column(name = "leverbaarVanaf")
+  @DateTimeFormat(pattern = "dd-MM-yyyy")
+  @Temporal(TemporalType.DATE)
   private Date leverbaarVanaf;
 
   @JsonProperty("LeverbaarTot")
   @Column(name = "leverbaarTot")
+  @DateTimeFormat(pattern = "dd-MM-yyyy")
+  @Temporal(TemporalType.DATE)
   private Date leverbaarTot;
 
   @JsonProperty("Leveranciercode")
   @Column(name = "leverancierCode")
-  private int leverancierCode;
+  private String leverancierCode;
 
   @JsonProperty("Leverancier")
   @Column(name = "leverancier")
   String leverancier;
 
   @JsonProperty("Categorieen")
-  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<Categorie> categorieen;
+
+  public Artikel(String naam) {
+    this.naam = naam;
+  }
 
   public Artikel() {
   }
 
   public Artikel(String naam, String beschrijving, double prijs, String afbeeldingURL,
-    Date leverbaarVanaf, Date leverbaarTot, int leverancierCode, String leverancier,
+    Date leverbaarVanaf, Date leverbaarTot, String leverancierCode, String leverancier,
     List<Categorie> categorieen) {
     this.naam = naam;
     this.beschrijving = beschrijving;
@@ -77,7 +79,7 @@ public class Artikel {
   }
 
   public Artikel(Long artikelnummer, String naam, String beschrijving, double prijs, String afbeeldingURL,
-    Date leverbaarVanaf, Date leverbaarTot, int leverancierCode, String leverancier,
+    Date leverbaarVanaf, Date leverbaarTot, String leverancierCode, String leverancier,
     List<Categorie> categorieen) {
     this.artikelnummer = artikelnummer;
     this.naam = naam;
@@ -148,11 +150,11 @@ public class Artikel {
     this.leverbaarTot = leverbaarTot;
   }
 
-  public int getLeverancierCode() {
+  public String getLeverancierCode() {
     return leverancierCode;
   }
 
-  public void setLeverancierCode(int leverancierCode) {
+  public void setLeverancierCode(String leverancierCode) {
     this.leverancierCode = leverancierCode;
   }
 
@@ -184,7 +186,7 @@ public class Artikel {
       ", leverbaarTot=" + leverbaarTot +
       ", leverancierCode=" + leverancierCode +
       ", leverancier='" + leverancier + '\'' +
-      ", categorieen=" + categorieen +
+      ", categorieen='" + categorieen + '\'' +
       '}';
   }
 

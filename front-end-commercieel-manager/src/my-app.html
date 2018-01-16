@@ -20,6 +20,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
 <link rel="import" href="my-icons.html">
 
 <script src="environment.js"></script>
@@ -79,6 +81,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         tail="{{subroute}}">
     </app-route>
 
+    <app-route
+      route="[[route]]"
+      data="{{routeData}}">
+    </app-route>
+
     <app-drawer-layout fullbleed narrow="{{narrow}}">
       <!-- Drawer content -->
       <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
@@ -104,6 +111,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fallback-selection="view404"
             role="main">
           <bestellingen-view name="bestellingen"></bestellingen-view>
+          <klant-view name="klant"></klant-view>
           <not-found-view name="notFound"></not-found-view>
         </iron-pages>
       </app-header-layout>
@@ -147,12 +155,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _pageChanged(page) {
-        console.log(page, 'page');
-
         // Load page import on demand. Show 404 page if fails
         var resolvedPageUrl = this.resolveUrl(page + '.html');
 
-        console.log( resolvedPageUrl, "resolved")
         Polymer.importHref(
             resolvedPageUrl,
             null,
