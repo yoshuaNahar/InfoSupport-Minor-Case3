@@ -179,8 +179,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let doc = new jsPDF('p', 'pt');
 
         doc.text(this.gebruiker.volledigeNaam, 10, 20);
-        doc.text(this.gebruiker.straatnaam + " " + this.gebruiker.huisnummer, 10, 40);
-        doc.text(this.gebruiker.postcode + ", " + this.gebruiker.stad, 10, 60);
+        doc.text(this.gebruiker.factuurStraatnaam + " " + this.gebruiker.factuurHuisnummer, 10, 40);
+        doc.text(this.gebruiker.factuurPostCode + ", " + this.gebruiker.factuurStad, 10, 60);
 
         doc.text("Factuurdatum: " + new Date().toDateString(), 10, 100);
 
