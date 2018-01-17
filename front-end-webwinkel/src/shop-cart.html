@@ -62,7 +62,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-dialog id="modalFailLogin" modal>
       <p>Je sessie is verlopen, log opnieuw in.</p>
       <div class="buttons">
-        <paper-button dialog-confirm autofocus href="/login">Inloggen</paper-button>
+        <a href="/login">
+          <paper-button dialog-confirm autofocus>Inloggen</paper-button>
+        </a>
       </div>
     </paper-dialog>
 
@@ -193,8 +195,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 }
               }).then(data => {
                 if(!data.ok) {
-                  localStorage.getItem(['refreshToken']) ? localStorage.removeItem(['refreshToken']) : '';
-                  localStorage.getItem(['accessToken']) ? localStorage.removeItem(['accessToken']) : ''
+                  this._logout()
                   location.reload()
                 }
                 data.text().then(data => {
@@ -210,7 +211,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }).catch(() =>{
           this.authenticated = false;
           this.shadowRoot.querySelector('#modalFailLogin').open();
+          this._logout()
         })
+      }
+
+      _logout() {
+        localStorage.getItem(['refreshToken']) ? localStorage.removeItem(['refreshToken']) : '';
+        localStorage.getItem(['accessToken']) ? localStorage.removeItem(['accessToken']) : ''
+        this.shadowRoot.querySelector('#modalFailLogin').close()
       }
 
       _visibleChanged(visible) {

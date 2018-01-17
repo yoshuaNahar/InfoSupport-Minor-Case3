@@ -62,7 +62,7 @@
       </div>
 
       <div class="form-div">
-
+        <h2>Adres</h2>
         <div class="row">
           <div style="padding-right: 5px;">
             Straat*<br>
@@ -93,7 +93,39 @@
       </div>
 
       <div class="form-div">
-        E-mailadres*<br>
+        <h2>Factuur adres</h2>
+        <div class="row">
+          <div style="padding-right: 5px;">
+            Straat*<br>
+            <input type="text" id="factuurStreet" name="factuurStreet" required/><br>
+          </div>
+
+          <div>
+            Huisnummer*<br>
+            <input type="number" min="1" id="factuurStreetNumber" name="factuurStreetNumber" required/><br>
+          </div>
+        </div>
+        <br>
+
+        <div class="row">
+          <div style="padding-right: 5px;">
+            Postcode*<br>
+            <input type="text" minlength="6" maxlength="6" id="factuurZipCode" name="factuurZipCode" required/>
+          </div>
+          <div>
+            Stad*<br>
+            <input type="text" id="factuurCity" name="factuurCity" required/>
+          </div>
+        </div>
+        <br>
+
+        Land*<br>
+        <input type="text" id="factuurCountry" name="factuurCountry" required/><br>
+      </div>
+
+
+      <div class="form-div">
+        E-mailadres* (wordt gebruikt als gebruikersnaam)<br>
         <input type="email" id="email" name="email" required/><br>
         <br>
 
@@ -128,7 +160,6 @@
         this.shadowRoot.querySelector("#modal").close();
         window.history.pushState({}, null, '/login');
         window.dispatchEvent(new CustomEvent('location-changed'));
-
       }
 
       submit(event) {
@@ -159,6 +190,11 @@
           stad: this.shadowRoot.querySelector('#city').value,
           land: this.shadowRoot.querySelector('#country').value,
           telefoonnummer: this.shadowRoot.querySelector('#telephone').value,
+          factuurStraatnaam: this.shadowRoot.querySelector('#factuurStreet').value,
+          factuurHuisnummer: this.shadowRoot.querySelector('#factuurStreetNumber').value,
+          factuurPostCode: this.shadowRoot.querySelector('#factuurZipCode').value,
+          factuurStad: this.shadowRoot.querySelector('#factuurCity').value,
+          factuurLand: this.shadowRoot.querySelector('#factuurCountry').value
         };
 
         let headers = new Headers({'content-type': 'application/json'});
