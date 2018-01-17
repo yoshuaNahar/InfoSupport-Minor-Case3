@@ -37,17 +37,10 @@ public class BestellingFilter implements Filter {
 
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
-    String role;
     String url = ((HttpServletRequest) request).getRequestURI();
     logger.info("Url: {}", url);
 
-    if (isMagazijnMedewerkerUrl(url)) {
-      role = "MAGAZIJN_MEDEWERKER";
-    } else if (isCommercieelMedewerkerUrl(url)) {
-      role = "COMMERCIEEL_MEDEWERKER";
-    } else {
-      role = "USER";
-    }
+    String role = determineRoleBasedOnRequestedUrl(url);
     logger.info("Role: {}", role);
 
     String accessToken = ((HttpServletRequest) request).getHeader("Access-Token");
@@ -75,13 +68,28 @@ public class BestellingFilter implements Filter {
     }
   }
 
+  private String determineRoleBasedOnRequestedUrl(String url) {
+    String role;
+    if (isMagazijnMedewerkerUrl(url)) {
+      role = "MAGAZIJN_MEDEWERKER";
+    } else if (isCommercieelMedewerkerUrl(url)) {
+      role = "COMMERCIEEL_MEDEWERKER";
+    } else {
+      role = "USER";
+    }
+    return role;
+  }
+
   private boolean isMagazijnMedewerkerUrl(String url) {
-    return url.contains("/bestelling?status=goedgekeurd&limit=1") || url
-      .matches("/bestelling/[0-9]+/setStatus/ingepakt");
+    return url.equals("/bestelling?status=goedgekeurd&limit=1") ||
+      url.matches("/bestelling/[0-9]+/setStatus/ingepakt");
   }
 
   private boolean isCommercieelMedewerkerUrl(String url) {
-    return false;
+    return url.equals("/bestelling/gebruikercontrole") ||
+      url.matches("/bestelling/[0-9]+/setStatus/goedgekeurd") ||
+      url.matches("/bestelling/[0-9]+/setStatus/afgekeurd") ||
+      url.matches("/bestelling/gebruiker/[0-9]+");
   }
 
 }

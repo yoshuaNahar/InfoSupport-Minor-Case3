@@ -1,5 +1,6 @@
 package nl.kantilever.accountservice.config;
 
+import nl.kantilever.accountservice.filter.AccountFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +15,8 @@ public class FilterConfig {
   @Bean
   public FilterRegistrationBean myFilterBean() {
     FilterRegistrationBean filterRegBean = new FilterRegistrationBean();
-    filterRegBean.setFilter(new IsAdminFilter(accessTokenSecret));
-    filterRegBean.addUrlPatterns("/test");
+    filterRegBean.setFilter(new AccountFilter(accessTokenSecret));
+    filterRegBean.addUrlPatterns("/gebruiker/*");
     filterRegBean.setEnabled(true);
     filterRegBean.setAsyncSupported(true);
     return filterRegBean;
