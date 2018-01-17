@@ -1,6 +1,8 @@
 package nl.kantilever.webwinkel.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -54,7 +56,7 @@ public class Artikel {
   String leverancier;
 
   @JsonProperty("Categorieen")
-  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Categorie> categorieen;
 
   public Artikel(String naam) {
