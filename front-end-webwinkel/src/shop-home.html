@@ -13,6 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="shop-image.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/polymer/lib/utils/async.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 
 <dom-module id="shop-home">
 
@@ -103,6 +104,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
+    <paper-dialog id="modal" modal>
+      <p>Er zijn geen resultaten gevonden</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Sluiten</paper-button>
+      </div>
+    </paper-dialog>
+
     <div class="horizontal around-justified wrap layout">
       <div class="search">
         <h1>Zoeken</h1>
@@ -136,15 +144,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </template>
         </div>
 
-        <h2>Categorieen</h2>
-        <div id="categorieen">
-          <template is="dom-repeat" items="{{searchCategoriesList}}" as="value">
-            <p>
-              <input type="checkbox" name="[[value.name]]">
-              <span>[[value.name]]</span>
-            </p>
-          </template>
-        </div>
+        <!--<h2>Categorieen</h2>-->
+        <!--<div id="categorieen">-->
+          <!--<template is="dom-repeat" items="{{searchCategoriesList}}" as="value">-->
+            <!--<p>-->
+              <!--<input type="checkbox" name="[[value.name]]">-->
+              <!--<span>[[value.name]]</span>-->
+            <!--</p>-->
+          <!--</template>-->
+        <!--</div>-->
 
       </div>
       <template is="dom-if" if="{{hasSearched}}">
@@ -234,11 +242,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Array,
           value: []
         },
-
-        searchCategoriesList: {
-          type: Array,
-          computed: '_getCategoriesSearchObject(categories)'
-        },
+//
+//        searchCategoriesList: {
+//          type: Array,
+//          computed: '_getCategoriesSearchObject(categories)'
+//        },
 
         searchLeverancierList: {
           type: Array,
@@ -260,21 +268,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         searchResults: {
-          type: Array
+          type: Array,
+          value: []
         }
 
       }}
 
-      _getCategoriesSearchObject(categoryList) {
-        let categories = [];
-        for(let category of categoryList) {
-          categories.push({
-            id: category.naam,
-            name: category.naam
-          })
-        }
-        return categories
-      }
+//      _getCategoriesSearchObject(categoryList) {
+//        let categories = [];
+//        for(let category of categoryList) {
+//          categories.push({
+//            id: category.naam,
+//            name: category.naam
+//          })
+//        }
+//        return categories
+//      }
 
       _getLeveranciersObject() {
         fetch(environment.API.webwinkel + '/leveranciers')
@@ -293,11 +302,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           leveranciers.push(checkbox.getAttribute('name'))
         }
 
-        let categoriesCheckboxes = this.shadowRoot.querySelectorAll("#categorieen input[type='checkbox']:checked");
-        let categorieen = [];
-        for (let checkbox of categoriesCheckboxes) {
-          categorieen.push(checkbox.getAttribute('name'))
-        }
+//        let categoriesCheckboxes = this.shadowRoot.querySelectorAll("#categorieen input[type='checkbox']:checked");
+//        let categorieen = [];
+//        for (let checkbox of categoriesCheckboxes) {
+//          categorieen.push(checkbox.getAttribute('name'))
+//        }
 
         let searchObject = {
           naam: this.shadowRoot.querySelector('#searchform').value,
@@ -305,7 +314,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           maxPrice: this.shadowRoot.querySelector('#max_price').value,
           leverbaarVanaf: this.shadowRoot.querySelector('#leverbaar_vanaf').value,
           leverbaarTot: this.shadowRoot.querySelector('#leverbaar_tot').value,
-          categorieen: categorieen,
+//          categorieen: categorieen,
           leveranciers: leveranciers
         };
 
@@ -330,6 +339,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     queryString = queryString.concat(leveranciers[i] + ';')
                   }
                 }
+            } else if (key === 'minPrice') {
+              queryString = queryString.concat('prijs>' + searchObject['minPrice'] + ';')
+            } else if (key === 'maxPrice') {
+              queryString = queryString.concat('prijs<' + searchObject['maxPrice'] + ';')
             } else {
               queryString = queryString.concat(key + ':' + searchObject[key] + ';')
             }
@@ -343,6 +356,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               data.json()
             }).then(data => {
             this.searchResults = data
+          }).catch(() => {
+            this.shadowRoot.querySelector('#modal').open();
           })
         }
       }
