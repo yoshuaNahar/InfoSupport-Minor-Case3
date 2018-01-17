@@ -1,18 +1,18 @@
 package nl.kantilever.webwinkel.repositories;
 
+import java.util.Date;
+import java.util.List;
 import nl.kantilever.webwinkel.domain.Artikel;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import java.util.Date;
-
-import java.util.List;
 
 @Repository
-public interface ArtikelRepository extends CrudRepository<Artikel, String>, JpaSpecificationExecutor<Artikel> {
+public interface ArtikelRepository extends CrudRepository<Artikel, String>,
+  JpaSpecificationExecutor<Artikel> {
+
   @Query(value = "select * from artikelen where artikelnummer = :artikelnummer", nativeQuery = true)
   Artikel findArtikelByArtikelnummer(@Param("artikelnummer") int artikelnummer);
 
@@ -26,7 +26,8 @@ public interface ArtikelRepository extends CrudRepository<Artikel, String>, JpaS
   List<Artikel> findArtikelenByBeschrijving(@Param("beschrijving") String beschrijving);
 
   @Query(value = "select * from artikelen where prijs between :minPrice and :maxPrice", nativeQuery = true)
-  List<Artikel> findArtikelenInPriceRange(@Param("minPrice") double minPrice, @Param("maxPrice") double maxPrice);
+  List<Artikel> findArtikelenInPriceRange(@Param("minPrice") double minPrice,
+    @Param("maxPrice") double maxPrice);
 
   @Query(value = "select * from artikelen where leverbaar_vanaf >= :leverbaar_vanaf", nativeQuery = true)
   List<Artikel> findArtikelenLeverbaarVanaf(@Param("leverbaar_vanaf") Date leverbaar_vanaf);
