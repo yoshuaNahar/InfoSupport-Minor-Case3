@@ -32,6 +32,22 @@ public class ZoekCriteriaBuilder {
     categorieen.add(categorie);
   }
 
+  public void setMinPrice(String minPrice) {
+    this.minPrice = tryParseInt(minPrice);
+  }
+
+  public void setMaxPrice(String maxPrice) {
+    this.maxPrice = tryParseInt(maxPrice);
+  }
+
+  int tryParseInt(String value) {
+    try {
+      return Integer.parseInt(value);
+    } catch (NumberFormatException e) {
+      return -1;
+    }
+  }
+
   public Specification<Artikel> build() { //Bouwt een specificatie met zoekcriteria en bijbehorend compositietype (AND/OR)
     if (zoekCriteria.size() == 0) {
       return null;
@@ -44,12 +60,23 @@ public class ZoekCriteriaBuilder {
 
     Specification<Artikel> result = specs.get(0);
     for (int i = 1; i < specs.size(); i++) {
-      if (categorieen.size() > 0) {
-        result = Specifications.where(result).or(specs.get(i)).and(isArtikelInCategorieen(categorieen));
-      } else {
-        result = Specifications.where(result).or(specs.get(i));
-      }
+      result = Specifications.where(result).or(specs.get(i));
     }
+
+
+    Specification<Artikel> categorieResults = null;
+    for (Categorie currentCategorie : categorieen) {
+      result = Specifications.where(result).and(isArtikelInCategorieen(categorieen));
+    }
+
+    if(minPrice != 0) {
+      result = Specifications.where(result).and(isArtikelMinimumPrice(minPrice)); //Controle van pricerange
+    }
+
+    if(maxPrice != 999999999) {
+      result = Specifications.where(result).and(isArtikelMaximumPricePrice(maxPrice)); //Controle van pricerange
+    }
+
     return result;
   }
 
@@ -61,13 +88,20 @@ public class ZoekCriteriaBuilder {
       }
     };
   }
-//
-//  public static Specification<Artikel> isArtikelInPriceRange(int minPrice, int maxPrice) {
-//    return new Specification<Artikel>() {
-//      public Predicate toPredicate(Root<Artikel> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-//        final Path<Categorie> group = root.get("categorieen");
-//        return group.(categorieen);
-//      }
-//    };
-//  }
+
+  public static Specification<Artikel> isArtikelMinimumPrice(int minPrice) {
+    return new Specification<Artikel>() {
+      public Predicate toPredicate(Root<Artikel> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        return builder.lessThanOrEqualTo(root.<Integer>get("prijs"), minPrice);
+      }
+    };
+  }
+
+  public static Specification<Artikel> isArtikelMaximumPricePrice(int maxPrice) {
+    return new Specification<Artikel>() {
+      public Predicate toPredicate(Root<Artikel> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        return builder.greaterThanOrEqualTo(root.<Integer>get("prijs"), maxPrice);
+      }
+    };
+  }
 }

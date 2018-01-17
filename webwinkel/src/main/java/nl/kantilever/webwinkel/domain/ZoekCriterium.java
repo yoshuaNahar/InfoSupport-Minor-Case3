@@ -7,7 +7,6 @@ public class ZoekCriterium {
   private String key;
   private String operator;
   private Object waarde;
-  private boolean isAnd = false;
 
   public ZoekCriterium(String key, Object waarde) {
     this.key = key;
@@ -19,13 +18,6 @@ public class ZoekCriterium {
     this.key = key;
     this.operator = operator;
     this.waarde = waarde;
-  }
-
-  public ZoekCriterium(String key, String operator, Object waarde, boolean isAnd) {
-    this.key = key;
-    this.operator = operator;
-    this.waarde = waarde;
-    this.isAnd = isAnd;
   }
 
   public String getKey() {
@@ -50,13 +42,5 @@ public class ZoekCriterium {
 
   public void setWaarde(Object waarde) {
     this.waarde = waarde;
-  }
-
-  public boolean isAnd() {
-    return isAnd;
-  }
-
-  public void setAnd(boolean and) {
-    isAnd = and;
   }
 }

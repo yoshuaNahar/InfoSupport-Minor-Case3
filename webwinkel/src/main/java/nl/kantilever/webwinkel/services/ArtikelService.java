@@ -4,6 +4,7 @@ import nl.kantilever.webwinkel.domain.Artikel;
 import nl.kantilever.webwinkel.domain.Categorie;
 import nl.kantilever.webwinkel.repositories.ArtikelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +32,6 @@ public class ArtikelService {
     return artikelRepository;
   }
 
-  @Autowired
-  private EntityManager entityManager;
-
   @Transactional
   public void save(Artikel artikel) {
     List<Categorie> categorieen = categorieService.findAll();
@@ -46,6 +44,10 @@ public class ArtikelService {
       }
     }
     this.artikelRepository.save(artikel);
+  }
+
+  public List<Artikel> findAllBySpec(Specification<Artikel> spec) {
+    return artikelRepository.findAll(spec);
   }
 
   public Artikel findArtikelByArtikelnummer(int artikelnummer) {
@@ -78,13 +80,5 @@ public class ArtikelService {
 
   public List<Artikel> findArtikelenLeverbaarTot(Date leverbaar_tot) {
     return artikelRepository.findArtikelenLeverbaarTot(leverbaar_tot);
-  }
-
-  public EntityManager getEntityManager() {
-    return entityManager;
-  }
-
-  public void setEntityManager(EntityManager entityManager) {
-    this.entityManager = entityManager;
   }
 }

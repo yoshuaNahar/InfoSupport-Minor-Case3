@@ -87,11 +87,15 @@ public class ArtikelRestController {
           if (matcher.group(1).equals("categorieen")) {
             Categorie potentialCategorie = categorieService.findCategorieByNaam(waardenArray[j]);
             if (potentialCategorie != null) {
-              //potentialCategorie.setArtikelen(new ArrayList<Artikel>()); //Nodig om overflow te voorkomen
+              potentialCategorie.setArtikelen(new ArrayList<Artikel>()); //Nodig om overflow te voorkomen
               builder.voegCategorieToe(potentialCategorie);
             } else {
               System.out.println("Categorie in de zoekfilter kan niet worden gevonden");
             }
+          } else if (matcher.group(1).equals("prijs") && matcher.group(2).equals("<")) {
+            builder.setMinPrice(waardenArray[j]);
+          } else if (matcher.group(1).equals("prijs") && matcher.group(2).equals(">")) {
+            builder.setMaxPrice(waardenArray[j]);
           } else {
             builder.voegZoekCriteriumToe(matcher.group(1), matcher.group(2), waardenArray[j]); //Zoekfilter bestaat altijd uit 3 delen (key, operator, waarde)
           }
@@ -100,7 +104,7 @@ public class ArtikelRestController {
     }
 
     Specification<Artikel> spec = builder.build();
-    return artikelService.getArtikelRepository().findAll(spec);
+    return artikelService.findAllBySpec(spec);
   }
 
   @RequestMapping(value = "artikel/artikelnummer/{artikelnummer}", method = RequestMethod.GET)
@@ -130,7 +134,8 @@ public class ArtikelRestController {
     List<Artikel> artikelLijst = new ArrayList<Artikel>();
 
     if (matchendeCategorie != null) {
-      artikelLijst = artikelService.findArtikelenByCategorieID(matchendeCategorie.getId());
+      artikelLijst = matchendeCategorie.getArtikelen();
+      //artikelLijst = artikelService.findArtikelenByCategorieID(matchendeCategorie.getId());
     } else {
       System.out.println("Categorie not found");
     }
@@ -164,8 +169,8 @@ public class ArtikelRestController {
     return artikelService.findArtikelenLeverbaarTot(leverbaar_tot);
   }
 
-  @RequestMapping(value= "leveranciers", method=RequestMethod.GET)
-  public List<Leverancier> findAllLeveranciers () {
+  @RequestMapping(value = "leveranciers", method = RequestMethod.GET)
+  public List<Leverancier> findAllLeveranciers() {
     return leverancierService.findAllLeveranciers();
   }
 }
