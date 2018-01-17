@@ -71,11 +71,4 @@ public class GebruikerController {
     }
   }
 
-  @GetMapping("/test")
-  public ResponseEntity test() {
-    logger.info("test");
-
-    return new ResponseEntity(HttpStatus.OK);
-  }
-
 }
