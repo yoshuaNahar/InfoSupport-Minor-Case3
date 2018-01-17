@@ -19,9 +19,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         .then(result => {
           return result.json()
         }).then(data => {
-          //TODO: Add images to the object
-
-        categories = data
+          categories = data
       }).then((() => {
         class ShopCategoryData extends Polymer.Element {
 
@@ -34,7 +32,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
               categoryName: String,
 
-              itemName: String,
+              itemName: {
+                type: String,
+                observer: '_getSearchItem'
+              },
 
               categories: {
                 type: Array,
@@ -55,6 +56,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 notify: true
               },
 
+              searchItem: {
+                type: Object,
+                value: [],
+                notify: true
+              },
+
               failure: {
                 type: Boolean,
                 notify: true,
@@ -62,6 +69,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               }
 
             }
+          }
+
+
+
+          ready() {
+            super.ready();
+
+          }
+
+          _getSearchItem(newValue, oldValue) {
+            fetch(environment.API.webwinkel + '/artikelen/naam/' + newValue)
+              .then(data => {
+                return data.json()
+              }).then(data => {
+              this.searchItem = data[0]
+            })
           }
 
           _getCategoryObject(categoryName) {

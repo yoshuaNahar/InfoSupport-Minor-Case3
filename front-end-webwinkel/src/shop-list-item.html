@@ -54,8 +54,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <shop-round-image src="../images/[[item.AfbeeldingUrl]]" alt="[[item.Naam]]" class="item-image"></shop-round-image>
       <div class="title">[[item.Naam]]</div>
       <span class="price">[[_formatPrice(item.Prijs)]]</span>
-      <p class="stock">Voorraad: [[stock]]</p>
-
   </template>
 
   <script>
@@ -66,11 +64,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get properties() { return {
 
-        item: Object,
-        stock: {
-          type: Number,
-          value: 420
-        }
+        item: Object
 
       }}
 
