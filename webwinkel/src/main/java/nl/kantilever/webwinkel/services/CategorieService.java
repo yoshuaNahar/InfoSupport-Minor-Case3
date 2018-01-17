@@ -8,10 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Created by Tinne on 20-12-2017.
- */
-
 @Service
 public class CategorieService {
   private CategorieRepository categorieRepository;
