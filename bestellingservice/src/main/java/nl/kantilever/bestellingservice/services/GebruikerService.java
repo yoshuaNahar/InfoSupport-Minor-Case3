@@ -2,6 +2,7 @@ package nl.kantilever.bestellingservice.services;
 
 import java.util.List;
 
+import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.entities.Gebruiker;
 import nl.kantilever.bestellingservice.repositories.GebruikerRepository;
 import org.springframework.beans.factory.annotation.Autowired;

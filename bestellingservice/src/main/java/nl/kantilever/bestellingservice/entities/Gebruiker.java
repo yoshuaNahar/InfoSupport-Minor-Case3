@@ -2,6 +2,7 @@ package nl.kantilever.bestellingservice.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.List;
 import javax.persistence.*;
 
 @Entity
@@ -32,9 +33,9 @@ public class Gebruiker {
 
   private String telefoonnummer;
 
-  private double maxKrediet = 500.0; // default value
+  private int maxKrediet = 500; // default value
 
-  private double huidigKrediet = 0.0; // default value
+  private int huidigKrediet = 0; // default value
 
 
   public Gebruiker(long id, String voornaam, String achternaam) {
