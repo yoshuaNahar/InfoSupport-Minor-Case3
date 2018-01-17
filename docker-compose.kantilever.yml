@@ -47,11 +47,11 @@ services:
       - "8922:80"
 
   kantilever-magazijn-service:
-    image: minordotnet.azurecr.io/kantilever-magazijn-service:latest
-    container_name: kantilever-magazijn-service
+    image: minordotnet.azurecr.io/kantilever-magazijn-services:latest
+    container_name: kantilever-magazijn-services
     environment:
       - MagazijnDb=Server=sql,1433;Database=MagazijnDb;User ID=sa;Password=Geheim_101
-      - VIRTUAL_HOST=kantilever-magazijn-service.netminor.infosupport.net
+      - VIRTUAL_HOST=kantilever-magazijn-services.netminor.infosupport.net
       - VIRTUAL_PORT=80
       - eventbus-exchangename=KantileverBus
       - eventbus-hostname=kantilever-eventbus

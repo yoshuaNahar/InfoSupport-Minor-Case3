@@ -14,6 +14,7 @@
 		<module>webwinkel</module>
     <module>replayservice</module>
     <module>bestellingservice</module>
+    <module>accountservice</module>
   </modules>
 
 	<parent>
@@ -59,10 +60,15 @@
         <artifactId>pitest-maven</artifactId>
         <version>1.2.5</version>
         <configuration>
+          <failWhenNoMutations>false</failWhenNoMutations>
           <outputFormats>      
             <outputFormat>XML</outputFormat>
             <outputFormat>HTML</outputFormat>
           </outputFormats>
+          <excludedClasses>
+            <excludedClass>nl.kantilever.bestellingservice.config.*</excludedClass>
+            <excludedClass>nl.kantilever.bestellingservice.entities.*</excludedClass>
+          </excludedClasses>
         </configuration>
       </plugin>
 		</plugins>

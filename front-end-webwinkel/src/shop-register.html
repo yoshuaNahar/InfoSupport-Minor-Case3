@@ -5,6 +5,24 @@
 <dom-module id="shop-register">
   <template>
     <style include="iron-flex iron-flex-alignment">
+      form {
+        background: white;
+        border: solid black 1px;
+        padding: 20px;
+      }
+
+      .form-div {
+        background: #cddfff;
+        border: solid black 1px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .row {
+        display: flex;
+        flex-direction: row;
+      }
+
 
     </style>
     <app-route
@@ -12,13 +30,145 @@
       pattern="/:category"
       data="{{routeData}}"></app-route>
 
+    <h1>Registreer een account</h1>
+
+    <form id="registration-form" on-submit="submit">
+      <div class="form-div">
+        Aanhef*<br>
+        <input type="radio" id="salutation0" name="salutation" value="De Heer" required/>De heer
+        <input type="radio" id="salutation1" name="salutation" value="Mevrouw" required/>Mevrouw<br>
+        <br>
+
+        <div class="row">
+          <div>Voornaam*<br>
+            <input type="text" id="firstName" required>
+          </div>
+          <div style="padding-left: 5px; padding-right: 5px;">Tussenvoegsel<br>
+            <input type="text" id="prefix">
+          </div>
+          <div>Achternaam*<br>
+            <input type="text" id="lastName" required>
+          </div>
+        </div>
+        <br>
+
+        Telefoonnummer*<br>
+        <input type="tel" id="telephone" name="telephone" required/>
+
+      </div>
+
+      <div class="form-div">
+
+        <div class="row">
+          <div style="padding-right: 5px;">
+            Straat*<br>
+            <input type="text" id="street" name="street" required/><br>
+          </div>
+
+          <div>
+            Huisnummer*<br>
+            <input type="number" min="1" id="streetNumber" name="streetNumber" required/><br>
+          </div>
+        </div>
+        <br>
+
+        <div class="row">
+          <div style="padding-right: 5px;">
+            Postcode*<br>
+            <input type="text" minlength="6" maxlength="6" id="zipCode" name="zipCode" required/>
+          </div>
+          <div>
+            Stad*<br>
+            <input type="text" id="city" name="city" required/>
+          </div>
+        </div>
+        <br>
+
+        Land*<br>
+        <input type="text" id="country" name="country" required/><br>
+      </div>
+
+      <div class="form-div">
+        E-mailadres*<br>
+        <input type="email" id="email" name="email" required/><br>
+        <br>
+
+        Wachtwoord*<br>
+        <input type="password" id="password" name="password" required/><br>
+      </div>
+
+      <button on-click="goToHome">Annuleer</button>
+      <button style="float: right;">Registreer</button>
+    </form>
+
+
   </template>
 
   <script>
     class ShopRegister extends Polymer.Element {
-      static get is() { return 'shop-register'; }
+      static get is() {
+        return 'shop-register';
+      }
+
+      goToHome() {
+        window.history.pushState({}, null, '/');
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      }
+
+      goToLogin() {
+        window.history.pushState({}, null, '/login');
+        window.dispatchEvent(new CustomEvent('location-changed'));
+      }
+
+      submit(event) {
+        event.preventDefault();
+
+        let account = {
+          username: this.shadowRoot.querySelector('#email').value,
+          password: this.shadowRoot.querySelector('#password').value
+        };
+
+        let salutation;
+        let firstSalutationField = this.shadowRoot.querySelector('#salutation0');
+        if (firstSalutationField.checked) {
+          salutation = firstSalutationField.value;
+        } else {
+          salutation = this.shadowRoot.querySelector('#salutation1').value;
+        }
+
+        let gebruiker = {
+          account: account,
+          aanhef: salutation,
+          voornaam: this.shadowRoot.querySelector('#firstName').value,
+          tussenvoegsel: this.shadowRoot.querySelector('#prefix').value,
+          achternaam: this.shadowRoot.querySelector('#lastName').value,
+          straatnaam: this.shadowRoot.querySelector('#street').value,
+          huisnummer: this.shadowRoot.querySelector('#streetNumber').value,
+          postcode: this.shadowRoot.querySelector('#zipCode').value,
+          stad: this.shadowRoot.querySelector('#city').value,
+          land: this.shadowRoot.querySelector('#country').value,
+          telefoonnummer: this.shadowRoot.querySelector('#telephone').value,
+        };
+
+        let headers = new Headers({'content-type': 'application/json'});
+        let url = environment.API.accountservice + "/gebruiker";
+        fetch(url, {method: 'POST', body: JSON.stringify(gebruiker), headers: headers}).then(data => {
+          if (data.status >= 300) { // Error Response
+            return data.text() // Check if a special response was given.
+          } else {
+            this.goToLogin();
+          }
+        }).then(message => {
+          if (message === "UsernameTaken") {
+            alert("Er bestaat al een account met het E-mailadres \'" + account.username + "\'")
+          }
+        }).catch(err => {
+          alert(err);
+        });
+      }
 
     }
+
     customElements.define(ShopRegister.is, ShopRegister);
   </script>
 
