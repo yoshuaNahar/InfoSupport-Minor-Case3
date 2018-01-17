@@ -110,7 +110,6 @@ public class ArtikelRestControllerTest {
   @Test
   public void getAllCategorieen_ExpectOkAnd2CategorieenAsJson() throws Exception {
     when(categorieService.findAll()).thenReturn(categorieArray);
-
     this.mockMvc.perform(get("/categorieen")
     ).andDo(print()).andExpect(status().isOk())
       .andExpect(content().contentType("application/json;charset=UTF-8"))

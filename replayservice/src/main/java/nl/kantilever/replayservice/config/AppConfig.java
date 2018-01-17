@@ -1,14 +1,15 @@
-package nl.kantilever.bestellingservice.config;
+package nl.kantilever.replayservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class Config {
+public class AppConfig {
 
   @Bean
-  public RestTemplate restTemplate() {
+  public RestTemplate simpleRestTemplate(){
     return new RestTemplate();
   }
+
 }

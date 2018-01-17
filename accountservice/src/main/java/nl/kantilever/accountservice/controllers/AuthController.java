@@ -12,13 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.KeyFactory;
 import java.util.HashMap;
-import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
 public class AuthController {
+
   private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
   @Autowired
@@ -41,10 +40,11 @@ public class AuthController {
     logger.debug("refresh: {}", refreshToken);
 
     try {
-      Jws<Claims> parsedRefreshToken = jwtParser.setSigningKey(this.refreshTokenSecret).parseClaimsJws(refreshToken);
+      Jws<Claims> parsedRefreshToken = jwtParser.setSigningKey(this.refreshTokenSecret)
+        .parseClaimsJws(refreshToken);
 
       // Retrieve user from database.
-      long id =  Integer.valueOf(parsedRefreshToken.getBody().getSubject());
+      long id = Integer.valueOf(parsedRefreshToken.getBody().getSubject());
       Account account = accountService.findById(id);
 
       if (account == null) {
@@ -52,7 +52,7 @@ public class AuthController {
       }
 
       // Configure claims
-      HashMap<String, Object> claims = new HashMap();
+      HashMap<String, Object> claims = new HashMap<>();
       claims.put("role", account.getRole());
 
       // Build AccessToken
@@ -73,9 +73,6 @@ public class AuthController {
 
   /**
    * Returns a refreshToken if the user is authenticated
-   *
-   * @param account
-   * @return
    */
   @PostMapping("/authenticate")
   public ResponseEntity authenticate(@RequestBody Account account) {
@@ -100,7 +97,7 @@ public class AuthController {
 
       return ResponseEntity.ok().body(refreshToken); // 200 OK
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.info("Exception: {}", e.getMessage());
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
     }
   }
