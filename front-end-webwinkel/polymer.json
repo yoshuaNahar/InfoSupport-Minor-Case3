@@ -8,7 +8,8 @@
     "src/shop-register.html",
     "src/shop-login.html",
     "src/shop-checkout.html",
-    "src/lazy-resources.html"
+    "src/lazy-resources.html",
+    "src/shop-search-detail.html"
   ],
   "sources": [
     "src/**/*",

@@ -99,7 +99,7 @@ public class AuthController {
 
       return ResponseEntity.ok().body(refreshToken); // 200 OK
     } catch (Exception e) {
-      logger.info("Exception: {}", e.getMessage());
+      logger.info("Exception: {}", e);
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
     }
   }

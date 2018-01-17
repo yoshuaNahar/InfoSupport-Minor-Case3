@@ -60,10 +60,10 @@ public class BestellingFilter implements Filter {
         chain.doFilter(request, response);
       }
     } catch (SignatureException e) {
-      logger.info("SignatureException: {}", e.getMessage());
+      logger.info("SignatureException: {}", e);
       ((HttpServletResponse) response).setStatus(401);
     } catch (Exception e) {
-      logger.info("Exception: {}", e.getMessage());
+      logger.info("Exception: {}", e);
       ((HttpServletResponse) response).setStatus(500);
     }
   }
@@ -81,12 +81,12 @@ public class BestellingFilter implements Filter {
   }
 
   private boolean isMagazijnMedewerkerUrl(String url) {
-    return url.equals("/bestelling?status=goedgekeurd&limit=1") ||
+    return "/bestelling?status=goedgekeurd&limit=1".equals(url) ||
       url.matches("/bestelling/[0-9]+/setStatus/ingepakt");
   }
 
   private boolean isCommercieelMedewerkerUrl(String url) {
-    return url.equals("/bestelling/gebruikercontrole") ||
+    return "/bestelling/gebruikercontrole".equals(url) ||
       url.matches("/bestelling/[0-9]+/setStatus/goedgekeurd") ||
       url.matches("/bestelling/[0-9]+/setStatus/afgekeurd") ||
       url.matches("/bestelling/gebruiker/[0-9]+");

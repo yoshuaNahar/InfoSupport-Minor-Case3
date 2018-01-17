@@ -11,6 +11,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shop-button.html">
 <link rel="import" href="shop-image.html">
+<link rel="import" href="shop-list-item.html">
+<link rel="import" href="shop-category-data.html">
+<link rel="import" href="shop-round-image.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/polymer/lib/utils/async.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
@@ -104,6 +107,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
+    <shop-category-data
+      id="categoryData"
+      category-name="{{categories[1].name}}"
+      category="{{categories[1].name}}">
+    </shop-category-data>
+
     <paper-dialog id="modal" modal>
       <p>Er zijn geen resultaten gevonden</p>
       <div class="buttons">
@@ -115,7 +124,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="search">
         <h1>Zoeken</h1>
         <input id="searchform" type="text" value="[[search]]">
-        <button on-click='_getSearchResults'class="search-button">Zoeken</button>
+        <button on-click='_getSearchResults' class="search-button">Zoeken</button>
         <br>
         <hr>
         <span>Minimum prijs (in euro's)</span>
@@ -157,7 +166,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       <template is="dom-if" if="{{hasSearched}}">
         <div class="categories flex">
-          <template is="dom-if" if="{{searchResults}}.length === 0">
+          <template is="dom-if" if="{{!searchResults}}">
             <h1>Categorieen</h1>
             <div class="horizontal layout wrap">
               <dom-repeat items="[[categories]]">
@@ -175,11 +184,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </dom-repeat>
             </div>
           </template>
-          <template is="dom-if" if="{{searchResults}}.length > 0">
+          <template is="dom-if" if="{{searchResults}}">
             <h1>Resultaten</h1>
             <p>[[_getPluralizedQuantity(searchResults.length)]]</p>
             <div class="horizontal layout wrap">
-              <dom-repeat items="[[searchResults]]">
+              <dom-repeat items="{{searchResults}}">
                 <template>
                   <div class="item">
                     <a href$="[[_getItemHref(item)]]">
@@ -295,7 +304,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _getSearchResults() {
-        this.hasSearched = true;
+        this.hasSearched = false
         let leveranciersCheckboxes = this.shadowRoot.querySelectorAll("#leveranciers input[type='checkbox']:checked");
         let leveranciers = [];
         for (let checkbox of leveranciersCheckboxes) {
@@ -315,10 +324,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           leverbaarVanaf: this.shadowRoot.querySelector('#leverbaar_vanaf').value,
           leverbaarTot: this.shadowRoot.querySelector('#leverbaar_tot').value,
 //          categorieen: categorieen,
-          leveranciers: leveranciers
+          leverancier: leveranciers
         };
 
-        let queryString = 'search=';
+        let queryString = 'zoeken=';
         for(let key of Object.keys(searchObject)){
           if(searchObject[key].length !== 0) {
             if(searchObject[key] === 'categorieen') {
@@ -330,32 +339,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   queryString = queryString.concat(categorieen[i] + ';')
                 }
               }
-            } else if(searchObject[key] === 'leveranciers') {
+            } else if(searchObject[key] === 'leverancier') {
                 queryString = queryString.concat(key + ':');
                 for(let i = 0; i < leveranciers.length; i++) {
                   if(i !== leveranciers.length - 1 ) {
-                    queryString = queryString.concat(leveranciers[i] + ',')
+                    queryString = queryString.concat(encodeURIComponent(leveranciers[i]) + ',')
                   } else {
-                    queryString = queryString.concat(leveranciers[i] + ';')
+                    queryString = queryString.concat(encodeURIComponent(leveranciers[i]) + ';')
                   }
                 }
             } else if (key === 'minPrice') {
-              queryString = queryString.concat('prijs>' + searchObject['minPrice'] + ';')
+              queryString = queryString.concat('prijs>' + encodeURIComponent(searchObject['minPrice']) + ';')
             } else if (key === 'maxPrice') {
-              queryString = queryString.concat('prijs<' + searchObject['maxPrice'] + ';')
+              queryString = queryString.concat('prijs<' + encodeURIComponent(searchObject['maxPrice']) + ';')
             } else {
-              queryString = queryString.concat(key + ':' + searchObject[key] + ';')
+              queryString = queryString.concat(key + ':' + encodeURIComponent(searchObject[key]) + ';')
             }
           }
         }
-        let encodedQueryString = encodeURIComponent(queryString);
-        console.log(queryString);
-        if(queryString !== 'search=') {
-          fetch(environment.API.webwinkel + '/artikelen?' + encodedQueryString)
+        if(queryString !== 'zoeken=') {
+          fetch(environment.API.webwinkel + '/artikelen?' + queryString)
             .then(data => {
-              data.json()
+              if(!data.ok) {
+                throw Error()
+              }
+              return data.json()
             }).then(data => {
-            this.searchResults = data
+              if( data.length === 0) {
+                throw Error()
+              }
+              this.searchResults = data;
+              this.hasSearched = true
           }).catch(() => {
             this.shadowRoot.querySelector('#modal').open();
           })
@@ -373,7 +387,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _getItemHref(item) {
         // By returning null when `itemId` is undefined, the href attribute won't be set and
         // the link will be disabled.
-        return item.Artikelnummer ? ['/detail', this.category.naam, item.Naam].join('/') : null;
+        return item.Artikelnummer ? ['/search-detail', item.Naam].join('/') : null;
       }
 
       _visibleChanged(visible) {
@@ -383,14 +397,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }));
         }
       }
-
-      _getItemHref(item) {
-        // By returning null when `itemId` is undefined, the href attribute won't be set and
-        // the link will be disabled.
-        return item.naam ? ['/detail', this.category.name, item.name].join('/') : null;
-      }
-
-
     }
 
     customElements.define(ShopHome.is, ShopHome);
