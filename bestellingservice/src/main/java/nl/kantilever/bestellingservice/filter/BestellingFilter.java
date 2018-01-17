@@ -48,6 +48,7 @@ public class BestellingFilter implements Filter {
     } else {
       role = "USER";
     }
+    logger.info("Role: {}", role);
 
     String accessToken = ((HttpServletRequest) request).getHeader("Access-Token");
     logger.info("access: {}", accessToken);
@@ -75,12 +76,12 @@ public class BestellingFilter implements Filter {
   }
 
   private boolean isMagazijnMedewerkerUrl(String url) {
-    return url.matches("/bestelling?status=(something)&limit=[+d]") || url
-      .matches("/bestelling/[+d]/setStatus/ingepakt");
+    return url.contains("/bestelling?status=goedgekeurd&limit=1") || url
+      .matches("/bestelling/[0-9]+/setStatus/ingepakt");
   }
 
   private boolean isCommercieelMedewerkerUrl(String url) {
-    return true;
+    return false;
   }
 
 }

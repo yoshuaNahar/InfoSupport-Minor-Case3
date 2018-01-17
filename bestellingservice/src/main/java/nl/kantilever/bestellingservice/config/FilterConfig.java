@@ -14,7 +14,7 @@ public class FilterConfig {
 
   @Bean
   public FilterRegistrationBean magazijnMedewerkerFilterBean() {
-    return filterBeanUrlPattern("/bestelling");
+    return filterBeanUrlPattern("/bestelling/*");
   }
 
   private FilterRegistrationBean filterBeanUrlPattern(String... urlPattern) {
