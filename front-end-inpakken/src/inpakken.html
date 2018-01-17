@@ -11,6 +11,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="shared-styles.html">
 
+<script src="../bower_components/jspdf/dist/jspdf.min.js"></script>
+<script src="../bower_components/jspdf-autotable/dist/jspdf.plugin.autotable.js"></script>
+
 <dom-module id="inpakken-view">
   <template>
     <style include="shared-styles">
@@ -93,15 +96,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       getGoedgekeurdeBestelling() {
-        let url = environment.API.bestellingservice + "/bestelling?status=goedgekeurd&limit=1";
+        let bestellingUrl = environment.API.bestellingservice + "/bestelling?status=goedgekeurd&limit=1";
 
-        fetch(url).then(data => {
+        fetch(bestellingUrl).then(data => {
           return data.json()
         }).then(bestellingen => {
           if (bestellingen.length > 0) {
             this.currentBestelling = bestellingen[0];
           }
 
+          let gebruikerUrl = environment.API.accountservice + "/gebruiker/" + this.currentBestelling.gebruikerId;
+          return fetch(gebruikerUrl);
+        }).then(data => {
+          return data.json();
+        }).then(gebruiker => {
+          if (gebruiker.tussenvoegsel) {
+            gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.tussenvoegsel + " " + gebruiker.achternaam;
+          } else {
+            gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.achternaam;
+          }
+
+          this.gebruiker = gebruiker;
           super.ready();
           console.log(this.authenticated);
         }).catch(err => {
@@ -141,17 +156,70 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
         this.requiredActions.allArtikelenIngepakt = allArtikelenIngepakt;
-
-        console.log(this.currentBestelling);
         this._toggleIngepaktButton();
       }
 
       printFactuur() {
+        let artikelen = [];
+
+        this.currentBestelling.artikelen.forEach(artikel => {
+          let artikelIndex = this._findIndexByKey(artikelen, 'Artikelnummer', artikel.Artikelnummer);
+
+          if (artikelIndex !== null) {
+            artikelen[artikelIndex].Totaal += artikel.Prijs;
+            artikelen[artikelIndex].Aantal++;
+          } else {
+            artikel.Totaal = artikel.Prijs;
+            artikel.Aantal = 1;
+
+            artikelen.push(artikel);
+          }
+        });
+
+        // Default export is a4 paper, portrait, using milimeters for units
+        let doc = new jsPDF('p', 'pt');
+
+        doc.text(this.gebruiker.volledigeNaam, 10, 20);
+        doc.text(this.gebruiker.straatnaam + " " + this.gebruiker.huisnummer, 10, 40);
+        doc.text(this.gebruiker.postcode + ", " + this.gebruiker.stad, 10, 60);
+
+        doc.text("Factuurdatum: " + new Date().toDateString(), 10, 100);
+
+        let columns = ["Datum", "Artikel", "Aantal", "Stuksprijs", "Totaalprijs"];
+        let rows = [];
+
+        let alleArtikelenTotaal = 0;
+        artikelen.forEach(artikel => {
+          alleArtikelenTotaal += artikel.Totaal;
+          rows.push([this.currentBestelling.geplaatstOp, artikel.Naam, artikel.Aantal, "€" + artikel.Prijs, "€" + artikel.Totaal]);
+        });
+
+        doc.text("Totaalprijs: €" + alleArtikelenTotaal, 400, 100);
+
+        // Only pt supported (not mm or in)
+        doc.autoTable(columns, rows, {
+          margin: {top: 140}, // 'auto', 'avoid' or 'always'
+        });
+
+        doc.save("Factuur.pdf");
+
         this.requiredActions.printedFactuur = true;
         this._toggleIngepaktButton();
       }
 
       printSticker() {
+        let doc = new jsPDF(
+          {
+            orientation: 'landscape',
+            unit: 'pt',
+            format: [250, 90]
+          });
+        doc.text(this.gebruiker.volledigeNaam, 10, 20);
+        doc.text(this.gebruiker.straatnaam + " " + this.gebruiker.huisnummer, 10, 40);
+        doc.text(this.gebruiker.postcode + ", " + this.gebruiker.stad, 10, 60);
+        doc.text(this.gebruiker.land, 10, 80);
+        doc.save("Adressticker.pdf");
+
         this.requiredActions.printedSticker = true;
         this._toggleIngepaktButton();
       }

@@ -4,8 +4,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import nl.kantilever.replayservice.domain.ReplayEventsCommand;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -15,8 +13,6 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class ReplayService {
-
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private static final String REST_SERVICE_URI = "http://192.168.178.158:8922/api/ReplayEvents";
   private RestTemplate restTemplate;
@@ -41,7 +37,7 @@ public class ReplayService {
           new ParameterizedTypeReference<List<String>>() {
           });
     } catch (URISyntaxException e) {
-      throw new RuntimeException(e);
+      throw new UnsupportedOperationException(e);
     }
     return response;
   }
