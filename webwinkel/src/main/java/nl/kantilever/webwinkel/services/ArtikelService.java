@@ -28,10 +28,6 @@ public class ArtikelService {
     this.categorieService = categorieService;
   }
 
-  public ArtikelRepository getArtikelRepository() {
-    return artikelRepository;
-  }
-
   @Transactional
   public void save(Artikel artikel) {
     List<Categorie> categorieen = categorieService.findAll();
@@ -60,10 +56,6 @@ public class ArtikelService {
 
   public List<Artikel> findArtikelenByLeverancier(String leverancier) {
     return artikelRepository.findArtikelenByLeverancier(leverancier);
-  }
-
-  public List<Artikel> findArtikelenByCategorieID(int categorieID) {
-    return artikelRepository.findArtikelenByCategorieID(categorieID);
   }
 
   public List<Artikel> findArtikelenByBeschrijving(String beschrijving) {
