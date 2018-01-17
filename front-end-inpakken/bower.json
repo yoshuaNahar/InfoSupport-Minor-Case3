@@ -16,7 +16,9 @@
     "polymer": "Polymer/polymer#^2.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
     "paper-checkbox": "^2.0.1",
-    "paper-button": "PolymerElements/paper-button#^2.0.0"
+    "paper-button": "PolymerElements/paper-button#^2.0.0",
+    "jspdf": "^1.3.5",
+    "jspdf-autotable": "^2.3.2"
   },
   "resolutions": {
     "polymer": "^2.0.0"
