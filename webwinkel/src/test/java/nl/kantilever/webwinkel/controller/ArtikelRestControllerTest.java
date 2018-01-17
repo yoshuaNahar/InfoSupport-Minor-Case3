@@ -188,7 +188,6 @@ public class ArtikelRestControllerTest {
 
 
   @Test
-  @Ignore
   public void getArtikelenAfterLeverbaarVanafDateExpectOkAnd2ArtikelenAsJson() throws Exception {
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
