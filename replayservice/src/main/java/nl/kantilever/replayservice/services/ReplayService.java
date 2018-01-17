@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import nl.kantilever.replayservice.domain.ReplayEventsCommand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,9 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class ReplayService {
 
-  private static final String REST_SERVICE_URI = "http://192.168.178.158:8922/api/ReplayEvents";
+  @Value("${rest.service.url}")
+  private String restServiceUrl;
+
   private RestTemplate restTemplate;
 
   @Autowired
@@ -24,14 +27,14 @@ public class ReplayService {
 
   public ResponseEntity<String> replayEvents() {
     ReplayEventsCommand replayEventsCommand = new ReplayEventsCommand();
-    return restTemplate.postForEntity(REST_SERVICE_URI, replayEventsCommand, String.class);
+    return restTemplate.postForEntity(restServiceUrl, replayEventsCommand, String.class);
   }
 
   public ResponseEntity<List<String>> getAllEvents() {
     ResponseEntity<List<String>> response;
     try {
       response = restTemplate
-        .exchange(new URI(REST_SERVICE_URI),
+        .exchange(new URI(restServiceUrl),
           HttpMethod.GET,
           null,
           new ParameterizedTypeReference<List<String>>() {

@@ -49,7 +49,7 @@ public class GebruikerController {
 
       return new ResponseEntity(HttpStatus.OK);
     } catch (Exception e) {
-      logger.info("Exception: {}", e.toString());
+      logger.info("Exception: {}", e);
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
     }
   }
