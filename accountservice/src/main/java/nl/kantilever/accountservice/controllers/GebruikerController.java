@@ -9,7 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin("*")
 @RestController
@@ -51,13 +56,10 @@ public class GebruikerController {
 
   /**
    * Retrieve a user by id
-   *
-   * @param gebruikerId
-   * @return
    */
   @GetMapping("/gebruiker/{id}")
   public ResponseEntity retrieveGebruikerById(@PathVariable("id") Long gebruikerId) {
-    logger.debug("gebruikerId: {}", gebruikerId.toString());
+    logger.debug("gebruikerId: {}", gebruikerId);
 
     try {
       if (gebruikerId == null) {
@@ -66,7 +68,7 @@ public class GebruikerController {
 
       return ResponseEntity.ok().body(gebruikerService.findById(gebruikerId));
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.info(e.getMessage());
       return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR); // 400 Bad Request
     }
   }
