@@ -134,6 +134,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         this.currentBestelling.artikelen[artikelIndex].ingepakt = !this.currentBestelling.artikelen[artikelIndex].ingepakt;
 
+
         let allArtikelenIngepakt = true;
         for (let i = 0; i < this.currentBestelling.artikelen.length; i++) {
           if (!this.currentBestelling.artikelen[i].ingepakt) {
@@ -142,6 +143,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
         this.requiredActions.allArtikelenIngepakt = allArtikelenIngepakt;
+
+        console.log(this.currentBestelling);
         this._toggleIngepaktButton();
       }
 
