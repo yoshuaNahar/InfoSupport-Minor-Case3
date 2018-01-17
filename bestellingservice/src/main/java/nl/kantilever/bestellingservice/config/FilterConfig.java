@@ -1,5 +1,6 @@
-package nl.kantilever.accountservice.config;
+package nl.kantilever.bestellingservice.config;
 
+import nl.kantilever.bestellingservice.filter.BestellingFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -12,10 +13,14 @@ public class FilterConfig {
   private String accessTokenSecret;
 
   @Bean
-  public FilterRegistrationBean myFilterBean() {
+  public FilterRegistrationBean magazijnMedewerkerFilterBean() {
+    return filterBeanUrlPattern("/bestelling");
+  }
+
+  private FilterRegistrationBean filterBeanUrlPattern(String... urlPattern) {
     FilterRegistrationBean filterRegBean = new FilterRegistrationBean();
-    filterRegBean.setFilter(new IsAdminFilter(accessTokenSecret));
-    filterRegBean.addUrlPatterns("/test");
+    filterRegBean.setFilter(new BestellingFilter(accessTokenSecret));
+    filterRegBean.addUrlPatterns(urlPattern);
     filterRegBean.setEnabled(true);
     filterRegBean.setAsyncSupported(true);
     return filterRegBean;

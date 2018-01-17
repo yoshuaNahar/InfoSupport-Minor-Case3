@@ -1,6 +1,15 @@
 package nl.kantilever.bestellingservice.services;
 
-import nl.kantilever.bestellingservice.config.Config;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import nl.kantilever.bestellingservice.config.AppConfig;
 import nl.kantilever.bestellingservice.entities.Artikel;
 import nl.kantilever.bestellingservice.entities.Bestelling;
 import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
@@ -10,9 +19,9 @@ import nl.kantilever.bestellingservice.repositories.BestellingRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;
 import nl.kantilever.bestellingservice.repositories.GebruikerRepository;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,19 +34,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-
 
 @RunWith(SpringRunner.class)
-@Import(Config.class)
+@Import(AppConfig.class)
 //@Transactional
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @DataJpaTest

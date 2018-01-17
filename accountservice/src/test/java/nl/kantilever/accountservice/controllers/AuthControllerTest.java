@@ -1,7 +1,16 @@
 package nl.kantilever.accountservice.controllers;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.SignatureException;
@@ -10,8 +19,6 @@ import nl.kantilever.accountservice.entities.Account;
 import nl.kantilever.accountservice.services.AccountService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,14 +27,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @RunWith(SpringRunner.class)
 @WebMvcTest(AuthController.class)
 public class AuthControllerTest {
+
   @MockBean
   private AccountService accountService;
 
@@ -44,13 +47,14 @@ public class AuthControllerTest {
   private ObjectMapper mapper;
 
   @Test
-  public void authenticateWithAccountInDBAndCorrectPasswordShouldReturnOkReponseEntity() throws Exception {
+  public void authenticateWithAccountInDBAndCorrectPasswordShouldReturnOkReponseEntity()
+    throws Exception {
     Account account = new Account();
     account.setUsername("test@mail.com");
     account.setPassword("somePass");
 
     doReturn(account).when(accountService).findByUsername(any(String.class));
-    doReturn(true).when(bCrypt).matches(eq(account.getPassword()),any(String.class));
+    doReturn(true).when(bCrypt).matches(eq(account.getPassword()), any(String.class));
 
     mockMvc.perform(post("/authenticate")
       .contentType(MediaType.APPLICATION_JSON)
@@ -59,11 +63,12 @@ public class AuthControllerTest {
     ).andExpect(status().isOk());
 
     verify(accountService, times(1)).findByUsername(account.getUsername());
-    verify(bCrypt, times(1)).matches(eq(account.getPassword()),any(String.class));
+    verify(bCrypt, times(1)).matches(eq(account.getPassword()), any(String.class));
   }
 
   @Test
-  public void authenticateWithNonExstingAccountShouldReturnNotFoundReponseEntity() throws Exception {
+  public void authenticateWithNonExstingAccountShouldReturnNotFoundReponseEntity()
+    throws Exception {
     Account account = new Account();
     account.setUsername("test@mail.com");
 
@@ -79,12 +84,13 @@ public class AuthControllerTest {
   }
 
   @Test
-  public void authenticateWithAccountInDBAndIncorrectPasswordShouldReturnUnauthorizedReponseEntity() throws Exception {
+  public void authenticateWithAccountInDBAndIncorrectPasswordShouldReturnUnauthorizedReponseEntity()
+    throws Exception {
     Account account = new Account();
     account.setUsername("test@mail.com");
 
     doReturn(account).when(accountService).findByUsername(any(String.class));
-    doReturn(false).when(bCrypt).matches(eq(account.getPassword()),any(String.class));
+    doReturn(false).when(bCrypt).matches(eq(account.getPassword()), any(String.class));
 
     mockMvc.perform(post("/authenticate")
       .contentType(MediaType.APPLICATION_JSON)
@@ -93,11 +99,12 @@ public class AuthControllerTest {
     ).andExpect(status().isUnauthorized());
 
     verify(accountService, times(1)).findByUsername(account.getUsername());
-    verify(bCrypt, times(1)).matches(eq(account.getPassword()),any(String.class));
+    verify(bCrypt, times(1)).matches(eq(account.getPassword()), any(String.class));
   }
 
   @Test
-  public void authenticateWithAccountThrowsExceptionShouldReturnBadRequestResponseEntity() throws Exception {
+  public void authenticateWithAccountThrowsExceptionShouldReturnBadRequestResponseEntity()
+    throws Exception {
     Account account = new Account();
     account.setUsername("test@mail.com");
 
@@ -140,7 +147,8 @@ public class AuthControllerTest {
   }
 
   @Test
-  public void refreshWithRefreshTokenAndNonExistingAccountShouldReturnUnauthorizedResponseEntity() throws Exception {
+  public void refreshWithRefreshTokenAndNonExistingAccountShouldReturnUnauthorizedResponseEntity()
+    throws Exception {
     String refreshToken = "a.b.c";
 
     Jws jws = mock(Jws.class);
@@ -163,7 +171,8 @@ public class AuthControllerTest {
   }
 
   @Test
-  public void refreshWithThrownSignatureExceptionShouldReturnUnauthorizedResponseEntity() throws Exception {
+  public void refreshWithThrownSignatureExceptionShouldReturnUnauthorizedResponseEntity()
+    throws Exception {
     doThrow(SignatureException.class).when(jwtParser).setSigningKey(any(String.class));
 
     mockMvc.perform(post("/refresh")
@@ -174,7 +183,8 @@ public class AuthControllerTest {
   }
 
   @Test
-  public void refreshWithThrownExceptionShouldReturnInternalServerErrorResponseEntity() throws Exception {
+  public void refreshWithThrownExceptionShouldReturnInternalServerErrorResponseEntity()
+    throws Exception {
     doThrow(Exception.class).when(jwtParser).setSigningKey(any(String.class));
 
     mockMvc.perform(post("/refresh")
@@ -183,5 +193,6 @@ public class AuthControllerTest {
       .accept(MediaType.APPLICATION_JSON)
     ).andExpect(status().isInternalServerError());
   }
+
 }
 

@@ -1,4 +1,4 @@
-package nl.kantilever.accountservice.config;
+package nl.kantilever.bestellingservice.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -14,15 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
-// TODO: put this inside a filter
 @Order(1)
-public class IsAdminFilter implements Filter {
+public class BestellingFilter implements Filter {
 
-  private static final Logger logger = LoggerFactory.getLogger(IsAdminFilter.class);
+  private static final Logger logger = LoggerFactory.getLogger(BestellingFilter.class);
 
   private final String accessTokenSecret;
 
-  public IsAdminFilter(String accessTokenSecret) {
+  public BestellingFilter(String accessTokenSecret) {
     this.accessTokenSecret = accessTokenSecret;
   }
 
@@ -38,6 +37,18 @@ public class IsAdminFilter implements Filter {
 
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
+    String role;
+    String url = ((HttpServletRequest) request).getRequestURI();
+    logger.info("Url: {}", url);
+
+    if (isMagazijnMedewerkerUrl(url)) {
+      role = "MAGAZIJN_MEDEWERKER";
+    } else if (isCommercieelMedewerkerUrl(url)) {
+      role = "COMMERCIEEL_MEDEWERKER";
+    } else {
+      role = "USER";
+    }
+
     String accessToken = ((HttpServletRequest) request).getHeader("Access-Token");
     logger.info("access: {}", accessToken);
 
@@ -46,12 +57,12 @@ public class IsAdminFilter implements Filter {
         .parser()
         .setSigningKey(this.accessTokenSecret)
         .parseClaimsJws(accessToken);
-
-      if (!claims.getBody().get("role", String.class).equals("ADMIN")) {
-        logger.info("role not admin");
+      if (!claims.getBody().get("role", String.class).equals(role)) {
+        logger.info("if");
         ((HttpServletResponse) response).setStatus(401);
+        // maybe here should be stopped from going to the controller
       } else {
-        logger.info("role is admin, so doFilter, means: go to next Filter or Controller");
+        logger.info("else");
         chain.doFilter(request, response);
       }
     } catch (SignatureException e) {
@@ -61,6 +72,15 @@ public class IsAdminFilter implements Filter {
       logger.info("Exception: {}", e.getMessage());
       ((HttpServletResponse) response).setStatus(500);
     }
+  }
+
+  private boolean isMagazijnMedewerkerUrl(String url) {
+    return url.matches("/bestelling?status=(something)&limit=[+d]") || url
+      .matches("/bestelling/[+d]/setStatus/ingepakt");
+  }
+
+  private boolean isCommercieelMedewerkerUrl(String url) {
+    return true;
   }
 
 }
