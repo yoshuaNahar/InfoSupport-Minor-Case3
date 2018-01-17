@@ -31,7 +31,15 @@
       pattern="/:category"
       data="{{routeData}}"></app-route>
 
-  <h1 style="text-align: center">Inloggen</h1>
+
+    <paper-dialog id="modal" modal>
+      <p>We hebben geen gebruiker gevonden met het gegeven gebruikersnaam en wachtwoord.</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Sluiten</paper-button>
+      </div>
+    </paper-dialog>
+
+    <h1 style="text-align: center">Inloggen</h1>
     <div class="login-field vertical around-justified wrap layout">
       <div>
 
@@ -42,7 +50,7 @@
                 <p>Gebruikersnaam: </p><input type="text" name="username" id="username" required>
               </div>
               <div>
-                <p>Password: </p><input type="password" name="password" id="password" required>
+                <p>Wachtwoord: </p><input type="password" name="password" id="password" required>
               </div>
               <shop-button responsive>
                   <input type="submit">
@@ -93,6 +101,7 @@
             localStorage.setItem("refreshToken",data);
             location.href="/"
         }).catch(error => {
+          this.shadowRoot.querySelector('#modal').open();
           this.loginFailed = true
         })
       }
