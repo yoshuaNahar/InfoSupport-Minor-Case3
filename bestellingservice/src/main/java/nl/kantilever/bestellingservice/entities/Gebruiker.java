@@ -10,8 +10,7 @@ import javax.persistence.*;
 public class Gebruiker {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long gebruikerId;
+  private long id;
 
   private String aanhef;
 
@@ -38,8 +37,8 @@ public class Gebruiker {
   private int huidigKrediet = 0; // default value
 
 
-  public Gebruiker(long gebruikerId, String voornaam, String achternaam) {
-    this.gebruikerId = gebruikerId;
+  public Gebruiker(long id, String voornaam, String achternaam) {
+    this.id = id;
     this.voornaam = voornaam;
     this.achternaam = achternaam;
   }
@@ -48,12 +47,12 @@ public class Gebruiker {
 
   }
 
-  public long getGebruikerId() {
-    return gebruikerId;
+  public long getId() {
+    return id;
   }
 
-  public void setGebruikerId(long gebruikerId) {
-    this.gebruikerId = gebruikerId;
+  public void setID(long id) {
+    this.id = id;
   }
 
   public String getAanhef() {
@@ -155,7 +154,7 @@ public class Gebruiker {
   @Override
   public String toString() {
     return "Gebruiker{" +
-      "gebruikerId=" + gebruikerId +
+      "id=" + id +
       ", aanhef='" + aanhef + '\'' +
       ", voornaam='" + voornaam + '\'' +
       ", tussenvoegsel='" + tussenvoegsel + '\'' +

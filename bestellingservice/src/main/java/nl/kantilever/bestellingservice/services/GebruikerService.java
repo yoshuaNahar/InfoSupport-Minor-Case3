@@ -2,7 +2,6 @@ package nl.kantilever.bestellingservice.services;
 
 import java.util.List;
 
-import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.entities.Gebruiker;
 import nl.kantilever.bestellingservice.repositories.GebruikerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,10 @@ public class GebruikerService {
 
   public void updateGebruiker(Gebruiker gebruiker){
     gebruikerRepository.save(gebruiker);
+  }
+
+  public Gebruiker save(Gebruiker gebruiker) {
+    return gebruikerRepository.save(gebruiker);
   }
 
 }
