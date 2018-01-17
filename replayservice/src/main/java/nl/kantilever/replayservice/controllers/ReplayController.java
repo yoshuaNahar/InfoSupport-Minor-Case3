@@ -4,34 +4,34 @@ import nl.kantilever.replayservice.services.ReplayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
 public class ReplayController {
 
-  private RestTemplate restTemplate;
-  private ReplayService replayService;
-  private static final String REST_SERVICE_URI = "http://dormin02:8922/api/ReplayEvents";
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+  private ReplayService replayService;
+
   @Autowired
-  public ReplayController(RestTemplate restTemplate, ReplayService replayService) {
-    this.restTemplate = restTemplate;
+  public ReplayController(ReplayService replayService) {
     this.replayService = replayService;
   }
 
-  @GetMapping("replayRequest")
-  public ResponseEntity<?> getAuditLog() {
+  @GetMapping("/replayRequest")
+  public ResponseEntity getAuditLog() {
     replayService.getAllEvents();
-    return null;
+    return new ResponseEntity(HttpStatus.OK);
   }
 
-  @GetMapping("replayPostRequest")
+  @GetMapping("/replayPostRequest")
   public String replayPostRequest() {
     replayService.replayEvents();
+    logger.info("Succes");
     return "Succes";
   }
+
 }
