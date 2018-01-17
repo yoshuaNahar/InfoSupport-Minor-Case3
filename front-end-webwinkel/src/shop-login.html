@@ -1,0 +1,103 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="shop-button.html">
+
+<dom-module id="shop-login">
+  <template>
+    <style include="iron-flex iron-flex-alignment shop-button">
+      .login-field {
+        background-color: white;
+        padding: 10px;
+        margin: auto;
+        width: 80%;
+      }
+
+      .input-fields {
+        width: 80%;
+        margin: auto;
+      }
+
+      .input-fields input {
+        width: 100%;
+      }
+
+      shop-button {
+        float: right;
+      }
+    </style>
+    <app-route
+      route="[[route]]"
+      pattern="/:category"
+      data="{{routeData}}"></app-route>
+
+  <h1 style="text-align: center">Inloggen</h1>
+    <div class="login-field vertical around-justified wrap layout">
+      <div>
+
+      </div>
+        <div class="input-fields vertical">
+            <form on-submit="submit">
+              <div>
+                <p>Gebruikersnaam: </p><input type="text" name="username" id="username" required>
+              </div>
+              <div>
+                <p>Password: </p><input type="password" name="password" id="password" required>
+              </div>
+              <shop-button responsive>
+                  <input type="submit">
+              </shop-button>
+            </form>
+        </div>
+    </div>
+  </template>
+
+  <script>
+    class ShopLogin extends Polymer.Element {
+      static get is() { return 'shop-login'; }
+
+      static get properties() {
+        return {
+          loginFailed: Boolean
+        }
+      }
+
+      ready() {
+        super.ready()
+      }
+
+      submit(event) {
+        this.loginFailed = false;
+        event.preventDefault();
+        console.log(event)
+        fetch(environment.API.accountservice + '/authenticate',
+          {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: this.shadowRoot.querySelector('#username').value,
+              password: this.shadowRoot.querySelector('#password').value
+            })
+          })
+          .then(data => {
+            if (!data.ok) {
+              throw Error(data.statusText)
+            }
+            return data.text()
+          }).then(data => {
+          this.dispatchEvent(new CustomEvent('authenticate', {
+            bubbles: true, composed: true}));
+            localStorage.setItem("refreshToken",data);
+            location.href="/"
+        }).catch(error => {
+          this.loginFailed = true
+        })
+      }
+    }
+    customElements.define(ShopLogin.is, ShopLogin);
+  </script>
+
+</dom-module>

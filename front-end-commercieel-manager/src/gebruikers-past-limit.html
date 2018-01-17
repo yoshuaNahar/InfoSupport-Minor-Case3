@@ -1,0 +1,110 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="gebruikers-past-limit-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      h2 {
+        color: black;
+      }
+    </style>
+
+    <div class="container">
+      <template is="dom-if" if="{{showList()}}">
+        <h1>Klanten met een overschreden kredietlimiet</h1>
+        <!--<template is="dom-repeat" items="[[bestellingen]]">-->
+        <table class="table">
+          <tr>
+            <th>Naam</th>
+            <th>Huidig Krediet</th>
+            <th>Kredietlimiet</th>
+          </tr>
+          <template is="dom-repeat" items="[[gebruikers]]">
+            <tr style="cursor: pointer">git
+              <!--Dirty fix, data-item on tabel row didn't work for some reason -->
+              <td on-click="goToGebruikerDetail" data-item$="[[item]]">[[item.volledigeNaam]]</td>
+              <td on-click="goToGebruikerDetail" data-item$="[[item]]">[[item.huidigKrediet]]</td>
+              <td on-click="goToGebruikerDetail" data-item$="[[item]]">[[item.maxKrediet]]</td>
+            </tr>
+          </template>
+        </table>
+      </template>
+
+      <template is="dom-if" if="{{!showList()}}">
+        <h2>Geen bestellingen om te keuren</h2>
+        <paper-button raised class="mat-blue" on-click="reloadPage">Refresh</paper-button>
+      </template>
+    </div>
+
+  </template>
+
+  <script>
+    class GebruikersPastLimit extends Polymer.Element {
+      static get is() {
+        return 'gebruikers-past-limit-view';
+      }
+
+      static get properties() {
+        return {
+          gebruikers: {
+            value: this.gebruikers
+          }
+        };
+      }
+
+      ready() {
+        let url = environment.API.bestellingservice + "/bestelling/gebruikercontrole";
+        fetch(url).then(data => {
+          return data.json()
+        }).then(gebruikers => {
+          gebruikers.forEach(gebruiker => {
+            if (gebruiker.tussenvoegsel) {
+              gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.tussenvoegsel + " " + gebruiker.achternaam;
+            } else {
+              gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.achternaam;
+            }
+          });
+
+          this.gebruikers = gebruikers;
+          console.log(gebruikers);
+          super.ready();
+        }).catch(err => {
+          alert(err);
+        })
+      }
+
+      reloadPage() {
+        location.reload();
+      }
+
+      goToGebruikerDetail(event) {
+        let gebruikerId = JSON.parse(event.target.dataset.item).id;
+        location.pathname = '/gebruiker-detail/' + gebruikerId;
+      }
+
+      showList() {
+        if (this.gebruikers && this.gebruikers.length > 0) {
+          return true;
+        }
+      }
+    }
+
+    window.customElements.define(GebruikersPastLimit.is, GebruikersPastLimit);
+  </script>
+</dom-module>

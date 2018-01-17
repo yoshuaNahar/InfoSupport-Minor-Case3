@@ -2,7 +2,8 @@
   "entrypoint": "index.html",
   "shell": "src/my-app.html",
   "fragments": [
-    "src/bestellingen.html",
+    "src/gebruiker-detail.html",
+    "src/gebruikers-past-limit.html",
     "src/notFound.html"
   ],
   "sources": [

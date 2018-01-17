@@ -12,6 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="shop-button.html">
 <link rel="import" href="shop-common-styles.html">
 <link rel="import" href="shop-form-styles.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 
 <dom-module id="shop-cart">
 
@@ -30,6 +31,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .subtotal {
+        color: black;
         margin: 0 64px 0 24px;
       }
 
@@ -42,16 +44,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
     </style>
+    <paper-dialog id="modal" modal>
+      <p>Uw bestelling is geplaatst</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Sluiten</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="modalFail" modal>
+      <p>Het is niet gelukt om uw bestelling te plaatsen!</p>
+      <p>Probeer het nogmaals</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Sluiten</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="modalFailLogin" modal>
+      <p>Je sessie is verlopen, log opnieuw in.</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus href="/login">Inloggen</paper-button>
+      </div>
+    </paper-dialog>
 
     <div class="main-frame">
       <div class="subsection" visible$="[[!_hasItems]]">
-        <p class="empty-cart">Your <iron-icon icon="shopping-cart"></iron-icon> is empty.</p>
+        <h1 style="text-align: center">Je <iron-icon icon="shopping-cart"></iron-icon> is leeg.</h1>
       </div>
       <div class="subsection" visible$="[[_hasItems]]">
-        <header>
-          <h1>Your Cart</h1>
+        <div style="text-align: center">
+          <h1>Je winkelwagen</h1>
           <span>([[_getPluralizedQuantity(cart.length)]])</span>
-        </header>
+        </div>
         <div class="list">
           <dom-repeat items="[[cart]]" as="entry">
             <template>
@@ -60,10 +83,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </dom-repeat>
         </div>
         <div class="checkout-box">
-          Total: <span class="subtotal">[[_formatTotal(total)]]</span>
-          <shop-button responsive>
-            <a href="/checkout">Checkout</a>
-          </shop-button>
+          Totaal: <span class="subtotal">[[_formatTotal(total)]]</span>
+          <template is="dom-if" if="{{authenticated}}">
+            <shop-button responsive>
+              <button on-click="_setOrder" data-item$="[[cart]]">Bestellen</button>
+            </shop-button>
+          </template>
+          <template is="dom-if" if="{{!authenticated}}">
+            <shop-button responsive>
+              <button on-click="_goToLogin">Bestellen</button>
+            </shop-button>
+          </template>
         </div>
       </div>
     </div>
@@ -82,6 +112,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         cart: Array,
 
+        loading: Boolean,
+
         visible: {
           type: Boolean,
           observer: '_visibleChanged'
@@ -90,12 +122,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         _hasItems: {
           type: Boolean,
           computed: '_computeHasItem(cart.length)'
+        },
+
+        authenticated: {
+          Type: Boolean,
+          value: false
         }
 
       }}
 
+      ready() {
+        super.ready()
+        if (localStorage.getItem('refreshToken')) {
+          this.authenticated = true
+        }
+      }
+
       _formatTotal(total) {
-        return isNaN(total) ? '' : '$' + total.toFixed(2);
+        return isNaN(total) ? '' : '€' + total.toFixed(2);
       }
 
       _computeHasItem(cartLength) {
@@ -106,14 +150,80 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return quantity + ' ' + (quantity === 1 ? 'item' : 'items');
       }
 
+      _setOrder(event) {
+        let authenticationData = localStorage.getItem(['refreshToken'])
+        let userData = JSON.parse(atob(authenticationData.split('.')[1]));
+        this.loading = true;
+        let artikelIds = []
+        for(let artikel of this.cart) {
+          for(let i = 0; i < artikel.quantity; i++) {
+            artikelIds.push(artikel.item.Artikelnummer)
+          }
+        }
+
+        fetch(environment.API.accountservice + '/refresh', {
+          method: 'post',
+          headers: {
+            'Refresh-Token': authenticationData
+          }
+        }).then(data => {
+          if (!data.ok) {
+            throw Error()
+          }
+          return data.text()
+        }).then(data => {
+          localStorage.setItem('accessToken', data)
+          fetch(environment.API.bestellingservice + '/bestelling', {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Access-Token': data
+            },
+            body: JSON.stringify({
+              gebruikerId: userData.sub,
+              artikelenIds: artikelIds,
+            })
+          }).then(data => {
+            if(data.status == 401) {
+              fetch(environment.API.accountservice + '/refresh', {
+                method: 'post',
+                headers: {
+                  'Refresh-Token': authenticationData
+                }
+              }).then(data => {
+                if(!data.ok) {
+                  localStorage.getItem(['refreshToken']) ? localStorage.removeItem(['refreshToken']) : '';
+                  localStorage.getItem(['accessToken']) ? localStorage.removeItem(['accessToken']) : ''
+                  location.reload()
+                }
+                data.text().then(data => {
+                  localStorage.setItem('refreshToken', data)
+                })
+              })
+            }
+            this.shadowRoot.querySelector('#modal').open();
+            localStorage.removeItem(['shop-cart-data'])
+          }).catch(() => {
+            this.shadowRoot.querySelector('#modalFail').open();
+          })
+        }).catch(() =>{
+          this.authenticated = false;
+          this.shadowRoot.querySelector('#modalFailLogin').open();
+        })
+      }
+
       _visibleChanged(visible) {
         if (visible) {
           // Notify the section's title
           this.dispatchEvent(new CustomEvent('change-section', {
-            bubbles: true, composed: true, detail: { title: 'Your cart' }}));
+            bubbles: true, composed: true, detail: { title: 'Winkelwagen' }}));
         }
       }
 
+      _goToLogin(e) {
+        location.href="/login"
+      }
     }
 
     customElements.define(ShopCart.is, ShopCart);
