@@ -45,7 +45,7 @@
                 <p>Password: </p><input type="password" name="password" id="password" required>
               </div>
               <shop-button responsive>
-                <input type="submit">
+                  <input type="submit">
               </shop-button>
             </form>
         </div>
@@ -83,12 +83,15 @@
             })
           })
           .then(data => {
-            if(!data.ok) {
+            if (!data.ok) {
               throw Error(data.statusText)
             }
-            return data.json()
+            return data.text()
           }).then(data => {
-            this.dispatchEvent(new CustomEvent('login', data))
+          this.dispatchEvent(new CustomEvent('authenticate', {
+            bubbles: true, composed: true}));
+            localStorage.setItem("refreshToken",data);
+            location.href="/"
         }).catch(error => {
           this.loginFailed = true
         })

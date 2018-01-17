@@ -58,6 +58,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <paper-button dialog-confirm autofocus>Sluiten</paper-button>
       </div>
     </paper-dialog>
+
+    <paper-dialog id="modalFailLogin" modal>
+      <p>Je sessie is verlopen, log opnieuw in.</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus href="/login">Inloggen</paper-button>
+      </div>
+    </paper-dialog>
+
     <div class="main-frame">
       <div class="subsection" visible$="[[!_hasItems]]">
         <h1 style="text-align: center">Je <iron-icon icon="shopping-cart"></iron-icon> is leeg.</h1>
@@ -76,9 +84,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
         <div class="checkout-box">
           Totaal: <span class="subtotal">[[_formatTotal(total)]]</span>
-          <shop-button responsive>
-            <button on-click="_setOrder" data-item$="[[cart]]">Bestellen</button>
-          </shop-button>
+          <template is="dom-if" if="{{authenticated}}">
+            <shop-button responsive>
+              <button on-click="_setOrder" data-item$="[[cart]]">Bestellen</button>
+            </shop-button>
+          </template>
+          <template is="dom-if" if="{{!authenticated}}">
+            <shop-button responsive>
+              <button on-click="_goToLogin">Bestellen</button>
+            </shop-button>
+          </template>
         </div>
       </div>
     </div>
@@ -107,9 +122,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         _hasItems: {
           type: Boolean,
           computed: '_computeHasItem(cart.length)'
+        },
+
+        authenticated: {
+          Type: Boolean,
+          value: false
         }
 
       }}
+
+      ready() {
+        super.ready()
+        if (localStorage.getItem('refreshToken')) {
+          this.authenticated = true
+        }
+      }
 
       _formatTotal(total) {
         return isNaN(total) ? '' : '€' + total.toFixed(2);
@@ -124,6 +151,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _setOrder(event) {
+        let authenticationData = localStorage.getItem(['refreshToken'])
+        let userData = JSON.parse(atob(authenticationData.split('.')[1]));
         this.loading = true;
         let artikelIds = []
         for(let artikel of this.cart) {
@@ -131,22 +160,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             artikelIds.push(artikel.item.Artikelnummer)
           }
         }
-        fetch(environment.API.bestellingservice + '/bestelling', {
+
+        fetch(environment.API.gebruikerservice + '/refresh', {
           method: 'post',
           headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            gebruikderId: 1,
-            artikelenIds: artikelIds,
-          })
+            'Refresh-Token': authenticationData
+          }
         }).then(data => {
-          this.loading = false;
-          this.shadowRoot.querySelector('#modal').open();
-        }).catch(() => {
-          this.loading = false;
-          this.shadowRoot.querySelector('#modalFail').open();
+          if (!data.ok) {
+            throw Error()
+          }
+          return data.text()
+        }).then(data => {
+          localStorage.setItem('accessToken', data)
+          fetch(environment.API.bestellingservice + '/bestelling', {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              gebruikerId: userData.sub,
+              artikelenIds: artikelIds,
+            })
+          }).then(data => {
+            this.loading = false;
+            this.shadowRoot.querySelector('#modal').open();
+            localStorage.removeItem(['shop-cart-data'])
+          }).catch(() => {
+            this.loading = false;
+            this.shadowRoot.querySelector('#modalFail').open();
+          })
+        }).catch(() =>{
+          this.authenticated = false;
+          this.shadowRoot.querySelector('#modalFailLogin').open();
         })
       }
 
@@ -156,6 +203,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.dispatchEvent(new CustomEvent('change-section', {
             bubbles: true, composed: true, detail: { title: 'Winkelwagen' }}));
         }
+      }
+
+      _goToLogin(e) {
+        location.href="/login"
       }
     }
 
