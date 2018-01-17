@@ -36,7 +36,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <th>Kredietlimiet</th>
           </tr>
           <template is="dom-repeat" items="[[gebruikers]]">
-            <tr style="cursor: pointer">git
+            <tr style="cursor: pointer">
               <!--Dirty fix, data-item on tabel row didn't work for some reason -->
               <td on-click="goToGebruikerDetail" data-item$="[[item]]">[[item.volledigeNaam]]</td>
               <td on-click="goToGebruikerDetail" data-item$="[[item]]">[[item.huidigKrediet]]</td>

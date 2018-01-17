@@ -60,10 +60,10 @@ public class AccountFilter implements Filter {
         chain.doFilter(request, response);
       }
     } catch (SignatureException e) {
-      logger.info("SignatureException: {}", e.getMessage());
+      logger.info("SignatureException: {}", e);
       ((HttpServletResponse) response).setStatus(401);
     } catch (Exception e) {
-      logger.info("Exception: {}", e.getMessage());
+      logger.info("Exception: {}", e);
       ((HttpServletResponse) response).setStatus(500);
     }
   }

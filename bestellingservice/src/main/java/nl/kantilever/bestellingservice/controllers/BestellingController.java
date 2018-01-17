@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @CrossOrigin("*")
 @RestController
 public class BestellingController {
@@ -50,7 +48,8 @@ public class BestellingController {
   }
 
   @PutMapping("/bestelling/{id}/setStatus/{status}")
-  public ResponseEntity setBestellingStatus(@PathVariable("id") Long bestellingId, @PathVariable("status") String status) {
+  public ResponseEntity setBestellingStatus(@PathVariable("id") Long bestellingId,
+    @PathVariable("status") String status) {
     logger.debug("setBestellingStatus id,status: {},{}", bestellingId, status);
 
     try {
@@ -58,7 +57,7 @@ public class BestellingController {
 
       return new ResponseEntity(HttpStatus.OK); // 200 OK
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.info(e.getMessage());
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
     }
   }
@@ -81,7 +80,9 @@ public class BestellingController {
   }
 
   @GetMapping("/bestelling")
-  public ResponseEntity getAllBestellingen(@RequestParam(value = "status", required = false) String status, @RequestParam(value = "limit", required = false) Integer limit) {
+  public ResponseEntity getAllBestellingen(
+    @RequestParam(value = "status", required = false) String status,
+    @RequestParam(value = "limit", required = false) Integer limit) {
     logger.debug("getAllBestellingen");
 
     if (status == null || status.trim().isEmpty()) {
@@ -108,7 +109,6 @@ public class BestellingController {
 
     return ResponseEntity.ok().body(bestellingService.getTotaalwaardeBestellingen(gebruikerId));
   }
-
 
   @GetMapping("/bestelling/gebruikercontrole")
   public List<Gebruiker> getGebruikersMetBestellingenBoven500() {
