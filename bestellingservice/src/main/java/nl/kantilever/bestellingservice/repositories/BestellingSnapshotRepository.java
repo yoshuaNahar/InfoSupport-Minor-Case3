@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -21,7 +20,6 @@ public interface BestellingSnapshotRepository extends PagingAndSortingRepository
 
   Page<BestellingSnapshot> findAllByStatus(String status, Pageable pageable);
 
-//  @Query(value = "UPDATE bestelling_snapshot SET status = 'ingepakt' WHERE bestelling_snapshot_id = :bestelling_snapshot_id", nativeQuery = true)
   @Modifying
   @Query("UPDATE BestellingSnapshot bestellingSnapshot SET bestellingSnapshot.status = 'ingepakt' WHERE bestellingSnapshot.id = :bestellingId")
   void setStatusIngepakt(@Param("bestellingId") Long bestellingId);

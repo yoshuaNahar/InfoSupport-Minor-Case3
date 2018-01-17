@@ -1,0 +1,24 @@
+server:
+  port: 9999
+
+spring:
+ datasource:
+   driverClassName: com.mysql.jdbc.Driver
+   url: jdbc:mysql://192.168.99.100:8935/accountservice
+   username: root
+   password: root
+ jpa:
+   hibernate:
+     ddl-auto: create-drop
+
+tokens:
+  refreshToken:
+    secret: "jOQYz6atem9WeBwW0skYfI2ENyhJRQgzlGSglT-y-Xdp-DJkk3g8K-aIcPHsE8ptYiSE2n8yR7WcmWuK4qbd1Opa-DoTlkEF37c6w6y-neWBaNmOvPDGbQLshHul0tSI5mszb_BOg8-7MY-k6eddTaHeMaMHtHg0UbcSmikaaC3_otjukriFdj9YHIo8xpnNf_lilbcWo_Cc2PHGX81yRmtmbnD0AbmDRHNzYYHRo6OFiP99W6pToQZrTPQw4uqW6LE7uI3pkU1Dwe-9AaKayzvGXxwgqxiwlCCRZXf-2-uic5JPg5EqKo46E0WKA1OWanY7oQ5IjTfKqkE4IfLaMw"
+  accessToken:
+    secret: "hQWcnjr1LAbgNX7HBujEnbdbbt0_Y6z5m8eoEQAy275s4TBNHUVXN4OnOQQKjWlUOUNPRszHumXK7FRGyMnq9vcDsTfHmpsDrSv5F5zcVWUi2_VwJaneCeBCQKqqQxwcSumoDWcZEQ3aCNtZ5KFc-6LrIr9tliTqxlpPRSGUAY__1tbzBeW43I5LTnTnVzqwc3KJ8UpytDNnS8x1nm5wos7lHym6qiK7CmqohxySMul1ZeSBp274G2pOA008H7ehxmDEGbsy3K7BSV-hUF_5K88WRwQqRhgg_bucAuGEH_fUodxtadF4mlf_7A7-DC6LsOPkjqnis2bFGyEDbcctRg"
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

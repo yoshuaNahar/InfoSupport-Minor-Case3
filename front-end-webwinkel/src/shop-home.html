@@ -38,6 +38,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .categories {
         width: 100%;
+        margin-left: 20px;
       }
 
       .image-link > shop-image::after {
@@ -106,58 +107,103 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="search">
         <h1>Zoeken</h1>
         <input id="searchform" type="text" value="[[search]]">
-        <button class="search-button">Zoeken</button>
+        <button on-click='_getSearchResults'class="search-button">Zoeken</button>
         <br>
         <hr>
-        <span>Minimum prijs</span>
+        <span>Minimum prijs (in euro's)</span>
         <br>
         <input id="min_price" type="number" value="[[search]]">
         <br>
-        <span>Maximum prijs</span>
+        <span>Maximum prijs (in euro's)</span>
         <br>
         <input id="max_price" type="number" value="[[search]]">
         <br>
-        <span>leverbaar vanaf:</span>
+        <span>Leverbaar vanaf:</span>
         <br>
         <input id="leverbaar_vanaf" type="date" value="[[search]]">
         <br>
-        <span>leverbaar tot:</span>
+        <span>Leverbaar tot:</span>
         <br>
         <input id="leverbaar_tot" type="date" value="[[search]]">
-          <h2>Leveranciers</h2>
+
+        <h2>Leveranciers</h2>
+        <div id="leveranciers">
           <template is="dom-repeat" items="{{searchLeverancierList}}" as="value">
             <p>
               <input type="checkbox" name="[[value]]">
               <span>[[value]]</span>
             </p>
           </template>
+        </div>
 
         <h2>Categorieen</h2>
-        <template is="dom-repeat" items="{{searchCategoriesList}}" as="value">
-          <p>
-            <input type="checkbox" name="[[value.name]]">
-            <span>[[value.name]]</span>
-          </p>
-        </template>
-      </div>
-      <div class="categories flex">
-        <h1>Categorieen</h1>
-        <div class="horizontal layout wrap">
-          <dom-repeat items="[[categories]]">
-            <template strip-whitespace>
-              <div class="item">
-                <a class="image-link" href$="/list/[[item.naam]]">
-                  <shop-image src="../images/[[item.afbeeldingURL]]" alt="[[item.naam]]"></shop-image>
-                </a>
-                <h2>[[item.naam]]</h2>
-                <shop-button>
-                  <a aria-label$="[[item.naam]] Shop Now" href$="/list/[[item.naam]]"> Bekijken</a>
-                </shop-button>
-              </div>
-            </template>
-          </dom-repeat>
+        <div id="categorieen">
+          <template is="dom-repeat" items="{{searchCategoriesList}}" as="value">
+            <p>
+              <input type="checkbox" name="[[value.name]]">
+              <span>[[value.name]]</span>
+            </p>
+          </template>
         </div>
+
       </div>
+      <template is="dom-if" if="{{hasSearched}}">
+        <div class="categories flex">
+          <template is="dom-if" if="{{searchResults}}.length === 0">
+            <h1>Categorieen</h1>
+            <div class="horizontal layout wrap">
+              <dom-repeat items="[[categories]]">
+                <template strip-whitespace>
+                  <div class="item">
+                    <a class="image-link" href$="/list/[[item.naam]]">
+                      <shop-image src="../images/[[item.afbeeldingURL]]" alt="[[item.naam]]"></shop-image>
+                    </a>
+                    <h2>[[item.naam]]</h2>
+                    <shop-button>
+                      <a aria-label$="[[item.naam]] Shop Now" href$="/list/[[item.naam]]"> Bekijken</a>
+                    </shop-button>
+                  </div>
+                </template>
+              </dom-repeat>
+            </div>
+          </template>
+          <template is="dom-if" if="{{searchResults}}.length > 0">
+            <h1>Resultaten</h1>
+            <p>[[_getPluralizedQuantity(searchResults.length)]]</p>
+            <div class="horizontal layout wrap">
+              <dom-repeat items="[[searchResults]]">
+                <template>
+                  <div class="item">
+                    <a href$="[[_getItemHref(item)]]">
+                      <shop-list-item item="[[item]]"></shop-list-item>
+                    </a>
+                  </div>
+                </template>
+              </dom-repeat>
+            </div>
+          </template>
+        </div>
+      </template>
+      <template is="dom-if" if="{{!hasSearched}}">
+        <div class="categories flex">
+          <h1>Categorieen</h1>
+          <div class="horizontal layout wrap">
+            <dom-repeat items="[[categories]]">
+              <template strip-whitespace>
+                <div class="item">
+                  <a class="image-link" href$="/list/[[item.naam]]">
+                    <shop-image src="../images/[[item.afbeeldingURL]]" alt="[[item.naam]]"></shop-image>
+                  </a>
+                  <h2>[[item.naam]]</h2>
+                  <shop-button>
+                    <a aria-label$="[[item.naam]] Shop Now" href$="/list/[[item.naam]]"> Bekijken</a>
+                  </shop-button>
+                </div>
+              </template>
+            </dom-repeat>
+          </div>
+        </div>
+      </template>
     </div>
     <hr>
 
@@ -199,10 +245,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: [],
         },
 
-        selectedFilters: {
-          type: Array
-        },
-
         categories: {
           type: Array
         },
@@ -212,9 +254,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: '_visibleChanged'
         },
 
-        hasMore: {
-          type: Boolean
+        hasSearched: {
+          type: Boolean,
+          value: false
+        },
+
+        searchResults: {
+          type: Array
         }
+
       }}
 
       _getCategoriesSearchObject(categoryList) {
@@ -237,6 +285,82 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         })
       }
 
+      _getSearchResults() {
+        this.hasSearched = true;
+        let leveranciersCheckboxes = this.shadowRoot.querySelectorAll("#leveranciers input[type='checkbox']:checked");
+        let leveranciers = [];
+        for (let checkbox of leveranciersCheckboxes) {
+          leveranciers.push(checkbox.getAttribute('name'))
+        }
+
+        let categoriesCheckboxes = this.shadowRoot.querySelectorAll("#categorieen input[type='checkbox']:checked");
+        let categorieen = [];
+        for (let checkbox of categoriesCheckboxes) {
+          categorieen.push(checkbox.getAttribute('name'))
+        }
+
+        let searchObject = {
+          naam: this.shadowRoot.querySelector('#searchform').value,
+          minPrice: this.shadowRoot.querySelector('#min_price').value,
+          maxPrice: this.shadowRoot.querySelector('#max_price').value,
+          leverbaarVanaf: this.shadowRoot.querySelector('#leverbaar_vanaf').value,
+          leverbaarTot: this.shadowRoot.querySelector('#leverbaar_tot').value,
+          categorieen: categorieen,
+          leveranciers: leveranciers
+        };
+
+        let queryString = 'search=';
+        for(let key of Object.keys(searchObject)){
+          if(searchObject[key].length !== 0) {
+            if(searchObject[key] === 'categorieen') {
+              queryString = queryString.concat(key + ':');
+              for (let i = 0; i < categorieen.length; i++) {
+                if (i !== categorieen.length - 1) {
+                  queryString = queryString.concat(categorieen[i] + ',')
+                } else {
+                  queryString = queryString.concat(categorieen[i] + ';')
+                }
+              }
+            } else if(searchObject[key] === 'leveranciers') {
+                queryString = queryString.concat(key + ':');
+                for(let i = 0; i < leveranciers.length; i++) {
+                  if(i !== leveranciers.length - 1 ) {
+                    queryString = queryString.concat(leveranciers[i] + ',')
+                  } else {
+                    queryString = queryString.concat(leveranciers[i] + ';')
+                  }
+                }
+            } else {
+              queryString = queryString.concat(key + ':' + searchObject[key] + ';')
+            }
+          }
+        }
+        let encodedQueryString = encodeURIComponent(queryString);
+        console.log(queryString);
+        if(queryString !== 'search=') {
+          fetch(environment.API.webwinkel + '/artikelen?' + encodedQueryString)
+            .then(data => {
+              data.json()
+            }).then(data => {
+            this.searchResults = data
+          })
+        }
+      }
+
+      _getPluralizedQuantity(quantity) {
+        if (!quantity) {
+          return '';
+        }
+        let pluralizedQ = quantity === 1 ? 'item' : 'items';
+        return '(' + quantity + ' ' + pluralizedQ + ')';
+      }
+
+      _getItemHref(item) {
+        // By returning null when `itemId` is undefined, the href attribute won't be set and
+        // the link will be disabled.
+        return item.Artikelnummer ? ['/detail', this.category.naam, item.Naam].join('/') : null;
+      }
+
       _visibleChanged(visible) {
         if (visible) {
           this.dispatchEvent(new CustomEvent('change-section', {
@@ -251,27 +375,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return item.naam ? ['/detail', this.category.name, item.name].join('/') : null;
       }
 
-      _searchChanged(value) {
-        const searchShadowDom = this.shadowRoot.querySelector('paper-search-panel');
-        this.loading = true;
-        if(this.search ==="") {
-          Polymer.Async.microTask.run(() => {
-            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='none';
-            searchShadowDom.querySelector('#results').style.display='none'
-          })
-        } else {
-          if(this.items.length === 0) {
-            searchShadowDom.shadowRoot.querySelector('.noResults').style.display='inline';
-          }
-          searchShadowDom.querySelector('#results').style.display='inline'
-        }
 
-        let results = this._getMatchingArticles(value)
-        this.loading = false;
-      }
-
-      _getMatchingArticles(value) {
-      }
     }
 
     customElements.define(ShopHome.is, ShopHome);
