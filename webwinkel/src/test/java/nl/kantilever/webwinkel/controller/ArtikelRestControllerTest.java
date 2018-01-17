@@ -1,50 +1,34 @@
 package nl.kantilever.webwinkel.controller;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isIn;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
-
-import javafx.application.Application;
-import nl.kantilever.webwinkel.WebWinkelServiceApplication;
 import nl.kantilever.webwinkel.controllers.ArtikelRestController;
-import nl.kantilever.webwinkel.domain.*;
-import nl.kantilever.webwinkel.repositories.ArtikelRepository;
+import nl.kantilever.webwinkel.domain.Artikel;
+import nl.kantilever.webwinkel.domain.Categorie;
 import nl.kantilever.webwinkel.services.ArtikelService;
 import nl.kantilever.webwinkel.services.CategorieService;
 import nl.kantilever.webwinkel.services.LeverancierService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @RunWith(SpringRunner.class)
@@ -58,9 +42,6 @@ public class ArtikelRestControllerTest {
 
   @MockBean
   private ArtikelService artikelService;
-
-  @MockBean
-  private ArtikelRepository artikelRepository;
 
   @Autowired
   private MockMvc mockMvc;
@@ -129,7 +110,6 @@ public class ArtikelRestControllerTest {
   @Test
   public void getAllCategorieen_ExpectOkAnd2CategorieenAsJson() throws Exception {
     when(categorieService.findAll()).thenReturn(categorieArray);
-
     this.mockMvc.perform(get("/categorieen")
     ).andDo(print()).andExpect(status().isOk())
       .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -235,7 +215,7 @@ public class ArtikelRestControllerTest {
 
     List<Artikel> artikelArray = Arrays.asList(artikel1, artikel2);
 
-    when(artikelService.findArtikelenLeverbaarVanaf(searchUtilDate)).thenReturn(artikelArray);
+    when(artikelService.findArtikelenLeverbaarTot(searchUtilDate)).thenReturn(artikelArray);
 
     this.mockMvc.perform(get("/artikelen/leverbaar_tot/01-01-2024"))
       .andDo(print())
@@ -245,30 +225,14 @@ public class ArtikelRestControllerTest {
 
 
   @Test
-  @Ignore
-  public void getArtikelen_SearchSingleVERANDEREN() throws Exception {
-    List<Artikel> artikelArray = Arrays.asList(artikel2);
-    System.out.println(artikel2);
-    artikel2.setCategorieen(new ArrayList<>());
-    ZoekCriteriaBuilder builder = new ZoekCriteriaBuilder();
-    builder.voegZoekCriteriumToe("naam", ":", "fietstas"); //Zoekfilter bestaat altijd uit 3 delen (key, operator, waarde)
+  public void getArtikelen_SearchFunctieByNaam_ExpectOkAnd2ArtikelenAsJson() throws Exception {
+    when(artikelService.findAllBySpec(Mockito.any(Specification.class))).thenReturn(artikelArray);
 
-    Specification<Artikel> spec = builder.build();
-
-
-    when(artikelRepository.findAll(spec)).thenReturn(artikelArray);
-    this.mockMvc.perform(get("/artikelen?zoeken=naam:fietstas")
-    ).andDo(print()).andExpect(status().isOk())
+    this.mockMvc
+      .perform(get("/artikelen?zoeken=naam:fietstas"))
+      .andDo(print()).andExpect(status().isOk())
       .andExpect(content().contentType("application/json;charset=UTF-8"))
-      .andExpect(content().json((mapper.writeValueAsString(artikelArray))));
+      .andExpect(content().json(mapper.writeValueAsString(artikelArray)));
   }
-//  @Test
-//  public void getArtikelenBeforeLeverbaarTotDateExpectOkAnd2ArtikelenAsJson() throws Exception {
-//
-//  }
-//  @RequestMapping(value = "artikelen/leverbaar_tot/{leverbaar_tot}", method = RequestMethod.GET)
-//  public List<Artikel> findArtikelenLeverbaarTot(Model model, @PathVariable Date leverbaar_tot) {
-//    return artikelService.findArtikelenLeverbaarTot(leverbaar_tot);
-//  }
 }
 

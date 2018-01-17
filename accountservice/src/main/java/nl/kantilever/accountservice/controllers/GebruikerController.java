@@ -1,6 +1,5 @@
 package nl.kantilever.accountservice.controllers;
 
-import nl.kantilever.accountservice.entities.Account;
 import nl.kantilever.accountservice.entities.Gebruiker;
 import nl.kantilever.accountservice.services.AccountService;
 import nl.kantilever.accountservice.services.GebruikerService;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin("*")
 @RestController
 public class GebruikerController {
+
   private static final Logger logger = LoggerFactory.getLogger(GebruikerController.class);
 
   @Autowired
@@ -28,17 +28,15 @@ public class GebruikerController {
 
   /**
    * Registers a new user
-   *
-   * @param gebruiker
-   * @return
    */
   @PostMapping("/gebruiker")
   public ResponseEntity createGebruikerAndAccount(@RequestBody Gebruiker gebruiker) {
-    logger.debug("gebruiker: {}", gebruiker.toString());
+    logger.info("gebruiker: {}", gebruiker);
 
     try {
       if (accountService.findByUsername(gebruiker.getAccount().getUsername()) != null) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UsernameTaken"); // 400 Bad Request
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+          .body("UsernameTaken"); // 400 Bad Request
       }
 
       gebruiker.getAccount().setPassword(bCrypt.encode(gebruiker.getAccount().getPassword()));
@@ -46,7 +44,7 @@ public class GebruikerController {
 
       return new ResponseEntity(HttpStatus.OK);
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.info("Exception: {}", e.toString());
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
     }
   }
@@ -72,13 +70,5 @@ public class GebruikerController {
       return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR); // 400 Bad Request
     }
   }
-
-  @GetMapping("/test")
-  public ResponseEntity test() {
-    System.out.println("asasdsad");
-
-    return new ResponseEntity(HttpStatus.OK);
-  }
-
 
 }

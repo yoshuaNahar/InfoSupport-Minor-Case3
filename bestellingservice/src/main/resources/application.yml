@@ -28,6 +28,11 @@ urls:
 server:
   port: 8082
 
+# Security properties
+tokens:
+  accessToken:
+    secret: "hQWcnjr1LAbgNX7HBujEnbdbbt0_Y6z5m8eoEQAy275s4TBNHUVXN4OnOQQKjWlUOUNPRszHumXK7FRGyMnq9vcDsTfHmpsDrSv5F5zcVWUi2_VwJaneCeBCQKqqQxwcSumoDWcZEQ3aCNtZ5KFc-6LrIr9tliTqxlpPRSGUAY__1tbzBeW43I5LTnTnVzqwc3KJ8UpytDNnS8x1nm5wos7lHym6qiK7CmqohxySMul1ZeSBp274G2pOA008H7ehxmDEGbsy3K7BSV-hUF_5K88WRwQqRhgg_bucAuGEH_fUodxtadF4mlf_7A7-DC6LsOPkjqnis2bFGyEDbcctRg"
+
 logging:
   level:
     nl:

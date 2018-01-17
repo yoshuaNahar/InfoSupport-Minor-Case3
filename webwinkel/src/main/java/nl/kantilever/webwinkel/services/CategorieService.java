@@ -8,22 +8,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Created by Tinne on 20-12-2017.
- */
-
 @Service
 public class CategorieService {
   private CategorieRepository categorieRepository;
 
+  @Autowired
+  public CategorieService(CategorieRepository categorieRepository) {
+    this.categorieRepository = categorieRepository;
+  }
+
   @Transactional
   public void save(Categorie categorie) {
     this.categorieRepository.save(categorie);
-  }
-
-  @Autowired
-  public void setCategorieRepository(CategorieRepository categorieRepository) {
-    this.categorieRepository = categorieRepository;
   }
 
   public List<Categorie> findAll() {

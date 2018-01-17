@@ -17,9 +17,5 @@ spring:
     host: 192.168.178.158
     port: 8920
 
-logging:
-  level:
-    org: FINE
-
 server:
   port: 8922

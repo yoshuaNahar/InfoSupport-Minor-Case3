@@ -9,10 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * Created by Tinne on 20-12-2017.
- */
-
 @Repository
 public interface CategorieRepository extends CrudRepository<Categorie, String> {
 

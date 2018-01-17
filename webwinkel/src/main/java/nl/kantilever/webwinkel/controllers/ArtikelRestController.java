@@ -1,9 +1,9 @@
 package nl.kantilever.webwinkel.controllers;
 
-import nl.kantilever.webwinkel.domain.*;
 import nl.kantilever.webwinkel.domain.Artikel;
 import nl.kantilever.webwinkel.domain.Categorie;
 import nl.kantilever.webwinkel.domain.Leverancier;
+import nl.kantilever.webwinkel.domain.ZoekCriteriaBuilder;
 import nl.kantilever.webwinkel.services.ArtikelService;
 import nl.kantilever.webwinkel.services.CategorieService;
 import nl.kantilever.webwinkel.services.LeverancierService;
@@ -13,25 +13,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.Predicate;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.springframework.data.jpa.domain.Specifications.where;
-
-/**
- * Created by Tinne on 20-12-2017.
- */
 
 @CrossOrigin
 @RestController

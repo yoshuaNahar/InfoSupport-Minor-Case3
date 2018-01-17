@@ -1,16 +1,14 @@
 package nl.kantilever.accountservice.services;
 
-import nl.kantilever.accountservice.entities.Gebruiker;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import nl.kantilever.accountservice.repositories.AccountRepository;
-import nl.kantilever.accountservice.repositories.GebruikerRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 public class AccountServiceTest {

@@ -99,8 +99,7 @@ public class BestellingService {
     }
 
     Double bestellingTotal = artikelen.stream().mapToDouble(Artikel::getPrijs).sum();
-
-//    gebruiker.setHuidigKrediet(gebruiker.getHuidigKrediet() + bestellingTotal);
+    gebruiker.setHuidigKrediet(gebruiker.getHuidigKrediet() + bestellingTotal);
 
     BestellingSnapshot bestellingSnapshot = new BestellingSnapshot();
     bestellingSnapshot.setId(bestelling.getId());
