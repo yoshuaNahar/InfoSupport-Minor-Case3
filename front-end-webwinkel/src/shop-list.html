@@ -41,6 +41,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 20%;
         margin-right: 20px;
       }
+
+      .item {
+        margin: 0 10px 40px 10px;
+        width: 30%;
+        text-align: center;
+      }
       @media (max-width: 800px) {
         .search {
           width: 50%;
@@ -73,11 +79,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         failure="{{failure}}">
     </shop-category-data>
 
+    <paper-dialog id="modal" modal>
+      <p>Er zijn geen resultaten gevonden</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Sluiten</paper-button>
+      </div>
+    </paper-dialog>
+
       <div hidden$="[[_hasItems()]]" class="horizontal around-justified wrap layout">
         <div class="search">
           <h1>Zoeken</h1>
           <input id="searchform" type="text" value="[[search]]">
-          <button class="search-button">Zoeken</button>
+          <button on-click='_getSearchResults' class="search-button">Zoeken</button>
           <br>
           <hr>
           <span>Minimum prijs</span>
@@ -96,29 +109,71 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <br>
           <input id="leverbaar_tot" type="date" value="[[search]]">
           <h2>Leveranciers</h2>
-          <template is="dom-repeat" items="{{searchLeverancierList}}" as="value">
-            <p>
-              <input type="checkbox" name="[[value]]">
-              <span>[[value]]</span>
-            </p>
-          </template>
-        </div>
-
-        <div class="categoryItems flex" hidden$="[[failure]]">
-          <h1 style="text-align: center">[[category.naam]]</h1>
-          <p style="text-align: center">[[_getPluralizedQuantity(category.items.length)]]</p>
-          <div class="horizontal layout wrap">
-            <dom-repeat items="[[_getListItems(category.items)]]">
-              <template>
-                <div class="categoryItem">
-                  <a href$="[[_getItemHref(item)]]">
-                    <shop-list-item item="[[item]]"></shop-list-item>
-                  </a>
-                </div>
-              </template>
-            </dom-repeat>
+          <div id="leveranciers">
+            <template is="dom-repeat" items="{{searchLeverancierList}}" as="value">
+              <p>
+                <input type="checkbox" name="[[value]]">
+                <span>[[value]]</span>
+              </p>
+            </template>
           </div>
         </div>
+
+        <template is="dom-if" if="{{hasSearched}}">
+          <template is="dom-if" if="{{!searchResults}}">
+            <div class="categoryItems flex" hidden$="[[failure]]">
+              <h1 style="text-align: center">[[category.naam]]</h1>
+              <p style="text-align: center">[[_getPluralizedQuantity(category.items.length)]]</p>
+              <div class="horizontal layout wrap">
+                <dom-repeat items="[[_getListItems(category.items)]]">
+                  <template>
+                    <div class="categoryItem">
+                      <a href$="[[_getItemHref(item)]]">
+                        <shop-list-item item="[[item]]"></shop-list-item>
+                      </a>
+                    </div>
+                  </template>
+                </dom-repeat>
+              </div>
+            </div>
+          </template>
+          <template is="dom-if" if="{{searchResults}}">
+            <div class="categoryItems flex" hidden$="[[failure]]">
+              <h1 style="text-align: center">Resultaten</h1>
+              <p style="text-align: center">[[_getPluralizedQuantity(searchResults.length)]]</p>
+              <div class="horizontal layout wrap">
+                <dom-repeat items="{{searchResults}}">
+                  <template>
+                    <div class="item">
+                      <a href$="[[_getSearchItemHref(item)]]">
+                        <shop-list-item item="[[item]]"></shop-list-item>
+                      </a>
+                    </div>
+                  </template>
+                </dom-repeat>
+              </div>
+            </div>
+          </template>
+        </template>
+
+        <template is="dom-if" if="{{!hasSearched}}">
+          <div class="categoryItems flex" hidden$="[[failure]]">
+            <h1 style="text-align: center">[[category.naam]]</h1>
+            <p style="text-align: center">[[_getPluralizedQuantity(category.items.length)]]</p>
+            <div class="horizontal layout wrap">
+              <dom-repeat items="[[_getListItems(category.items)]]">
+                <template>
+                  <div class="categoryItem">
+                    <a href$="[[_getItemHref(item)]]">
+                      <shop-list-item item="[[item]]"></shop-list-item>
+                    </a>
+                  </div>
+                </template>
+              </dom-repeat>
+            </div>
+          </div>
+        </template>
+
     </div>
 
     <!--
@@ -168,7 +223,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
 
           searchResults: {
-            type: Array
+            type: Array,
+            value: []
           },
 
           hasSearched: {
@@ -200,6 +256,73 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         super.ready();
       }
 
+      _getSearchResults() {
+        this.hasSearched = false
+        let leveranciersCheckboxes = this.shadowRoot.querySelectorAll("#leveranciers input[type='checkbox']:checked");
+        let leveranciers = [];
+        for (let checkbox of leveranciersCheckboxes) {
+          leveranciers.push(checkbox.getAttribute('name'))
+        }
+
+        let searchObject = {
+          naam: this.shadowRoot.querySelector('#searchform').value,
+          minPrice: this.shadowRoot.querySelector('#min_price').value,
+          maxPrice: this.shadowRoot.querySelector('#max_price').value,
+          leverbaarVanaf: this.shadowRoot.querySelector('#leverbaar_vanaf').value,
+          leverbaarTot: this.shadowRoot.querySelector('#leverbaar_tot').value,
+//          categorieen: categorieen,
+          leverancier: leveranciers
+        };
+
+        let queryString = 'zoeken=';
+        for(let key of Object.keys(searchObject)){
+          if(searchObject[key].length !== 0) {
+            if(searchObject[key] === 'categorieen') {
+              queryString = queryString.concat(key + ':');
+              for (let i = 0; i < categorieen.length; i++) {
+                if (i !== categorieen.length - 1) {
+                  queryString = queryString.concat(categorieen[i] + ',')
+                } else {
+                  queryString = queryString.concat(categorieen[i] + ';')
+                }
+              }
+            } else if(searchObject[key] === 'leverancier') {
+              queryString = queryString.concat(key + ':');
+              for(let i = 0; i < leveranciers.length; i++) {
+                if(i !== leveranciers.length - 1 ) {
+                  queryString = queryString.concat(encodeURIComponent(leveranciers[i]) + ',')
+                } else {
+                  queryString = queryString.concat(encodeURIComponent(leveranciers[i]) + ';')
+                }
+              }
+            } else if (key === 'minPrice') {
+              queryString = queryString.concat('prijs>' + encodeURIComponent(searchObject['minPrice']) + ';')
+            } else if (key === 'maxPrice') {
+              queryString = queryString.concat('prijs<' + encodeURIComponent(searchObject['maxPrice']) + ';')
+            } else {
+              queryString = queryString.concat(key + ':' + encodeURIComponent(searchObject[key]) + ';')
+            }
+          }
+        }
+        if(queryString !== 'zoeken=') {
+          fetch(environment.API.webwinkel + '/artikelen?' + queryString)
+            .then(data => {
+              if(!data.ok) {
+                throw Error()
+              }
+              return data.json()
+            }).then(data => {
+            if( data.length === 0) {
+              throw Error()
+            }
+            this.searchResults = data;
+            this.hasSearched = true
+          }).catch(() => {
+            this.shadowRoot.querySelector('#modal').open();
+          })
+        }
+      }
+
       connectedCallback() {
         super.connectedCallback();
         this.isAttached = true;
@@ -228,6 +351,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // By returning null when `itemId` is undefined, the href attribute won't be set and
         // the link will be disabled.
         return item.Artikelnummer ? ['/detail', this.category.naam, item.Naam].join('/') : null;
+      }
+
+      _getSearchItemHref(item) {
+        // By returning null when `itemId` is undefined, the href attribute won't be set and
+        // the link will be disabled.
+        return item.Artikelnummer ? ['/detail', item.Naam].join('/') : null;
       }
 
       _getPluralizedQuantity(quantity) {

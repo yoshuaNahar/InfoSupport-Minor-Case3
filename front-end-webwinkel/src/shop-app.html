@@ -305,7 +305,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-icon-button icon="arrow-back" aria-label="Go back"></paper-icon-button>
           </a>
         </div>
-        <div main-title style="color: whitesmoke">Kantilever</div>
+        <div class="inlog-container">
+          <a href="/">
+            <p >Home</p>
+          </a>
+        </div>
+        <div main-title>
+        </div>
         <template is="dom-if" if="{{!authenticated}}">
           <div class="register-container">
             <a href="/register">
@@ -365,6 +371,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <shop-list name="list" route="[[subroute]]" offline="[[offline]]"></shop-list>
       <!-- detail view of one item -->
       <shop-detail name="detail" route="[[subroute]]" offline="[[offline]]"></shop-detail>
+      <!-- detail view when search -->
+      <shop-search-detail name="search-detail" route="[[subroute]]"></shop-search-detail>
       <!-- cart view -->
       <shop-cart name="cart" cart="[[cart]]" total="[[total]]"></shop-cart>
       <!-- checkout view -->
@@ -379,6 +387,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <footer>
       <p>De Jong B.V.</p>
+      <p>Kantilever B.V.
+        Kruisboog 42
+        3905 TG Veenendaal
+        Tel: +31 318 552020
+        Email: info@kantilever.nl
+        IBAN: NL44 INGB 00058 54051
+        K.v.K. 3013 5370
+        BTW NL8062.30.277.B01</p>
     </footer>
 
     <!-- a11y announcer -->
