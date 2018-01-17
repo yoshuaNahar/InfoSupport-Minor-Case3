@@ -6,7 +6,6 @@ import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
 import nl.kantilever.bestellingservice.entities.Gebruiker;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;
-import org.hibernate.annotations.Cascade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,14 +92,19 @@ public class BestellingService {
 
     artikelService.saveArtikelen(artikelen);
 
-    Gebruiker gebruikerFromAccountService = restTemplate.getForObject("http://" + accountUrl + "gebruiker/" + bestelling.getGebruikerId(), Gebruiker.class);
-    long gebruikerId = gebruikerService.save(gebruikerFromAccountService).getId();
+    Gebruiker gebruiker = gebruikerService.getGebruikerById(bestelling.getGebruikerId());
+    if (gebruiker == null) {
+      Gebruiker gebruikerFromAccountService = restTemplate.getForObject("http://" + accountUrl + "gebruiker/" + bestelling.getGebruikerId(), Gebruiker.class);
+      gebruiker = gebruikerService.save(gebruikerFromAccountService);
+    }
 
     Double bestellingTotal = artikelen.stream().mapToDouble(Artikel::getPrijs).sum();
 
+    gebruiker.setHuidigKrediet(gebruiker.getHuidigKrediet() + bestellingTotal);
+
     BestellingSnapshot bestellingSnapshot = new BestellingSnapshot();
     bestellingSnapshot.setId(bestelling.getId());
-    bestellingSnapshot.setGebruikerId(gebruikerId);
+    bestellingSnapshot.setGebruikerId(gebruiker.getId());
     bestellingSnapshot.setArtikelen(artikelen);
     bestellingSnapshot.setTotal(bestellingTotal);
     bestellingSnapshot.setStatus("geplaatst");
