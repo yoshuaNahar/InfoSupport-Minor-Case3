@@ -132,7 +132,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let artikelIndex = JSON.parse(event.target.dataset.item);
         this.currentBestelling.artikelen[artikelIndex].ingepakt = !this.currentBestelling.artikelen[artikelIndex].ingepakt;
 
-
         let allArtikelenIngepakt = true;
         for (let i = 0; i < this.currentBestelling.artikelen.length; i++) {
           if (!this.currentBestelling.artikelen[i].ingepakt) {
