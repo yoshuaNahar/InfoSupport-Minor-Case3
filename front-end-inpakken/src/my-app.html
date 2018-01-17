@@ -106,6 +106,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             attr-for-selected="name"
             fallback-selection="view404"
             role="main">
+          <login-form-view name="login-form"></login-form-view>
           <inpakken-view name="inpakken"></inpakken-view>
           <not-found-view name="notFound"></not-found-view>
         </iron-pages>
@@ -128,7 +129,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           subroute: String,
           // This shouldn't be neccessary, but the Analyzer isn't picking up
           // Polymer.Element#rootPath
-          rootPath: String,
+          rootPath: String
         };
       }
 
@@ -150,17 +151,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _pageChanged(page) {
-        console.log(page, 'page');
+        if (page !== 'login-form' && (localStorage.getItem("refreshToken") === null || localStorage.getItem("refreshToken") === undefined)) {
+          location.pathname = "login-form";
+        } else {
 
         // Load page import on demand. Show 404 page if fails
         var resolvedPageUrl = this.resolveUrl(page + '.html');
 
-        console.log( resolvedPageUrl, "resolved");
         Polymer.importHref(
             resolvedPageUrl,
             null,
             this._showPage404.bind(this),
             true);
+        }
       }
 
       _showPage404() {

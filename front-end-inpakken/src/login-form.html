@@ -1,0 +1,98 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="login-form-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      h2 {
+        color: black;
+      }
+    </style>
+
+    <div class="container">
+      <form on-submit="login">
+        <div>
+          <p>Gebruikersnaam: </p><input type="email" name="username" id="username" required>
+        </div>
+        <div>
+          <p>Password: </p><input type="password" name="password" id="password" required>
+        </div>
+        <button>Login</button>
+      </form>
+    </div>
+
+
+  </template>
+
+  <script>
+    class LoginForm extends Polymer.Element {
+      static get is() {
+        return 'login-form-view';
+      }
+
+      static get properties() {
+        return {};
+      }
+
+      ready() {
+        super.ready();
+      }
+
+      login(event) {
+        event.preventDefault();
+        fetch(environment.API.accountservice + '/authenticate',
+          {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: this.shadowRoot.querySelector('#username').value,
+              password: this.shadowRoot.querySelector('#password').value
+            })
+          })
+          .then(data => {
+            if (!data.ok) {
+              if (data.status === 401) {
+                alert("Verkeerde gebruikersnaam wachtwoord combinatie");
+              } else {
+                throw Error(data.statusText)
+              }
+            }
+            return data.text()
+          }).then(data => {
+          if (data) {
+            localStorage.setItem("refreshToken", data);
+            this.goToInpakken();
+          }
+        }).catch(error => {
+          alert(error.message);
+        })
+      }
+
+      goToInpakken() {
+        location.pathname = "inpakken";
+      }
+
+    }
+
+    window.customElements.define(LoginForm.is, LoginForm);
+  </script>
+</dom-module>
