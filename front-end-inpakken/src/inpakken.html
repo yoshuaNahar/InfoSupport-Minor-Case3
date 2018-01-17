@@ -159,9 +159,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       printFactuur() {
-        console.log(this.currentBestelling);
-        console.log(this.gebruiker);
-
         let artikelen = [];
 
         this.currentBestelling.artikelen.forEach(artikel => {
@@ -210,6 +207,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       printSticker() {
+        let doc = new jsPDF(
+          {
+            orientation: 'landscape',
+            unit: 'pt',
+            format: [250, 90]
+          });
+        doc.text(this.gebruiker.volledigeNaam, 10, 20);
+        doc.text(this.gebruiker.straatnaam + " " + this.gebruiker.huisnummer, 10, 40);
+        doc.text(this.gebruiker.postcode + ", " + this.gebruiker.stad, 10, 60);
+        doc.text(this.gebruiker.land, 10, 80);
+        doc.save("Adressticker.pdf");
+
         this.requiredActions.printedSticker = true;
         this._toggleIngepaktButton();
       }
