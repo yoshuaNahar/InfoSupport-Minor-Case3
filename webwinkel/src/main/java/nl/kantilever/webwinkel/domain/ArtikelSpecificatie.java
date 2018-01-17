@@ -8,7 +8,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
- * Created by Tinne on 9-1-2018.
  * Deze klasse voorziet de builder van query specificaties.
  */
 public class ArtikelSpecificatie implements Specification<Artikel> {
