@@ -79,6 +79,7 @@ public class BestellingController {
     return new ResponseEntity<>(bestellingSnapshot, HttpStatus.OK);
   }
 
+  @CrossOrigin
   @GetMapping("/bestelling")
   public ResponseEntity getAllBestellingen(
     @RequestParam(value = "status", required = false) String status,
