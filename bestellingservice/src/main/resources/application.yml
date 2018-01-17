@@ -23,6 +23,7 @@ spring:
 
 urls:
   webwinkel: "localhost:8081"
+  account: "localhost:9999"
 
 server:
   port: 8082

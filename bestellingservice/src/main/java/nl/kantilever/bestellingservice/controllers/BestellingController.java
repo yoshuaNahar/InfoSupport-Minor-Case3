@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @CrossOrigin("*")
 @RestController
 public class BestellingController {
@@ -47,12 +49,12 @@ public class BestellingController {
     }
   }
 
-  @PutMapping("/bestelling/{id}/setIngepakt")
-  public ResponseEntity setBestellingIngepakt(@PathVariable("id") Long bestellingId) {
-    logger.debug("setBestellingIngepakt: {}", bestellingId);
+  @PutMapping("/bestelling/{id}/setStatus/{status}")
+  public ResponseEntity setBestellingStatus(@PathVariable("id") Long bestellingId, @PathVariable("status") String status) {
+    logger.debug("setBestellingStatus id,status: {},{}", bestellingId, status);
 
     try {
-      bestellingService.setBestellingIngepakt(bestellingId);
+      bestellingService.setBestellingStatus(bestellingId, status);
 
       return new ResponseEntity(HttpStatus.OK); // 200 OK
     } catch (Exception e) {
@@ -75,7 +77,7 @@ public class BestellingController {
       return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
-    return new ResponseEntity<>(bestellingSnapshot, HttpStatus.OK );
+    return new ResponseEntity<>(bestellingSnapshot, HttpStatus.OK);
   }
 
   @GetMapping("/bestelling")
@@ -99,7 +101,7 @@ public class BestellingController {
   }
 
   @GetMapping("/bestelling/gebruiker/{id}/totaalwaarde")
-  public ResponseEntity getTotaalwaardeBestellingen(@PathVariable("id") Integer gebruikerId){
+  public ResponseEntity getTotaalwaardeBestellingen(@PathVariable("id") Integer gebruikerId) {
     if (gebruikerId == null) {
       return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -109,7 +111,7 @@ public class BestellingController {
 
 
   @GetMapping("/bestelling/gebruikercontrole")
-  public List<Gebruiker> getGebruikersMetBestellingenBoven500(){
+  public List<Gebruiker> getGebruikersMetBestellingenBoven500() {
     return bestellingService.getGebruikersMetBestellingenBoven500();
   }
 }

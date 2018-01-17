@@ -4,9 +4,15 @@ import nl.kantilever.webwinkel.domain.Artikel;
 import nl.kantilever.webwinkel.domain.Categorie;
 import nl.kantilever.webwinkel.repositories.ArtikelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +42,10 @@ public class ArtikelService {
     this.artikelRepository.save(artikel);
   }
 
+  public List<Artikel> findAllBySpec(Specification<Artikel> spec) {
+    return artikelRepository.findAll(spec);
+  }
+
   public Artikel findArtikelByArtikelnummer(int artikelnummer) {
     return artikelRepository.findArtikelByArtikelnummer(artikelnummer);
   }
@@ -47,8 +57,6 @@ public class ArtikelService {
   public List<Artikel> findArtikelenByLeverancier(String leverancier) {
     return artikelRepository.findArtikelenByLeverancier(leverancier);
   }
-
-
 
   public List<Artikel> findArtikelenByBeschrijving(String beschrijving) {
     return artikelRepository.findArtikelenByBeschrijving(beschrijving);

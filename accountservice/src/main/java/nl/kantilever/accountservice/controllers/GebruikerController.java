@@ -49,6 +49,28 @@ public class GebruikerController {
     }
   }
 
+  /**
+   * Retrieve a user by id
+   *
+   * @param gebruikerId
+   * @return
+   */
+  @GetMapping("/gebruiker/{id}")
+  public ResponseEntity retrieveGebruikerById(@PathVariable("id") Long gebruikerId) {
+    logger.debug("gebruikerId: {}", gebruikerId.toString());
+
+    try {
+      if (gebruikerId == null) {
+        return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
+      }
+
+      return ResponseEntity.ok().body(gebruikerService.findById(gebruikerId));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR); // 400 Bad Request
+    }
+  }
+
   @GetMapping("/test")
   public ResponseEntity test() {
     logger.info("test");

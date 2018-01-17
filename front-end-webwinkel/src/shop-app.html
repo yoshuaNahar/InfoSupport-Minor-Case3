@@ -91,9 +91,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 40px;
       }
 
-      .account-container {
+      .inlog-container {
+        color: var(--app-primary-color);
+        text-align: center;
         position: relative;
-        width: 40px;
+        width: 70px;
+      }
+
+      .register-container {
+        text-align: center;
+        position: relative;
+        width: 120px;
+      }
+
+      .register-container a {
+        color: var(--app-primary-color);
+      }
+
+      .inlog-container a {
+        color: var(--app-primary-color);
       }
 
       .announcer {
@@ -177,10 +193,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .drawer-list a.iron-selected {
         color: black;
         font-weight: bold;
-      }
-
-      shop-cart-modal {
-        z-index: 3;
       }
 
       app-drawer {
@@ -294,16 +306,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </a>
         </div>
         <div main-title style="color: whitesmoke">Kantilever</div>
+        <template is="dom-if" if="{{!authenticated}}">
+          <div class="register-container">
+            <a href="/register">
+              <p>Registreren</p>
+            </a>
+          </div>
+          <div class="inlog-container">
+            <a href="/login">
+              <p>Login</p>
+            </a>
+          </div>
+        </template>
+        <template is="dom-if" if="{{authenticated}}">
+          <div class="inlog-container">
+            <a href="#" on-click="_logout">
+              <p>Logout</p>
+            </a>
+          </div>
+        </template>
+
         <div class="cart-btn-container">
           <a href="/cart" tabindex="-1">
             <paper-icon-button icon="shopping-cart" aria-label$="Shopping cart: [[_computePluralizedQuantity(numItems)]]"></paper-icon-button>
           </a>
           <div class="cart-badge" aria-hidden="true" hidden$="[[!numItems]]">[[numItems]]</div>
-        </div>
-        <div class="account-container">
-          <a href="/register">
-            <paper-icon-button icon="account-circle" aria-label="register"></paper-icon-button>
-          </a>
         </div>
 
       </app-toolbar>
@@ -366,40 +393,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     class ShopApp extends Polymer.Element {
 
-      static get is() { return 'shop-app'; }
+      static get is() {
+        return 'shop-app';
+      }
 
-      static get properties() { return {
-        page: {
-          type: String,
-          reflectToAttribute: true,
-          observer: '_pageChanged'
-        },
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_pageChanged'
+          },
 
-        numItems: {
-          type: Number,
-          value: 0
-        },
+          numItems: {
+            type: Number,
+            value: 0
+          },
 
-        authenticated: {
-          type: Boolean
-        },
+          authenticated: {
+            type: Boolean,
+            value: false
+          },
 
-        _shouldShowTabs: {
-          computed: '_computeShouldShowTabs(page, smallScreen)'
-        },
+          _shouldShowTabs: {
+            computed: '_computeShouldShowTabs(page, smallScreen)'
+          },
 
-        _shouldRenderTabs: {
-          computed: '_computeShouldRenderTabs(_shouldShowTabs, loadComplete)'
-        },
+          _shouldRenderTabs: {
+            computed: '_computeShouldRenderTabs(_shouldShowTabs, loadComplete)'
+          },
 
-        _shouldRenderDrawer: {
-          computed: '_computeShouldRenderDrawer(loadComplete)'
+          _shouldRenderDrawer: {
+            computed: '_computeShouldRenderDrawer(loadComplete)'
+          }
         }
-      }}
+      }
 
-      static get observers() { return [
-        '_routePageChanged(routeData.page)'
-      ]}
+      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)'
+        ]
+      }
 
       constructor() {
         super();
@@ -408,21 +442,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       ready() {
         super.ready();
+        if (localStorage.getItem(['refreshToken'])) {
+          this.authenticated = true;
+        }
         // Custom elements polyfill safe way to indicate an element has been upgraded.
         this.removeAttribute('unresolved');
         // listen for custom events
-        this.addEventListener('add-cart-item', (e)=>this._onAddCartItem(e));
-        this.addEventListener('set-cart-item', (e)=>this._onSetCartItem(e));
-        this.addEventListener('clear-cart', (e)=>this._onClearCart(e));
-        this.addEventListener('change-section', (e)=>this._onChangeSection(e));
-        this.addEventListener('announce', (e)=>this._onAnnounce(e));
-        this.addEventListener('dom-change', (e)=>this._domChange(e));
-        this.addEventListener('show-invalid-url-warning', (e)=>this._onFallbackSelectionTriggered(e));
-        this.addEventListener('login', (e) => this._login(e));
+        this.addEventListener('add-cart-item', (e) => this._onAddCartItem(e));
+        this.addEventListener('set-cart-item', (e) => this._onSetCartItem(e));
+        this.addEventListener('clear-cart', (e) => this._onClearCart(e));
+        this.addEventListener('change-section', (e) => this._onChangeSection(e));
+        this.addEventListener('announce', (e) => this._onAnnounce(e));
+        this.addEventListener('dom-change', (e) => this._domChange(e));
+        this.addEventListener('show-invalid-url-warning', (e) => this._onFallbackSelectionTriggered(e));
+        this.addEventListener('authenticate', (e) => this._authenticate(e));
+
         // listen for online/offline
         Polymer.RenderStatus.afterNextRender(this, () => {
-          window.addEventListener('online', (e)=>this._notifyNetworkStatus(e));
-          window.addEventListener('offline', (e)=>this._notifyNetworkStatus(e));
+          window.addEventListener('online', (e) => this._notifyNetworkStatus(e));
+          window.addEventListener('offline', (e) => this._notifyNetworkStatus(e));
         });
       }
 
@@ -442,7 +480,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           // home route is eagerly loaded
           if (page == 'home') {
             this._pageLoaded(Boolean(oldPage));
-          // other routes are lazy loaded
+            // other routes are lazy loaded
           } else {
             // When a load failed, it triggered a 404 which means we need to
             // eagerly load the 404 page definition
@@ -483,7 +521,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _notifyNetworkStatus() {
         let oldOffline = this.offline;
-        this.offline =  !navigator.onLine;
+        this.offline = !navigator.onLine;
         // Show the snackbar if the user is offline when starting a new session
         // or if the network status changed.
         if (this.offline || (!this.offline && oldOffline === true)) {
@@ -492,7 +530,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.root.appendChild(this._networkSnackbar);
           }
           this._networkSnackbar.innerHTML = this.offline ?
-              'You are offline' : 'You are online';
+            'You are offline' : 'You are online';
           this._networkSnackbar.open();
         }
       }
@@ -504,7 +542,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // Elements in the app can notify section changes.
       // Response by a11y announcing the section and syncronizing the category.
       _onChangeSection(event) {
-        console.log("onchange " + JSON.stringify(event.detail))
         let detail = event.detail;
 
         // Scroll to the top of the page when navigating to a non-list page. For list view,
@@ -520,7 +557,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         // Use `Polymer.AppLayout.scroll` with `behavior: 'silent'` to disable header scroll
         // effects during the scroll.
-        Polymer.AppLayout.scroll({ top: scrollTop, behavior: 'silent' });
+        Polymer.AppLayout.scroll({top: scrollTop, behavior: 'silent'});
 
         this.categoryName = detail.category || '';
 
@@ -602,10 +639,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return quantity + ' ' + (quantity === 1 ? 'item' : 'items');
       }
 
-    _login(e) {
-      console.log(e)
-    }
+      _logout(e) {
+        localStorage.getItem(['refreshToken']) ? localStorage.removeItem(['refreshToken']) : '';
+        localStorage.getItem(['accessToken']) ? localStorage.removeItem(['accessToken']) : ''
+        localStorage.removeItem(['shop-cart-data'])
+        location.reload()
+      }
 
+      _authenticate(e) {
+        console.log('authenticate event')
+        if (localStorage.getItem(['refreshToken'])) {
+          this.authenticated = true;
+        } else {
+          this.authenticated = false;
+        }
+      }
     }
 
     customElements.define(ShopApp.is, ShopApp);

@@ -31,6 +31,10 @@ public class Gebruiker {
 
   private String telefoonnummer;
 
+  private double maxKrediet = 500.0; // default value
+
+  private double huidigKrediet = 0.0; // default value
+
   @OneToOne
   @Cascade({org.hibernate.annotations.CascadeType.ALL})
   private Account account;
@@ -129,6 +133,22 @@ public class Gebruiker {
 
   public void setAccount(Account account) {
     this.account = account;
+  }
+
+  public double getMaxKrediet() {
+    return maxKrediet;
+  }
+
+  public void setMaxKrediet(double maxKrediet) {
+    this.maxKrediet = maxKrediet;
+  }
+
+  public double getHuidigKrediet() {
+    return huidigKrediet;
+  }
+
+  public void setHuidigKrediet(double huidigKrediet) {
+    this.huidigKrediet = huidigKrediet;
   }
 
   @Override

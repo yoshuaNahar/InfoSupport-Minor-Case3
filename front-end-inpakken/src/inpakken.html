@@ -39,7 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <tr>
               <td style="border-bottom: 0px;">
                 <paper-checkbox style="border-bottom: 0px;" on-click="setArtikelIngepakt"
-                                data-item$="[[item]]"></paper-checkbox>
+                                data-item$="[[index]]"></paper-checkbox>
               </td>
               <td style="border-bottom: 0px;">[[item.Naam]]</td>
               <td style="border-bottom: 0px;">[[item.Leverancier]]</td>
@@ -119,7 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       setBestellingIngepakt() {
-        let url = environment.API.bestellingservice + "/bestelling/" + this.currentBestelling.id + "/setIngepakt";
+        let url = environment.API.bestellingservice + "/bestelling/" + this.currentBestelling.id + "/setStatus/ingepakt";
 
         fetch(url, {method: 'PUT'}).then(() => {
           this.reloadPage();
@@ -129,9 +129,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       setArtikelIngepakt(event) {
-        let artikel = JSON.parse(event.target.dataset.item);
-        let artikelIndex = this._findIndexByKey(this.currentBestelling.artikelen, 'Artikelnummer', artikel.Artikelnummer);
-
+        let artikelIndex = JSON.parse(event.target.dataset.item);
         this.currentBestelling.artikelen[artikelIndex].ingepakt = !this.currentBestelling.artikelen[artikelIndex].ingepakt;
 
         let allArtikelenIngepakt = true;
@@ -142,6 +140,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
         this.requiredActions.allArtikelenIngepakt = allArtikelenIngepakt;
+
+        console.log(this.currentBestelling);
         this._toggleIngepaktButton();
       }
 

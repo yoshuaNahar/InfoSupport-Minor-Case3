@@ -1,7 +1,9 @@
 package nl.kantilever.webwinkel.repositories;
 
 import nl.kantilever.webwinkel.domain.Artikel;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface ArtikelRepository extends CrudRepository<Artikel, String> {
+public interface ArtikelRepository extends CrudRepository<Artikel, String>, JpaSpecificationExecutor<Artikel> {
   @Query(value = "select * from artikelen where artikelnummer = :artikelnummer", nativeQuery = true)
   Artikel findArtikelByArtikelnummer(@Param("artikelnummer") int artikelnummer);
 
@@ -19,7 +21,6 @@ public interface ArtikelRepository extends CrudRepository<Artikel, String> {
 
   @Query(value = "select * from artikelen where leverancier like %:leverancier%", nativeQuery = true)
   List<Artikel> findArtikelenByLeverancier(@Param("leverancier") String leverancier);
-
 
   @Query(value = "select * from artikelen where beschrijving like %:beschrijving%", nativeQuery = true)
   List<Artikel> findArtikelenByBeschrijving(@Param("beschrijving") String beschrijving);
