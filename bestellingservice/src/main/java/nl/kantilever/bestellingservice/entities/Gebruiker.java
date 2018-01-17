@@ -2,7 +2,6 @@ package nl.kantilever.bestellingservice.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.List;
 import javax.persistence.*;
 
 @Entity
@@ -170,4 +169,5 @@ public class Gebruiker {
       ", huidigKrediet=" + huidigKrediet +
       '}';
   }
+
 }
