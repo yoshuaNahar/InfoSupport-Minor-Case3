@@ -642,6 +642,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _logout(e) {
         localStorage.getItem(['refreshToken']) ? localStorage.removeItem(['refreshToken']) : '';
         localStorage.getItem(['accessToken']) ? localStorage.removeItem(['accessToken']) : ''
+        localStorage.removeItem(['shop-cart-data'])
         location.reload()
       }
 
