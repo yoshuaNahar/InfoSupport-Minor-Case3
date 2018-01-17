@@ -183,9 +183,9 @@ public class BestellingServiceTest {
     Page<BestellingSnapshot> page = new PageImpl(bestellingenList);
     Mockito.when(bestellingSnapshotRepository.findAllByStatus(Mockito.anyString(), Mockito.any(Pageable.class))).thenReturn(page);
 
-    bestellingService.setBestellingIngepakt(1L);
-    bestellingService.setBestellingIngepakt(2L);
-    bestellingService.setBestellingIngepakt(3L);
+    bestellingService.setBestellingStatus(1L, "ingepakt");
+    bestellingService.setBestellingStatus(2L, "ingepakt");
+    bestellingService.setBestellingStatus(3L, "ingepakt");
 
     assertThat(bestellingService.findAllByStatus("geplaatst", null).size(), is(3));
   }
@@ -223,7 +223,7 @@ public class BestellingServiceTest {
   public void getGebruikersMetBestellingenBoven500ReturnsGebruikers() throws Exception {
     List<Gebruiker> gebruikers = new ArrayList<>();
     Gebruiker gebruiker = new Gebruiker();
-    gebruiker.setMaxCrediet(500);
+    gebruiker.setMaxKrediet(500);
     gebruikers.add(gebruiker);
     Mockito.when(gebruikerService.getGebruikersBoven500()).thenReturn(gebruikers);
 

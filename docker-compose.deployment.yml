@@ -64,6 +64,7 @@ services:
     environment:
       - spring_datasource_url=jdbc:mysql://de-jong-bestellingservice-mysql:3306/bestellingservice
       - urls_webwinkel=de-jong-webwinkel:8081
+      - urls_account=de-jong-accountservice:9999
     depends_on:
       - de-jong-bestellingservice-mysql
 

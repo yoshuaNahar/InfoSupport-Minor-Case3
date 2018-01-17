@@ -34,4 +34,8 @@ public class GebruikerService {
     gebruikerRepository.save(gebruiker);
   }
 
+  public Gebruiker save(Gebruiker gebruiker) {
+    return gebruikerRepository.save(gebruiker);
+  }
+
 }

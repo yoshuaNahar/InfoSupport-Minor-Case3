@@ -1,7 +1,5 @@
 package nl.kantilever.bestellingservice.services;
 
-import java.util.ArrayList;
-import java.util.List;
 import nl.kantilever.bestellingservice.entities.Artikel;
 import nl.kantilever.bestellingservice.entities.Bestelling;
 import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
@@ -34,6 +32,9 @@ public class BestellingService {
 
   @Value("${urls.webwinkel}")
   private String webwinkelUrl;
+
+  @Value("${urls.account}")
+  private String accountUrl;
 
   @Autowired
   public BestellingService(
@@ -77,6 +78,7 @@ public class BestellingService {
     return bestellingSnapshotRepository.findAllByStatus(status, pageLimit).getContent();
   }
 
+  @Transactional
   public void saveBestellingSnapshot(Bestelling bestelling) {
     List<Artikel> artikelen = new ArrayList<>();
 
@@ -89,12 +91,20 @@ public class BestellingService {
     logger.info("artikkelen list: {}", artikelen);
 
     artikelService.saveArtikelen(artikelen);
+
     Gebruiker gebruiker = gebruikerService.getGebruikerById(bestelling.getGebruikerId());
+    if (gebruiker == null) {
+      Gebruiker gebruikerFromAccountService = restTemplate.getForObject("http://" + accountUrl + "gebruiker/" + bestelling.getGebruikerId(), Gebruiker.class);
+      gebruiker = gebruikerService.save(gebruikerFromAccountService);
+    }
+
     Double bestellingTotal = artikelen.stream().mapToDouble(Artikel::getPrijs).sum();
+
+//    gebruiker.setHuidigKrediet(gebruiker.getHuidigKrediet() + bestellingTotal);
 
     BestellingSnapshot bestellingSnapshot = new BestellingSnapshot();
     bestellingSnapshot.setId(bestelling.getId());
-    bestellingSnapshot.setGebruikerId(gebruiker.getGebruikerId());
+    bestellingSnapshot.setGebruikerId(gebruiker.getId());
     bestellingSnapshot.setArtikelen(artikelen);
     bestellingSnapshot.setTotal(bestellingTotal);
     bestellingSnapshot.setStatus("geplaatst");
@@ -103,8 +113,8 @@ public class BestellingService {
   }
 
   @Transactional
-  public void setBestellingIngepakt(Long bestellingId) {
-    bestellingSnapshotRepository.setStatusIngepakt(bestellingId);
+  public void setBestellingStatus(Long bestellingId, String status) {
+    bestellingSnapshotRepository.setStatus(bestellingId, status);
   }
 
   public List<BestellingSnapshot> getBestellingenGebruiker(int id) {

@@ -21,6 +21,6 @@ public interface BestellingSnapshotRepository extends PagingAndSortingRepository
   Page<BestellingSnapshot> findAllByStatus(String status, Pageable pageable);
 
   @Modifying
-  @Query("UPDATE BestellingSnapshot bestellingSnapshot SET bestellingSnapshot.status = 'ingepakt' WHERE bestellingSnapshot.id = :bestellingId")
-  void setStatusIngepakt(@Param("bestellingId") Long bestellingId);
+  @Query("UPDATE BestellingSnapshot bestellingSnapshot SET bestellingSnapshot.status = :status WHERE bestellingSnapshot.id = :bestellingId")
+  void setStatus(@Param("bestellingId") Long bestellingId, @Param("status") String status);
 }

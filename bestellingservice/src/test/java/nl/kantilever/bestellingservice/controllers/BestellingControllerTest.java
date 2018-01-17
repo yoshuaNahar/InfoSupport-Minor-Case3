@@ -63,14 +63,14 @@ public class BestellingControllerTest {
   public void setBestellingIngepaktWithBestellingSnapshotIdShouldCallSetBestellingIngepaktAndReturnOkResponseEntity() throws Exception {
     long bestellingSnapshotId = 1L;
 
-    mockMvc.perform(put("/bestelling/" + bestellingSnapshotId + "/setIngepakt")).andExpect(status().isOk());
+    mockMvc.perform(put("/bestelling/" + bestellingSnapshotId + "/setStatus/ingepakt")).andExpect(status().isOk());
 
-    verify(bestellingService, times(1)).setBestellingIngepakt(bestellingSnapshotId);
+    verify(bestellingService, times(1)).setBestellingStatus(bestellingSnapshotId, "ingepakt");
   }
 
   @Test
   public void setBestellingIngepaktWithNoBestellingSnapshotIdShouldReturnBadRequestResponseEntity() throws Exception {
-    mockMvc.perform(put("/bestelling/null/setIngepakt")).andExpect(status().isBadRequest());
+    mockMvc.perform(put("/bestelling/null/setStatus/ingepakt")).andExpect(status().isBadRequest());
   }
 
   @Test

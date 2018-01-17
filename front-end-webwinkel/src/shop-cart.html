@@ -161,7 +161,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
 
-        fetch(environment.API.gebruikerservice + '/refresh', {
+        fetch(environment.API.accountservice + '/refresh', {
           method: 'post',
           headers: {
             'Refresh-Token': authenticationData
@@ -186,7 +186,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             })
           }).then(data => {
             if(data.status == 401) {
-              fetch(environment.API.gebruikerservice + '/refresh', {
+              fetch(environment.API.accountservice + '/refresh', {
                 method: 'post',
                 headers: {
                   'Refresh-Token': authenticationData

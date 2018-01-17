@@ -70,7 +70,7 @@
         this.loginFailed = false;
         event.preventDefault();
         console.log(event)
-        fetch(environment.API.gebruikerservice + '/authenticate',
+        fetch(environment.API.accountservice + '/authenticate',
           {
             method: 'post',
             headers: {
