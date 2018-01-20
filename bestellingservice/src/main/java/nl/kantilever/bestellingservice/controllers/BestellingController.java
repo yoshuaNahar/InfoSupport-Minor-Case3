@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin("*")
+@CrossOrigin
 @RestController
 public class BestellingController {
 
@@ -33,12 +34,13 @@ public class BestellingController {
   }
 
   @PostMapping("/bestelling")
-  public ResponseEntity addBestelling(@RequestBody Bestelling bestelling) {
+  public ResponseEntity addBestelling(@RequestBody Bestelling bestelling, @Header("Access-Token") String accessToken) {
     logger.debug("addBestelling: {}", bestelling);
+
+    System.out.println(accessToken);
 
     try {
       bestellingService.addBestelling(bestelling);
-
       bestellingService.saveBestellingSnapshot(bestelling);
 
       return new ResponseEntity(HttpStatus.CREATED); // 201 Created
@@ -49,7 +51,7 @@ public class BestellingController {
 
   @PutMapping("/bestelling/{id}/setStatus/{status}")
   public ResponseEntity setBestellingStatus(@PathVariable("id") Long bestellingId,
-    @PathVariable("status") String status) {
+                                            @PathVariable("status") String status) {
     logger.debug("setBestellingStatus id,status: {},{}", bestellingId, status);
 
     try {
@@ -79,7 +81,6 @@ public class BestellingController {
     return new ResponseEntity<>(bestellingSnapshot, HttpStatus.OK);
   }
 
-  @CrossOrigin
   @GetMapping("/bestelling")
   public ResponseEntity getAllBestellingen(
     @RequestParam(value = "status", required = false) String status,

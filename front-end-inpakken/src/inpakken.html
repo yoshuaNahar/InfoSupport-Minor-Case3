@@ -95,61 +95,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.getGoedgekeurdeBestelling();
       }
 
-      refresh() {
-        let refreshToken = localStorage.getItem("refreshToken");
-
-        fetch(environment.API.accountservice + '/refresh', {
-          method: 'post',
-          headers: {
-            'Refresh-Token': refreshToken
-          }
-        }).then(data => {
-          console.log(data.status);
-
-          if (data.status == 401 || data.status == 500) {
-            this.logout();
-          } else {
-            localStorage.setItem('accessToken', data);
-          }
-        })
-      }
-
       getGoedgekeurdeBestelling() {
         let bestellingUrl = environment.API.bestellingservice + "/bestelling?status=goedgekeurd&limit=1";
 
-        fetch(bestellingUrl).then(data => {
-          if (data.status == 401) {
-            this.refresh();
-          } else {
-            return data.json()
-          }
-        }).then(bestellingen => {
-          if (bestellingen) {
-
-            if (bestellingen.length > 0) {
-              this.currentBestelling = bestellingen[0];
-            }
-
-            let gebruikerUrl = environment.API.accountservice + "/gebruiker/" + this.currentBestelling.gebruikerId;
-            return fetch(gebruikerUrl);
-          }
-        }).then(data => {
-          return data.json();
-        }).then(gebruiker => {
-          if (gebruiker.tussenvoegsel) {
-            gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.tussenvoegsel + " " + gebruiker.achternaam;
-          } else {
-            gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.achternaam;
-          }
-
-          this.gebruiker = gebruiker;
-          super.ready();
-          console.log(this.authenticated);
-        }).catch(err => {
-          console.log("err");
-
-          this.refresh();
-        });
+        globals.makeAuthenticatedCall(bestellingUrl).then(data => {
+            return data.json();
+        })
+//          .then(bestellingen => {
+//          if (bestellingen) {
+//            if (bestellingen.length > 0) {
+//              this.currentBestelling = bestellingen[0];
+//            }
+//
+//            let gebruikerUrl = environment.API.accountservice + "/gebruiker/" + this.currentBestelling.gebruikerId;
+//            return fetch(gebruikerUrl);
+//          }
+//        }).then(data => {
+//          return data.json();
+//        }).then(gebruiker => {
+//          if (gebruiker.tussenvoegsel) {
+//            gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.tussenvoegsel + " " + gebruiker.achternaam;
+//          } else {
+//            gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.achternaam;
+//          }
+//
+//          this.gebruiker = gebruiker;
+//          super.ready();
+//        });
       }
 
       showTable() {
@@ -185,12 +157,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         this.requiredActions.allArtikelenIngepakt = allArtikelenIngepakt;
         this._toggleIngepaktButton();
-      }
-
-      logout() {
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("accessToken");
-        location.reload();
       }
 
       printFactuur() {

@@ -56,35 +56,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       login(event) {
         event.preventDefault();
-        fetch(environment.API.accountservice + '/authenticate',
-          {
-            method: 'post',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              username: this.shadowRoot.querySelector('#username').value,
-              password: this.shadowRoot.querySelector('#password').value
-            })
-          })
-          .then(data => {
-            if (!data.ok) {
-              if (data.status === 401) {
-                alert("Verkeerde gebruikersnaam wachtwoord combinatie");
-              } else {
-                throw Error(data.statusText)
-              }
-            }
-            return data.text()
-          }).then(data => {
-          if (data) {
-            localStorage.setItem("refreshToken", data);
-            this.goToInpakken();
-          }
-        }).catch(error => {
-          alert(error.message);
-        })
+
+        let username = this.shadowRoot.querySelector('#username').value;
+        let password = this.shadowRoot.querySelector('#password').value;
+
+        globals.authenticate(username, password, this.goToInpakken);
       }
 
       goToInpakken() {

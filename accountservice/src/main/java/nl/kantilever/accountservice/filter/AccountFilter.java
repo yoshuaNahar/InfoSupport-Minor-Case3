@@ -4,17 +4,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
-import java.io.IOException;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Order(1)
 public class AccountFilter implements Filter {
@@ -59,12 +56,14 @@ public class AccountFilter implements Filter {
           .setSigningKey(this.accessTokenSecret)
           .parseClaimsJws(accessToken);
 
-        if (!claims.getBody().get("role", String.class).equals(role)) {
-          logger.info("role not: {}", role);
-          ((HttpServletResponse) response).setStatus(401);
-        } else {
+        if (claims.getBody().get("role", String.class).equals("USER") ||
+          claims.getBody().get("role", String.class).equals("MAGAZIJN_MEDEWERKER") ||
+          claims.getBody().get("role", String.class).equals("COMMERCIEEL_MEDEWERKER")) {
           logger.info("role is admin, so doFilter, means: go to next Filter or Controller");
           chain.doFilter(request, response);
+        } else {
+          logger.info("role not: {}", role);
+          ((HttpServletResponse) response).setStatus(401);
         }
       } catch (SignatureException e) {
         logger.info("SignatureException: {}", e);
@@ -83,7 +82,7 @@ public class AccountFilter implements Filter {
     } else if (isRegisterationUrl(url)) {
       role = null;
     } else {
-        role = "USER";
+      role = "USER";
     }
     return role;
   }
@@ -93,7 +92,7 @@ public class AccountFilter implements Filter {
   }
 
   private boolean isRegisterationUrl(String url) {
-    return url.matches("/gebruiker");
+    return url.matches("/gebruiker") || url.matches("/gebruiker/[0-9]+");
   }
 
 }
