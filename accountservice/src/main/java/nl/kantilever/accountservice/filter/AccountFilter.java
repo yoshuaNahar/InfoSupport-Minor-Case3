@@ -76,23 +76,17 @@ public class AccountFilter implements Filter {
   }
 
   private String determineRoleBasedOnRequestedUrl(String url) {
-    String role;
-    if (isCommercieelMedewerkerUrl(url)) {
-      role = "COMMERCIEEL_MEDEWERKER";
-    } else if (isRegisterationUrl(url)) {
+    String role = "USER";
+
+    if (isRegisterationUrl(url)) {
       role = null;
-    } else {
-      role = "USER";
     }
+
     return role;
   }
 
-  private boolean isCommercieelMedewerkerUrl(String url) {
-    return url.matches("/gebruiker/[0-9]+");
-  }
-
   private boolean isRegisterationUrl(String url) {
-    return url.matches("/gebruiker") || url.matches("/gebruiker/[0-9]+");
+    return url.matches("/gebruiker");
   }
 
 }

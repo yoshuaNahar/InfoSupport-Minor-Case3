@@ -107,7 +107,7 @@ public class BestellingServiceTest {
     Artikel a = new Artikel();
     a.setPrijs(12.0);
     doReturn(a).when(restTemplate).getForObject(any(String.class), eq(Artikel.class));
-    bestellingService.saveBestellingSnapshot(bestellingFromDb);
+    bestellingService.saveBestellingSnapshot(bestellingFromDb, "123123");
 
     BestellingSnapshot bestellingSnapshotFromDb = bestellingService.findById(Mockito.anyLong());
     assertBestelling(bestellingSnapshotFromDb, bestelling);

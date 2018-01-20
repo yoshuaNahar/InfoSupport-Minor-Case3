@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Order(1)
 public class BestellingFilter implements Filter {

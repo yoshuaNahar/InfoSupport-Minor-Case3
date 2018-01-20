@@ -11,16 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+//@CrossOrigin
 @RestController
 public class BestellingController {
 
@@ -34,14 +27,12 @@ public class BestellingController {
   }
 
   @PostMapping("/bestelling")
-  public ResponseEntity addBestelling(@RequestBody Bestelling bestelling, @Header("Access-Token") String accessToken) {
+  public ResponseEntity addBestelling(@RequestBody Bestelling bestelling, @RequestHeader(value = "Access-Token") String accessToken) {
     logger.debug("addBestelling: {}", bestelling);
-
-    System.out.println(accessToken);
 
     try {
       bestellingService.addBestelling(bestelling);
-      bestellingService.saveBestellingSnapshot(bestelling);
+      bestellingService.saveBestellingSnapshot(bestelling, accessToken);
 
       return new ResponseEntity(HttpStatus.CREATED); // 201 Created
     } catch (Exception e) {

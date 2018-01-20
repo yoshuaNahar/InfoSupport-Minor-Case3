@@ -51,7 +51,7 @@ public class BestellingControllerTest {
     ).andExpect(status().isCreated());
 
     verify(bestellingService, times(1)).addBestelling(any(Bestelling.class));
-    verify(bestellingService, times(1)).saveBestellingSnapshot(any(Bestelling.class));
+    verify(bestellingService, times(1)).saveBestellingSnapshot(any(Bestelling.class), any(String.class));
   }
 
   @Test

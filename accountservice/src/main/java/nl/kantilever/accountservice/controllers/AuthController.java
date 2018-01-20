@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
-@CrossOrigin
 @RestController
 public class AuthController {
 
@@ -35,7 +34,6 @@ public class AuthController {
   @Autowired
   private JwtParser jwtParser;
 
-  @CrossOrigin
   @PostMapping("/refresh")
   public ResponseEntity refresh(@RequestHeader("Refresh-Token") String refreshToken) {
     logger.debug("refresh: {}", refreshToken);
@@ -75,7 +73,6 @@ public class AuthController {
   /**
    * Returns a refreshToken if the user is authenticated
    */
-  @CrossOrigin
   @PostMapping("/authenticate")
   public ResponseEntity authenticate(@RequestBody Account account) {
     logger.debug("authenticate: {}", account.getUsername());
