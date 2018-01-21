@@ -155,65 +155,94 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _setOrder(event) {
         let authenticationData = localStorage.getItem(['refreshToken'])
         let userData = JSON.parse(atob(authenticationData.split('.')[1]));
-        this.loading = true;
         let artikelIds = []
-        for(let artikel of this.cart) {
-          for(let i = 0; i < artikel.quantity; i++) {
+        for (let artikel of this.cart) {
+          for (let i = 0; i < artikel.quantity; i++) {
             artikelIds.push(artikel.item.Artikelnummer)
           }
         }
-
-        fetch(environment.API.accountservice + '/refresh', {
-          method: 'post',
-          headers: {
-            'Refresh-Token': authenticationData
-          }
-        }).then(data => {
-          if (!data.ok) {
-            throw Error()
-          }
-          return data.text()
-        }).then(data => {
-          localStorage.setItem('accessToken', data)
-          fetch(environment.API.bestellingservice + '/bestelling', {
+        globals.makeAuthenticatedCall(
+          environment.API.bestellingservice + '/bestelling', {
             method: 'post',
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
-              'Access-Token': data
             },
             body: JSON.stringify({
               gebruikerId: userData.sub,
               artikelenIds: artikelIds,
             })
-          }).then(data => {
-            if(data.status == 401) {
-              fetch(environment.API.accountservice + '/refresh', {
-                method: 'post',
-                headers: {
-                  'Refresh-Token': authenticationData
-                }
-              }).then(data => {
-                if(!data.ok) {
-                  this._logout()
-                  location.reload()
-                }
-                data.text().then(data => {
-                  localStorage.setItem('refreshToken', data)
-                })
-              })
-            }
-            this.shadowRoot.querySelector('#modal').open();
-            localStorage.removeItem(['shop-cart-data'])
-          }).catch(() => {
-            this.shadowRoot.querySelector('#modalFail').open();
-          })
-        }).catch(() =>{
-          this.authenticated = false;
-          this.shadowRoot.querySelector('#modalFailLogin').open();
-          this._logout()
+          }
+        ).then(data => {
+          this.shadowRoot.querySelector('#modal').open();
+          localStorage.removeItem(['shop-cart-data'])
+        }).catch(error => {
+          this.shadowRoot.querySelector('#modalFail').open()
         })
       }
+
+//      _setOrder(event) {
+//        let authenticationData = localStorage.getItem(['refreshToken'])
+//        let userData = JSON.parse(atob(authenticationData.split('.')[1]));
+//        this.loading = true;
+//        let artikelIds = []
+//        for(let artikel of this.cart) {
+//          for(let i = 0; i < artikel.quantity; i++) {
+//            artikelIds.push(artikel.item.Artikelnummer)
+//          }
+//        }
+//
+//        fetch(environment.API.accountservice + '/refresh', {
+//          method: 'post',
+//          headers: {
+//            'Refresh-Token': authenticationData
+//          }
+//        }).then(data => {
+//          if (!data.ok) {
+//            throw Error()
+//          }
+//          return data.text()
+//        }).then(data => {
+//          localStorage.setItem('accessToken', data)
+//          fetch(environment.API.bestellingservice + '/bestelling', {
+//            method: 'post',
+//            headers: {
+//              'Accept': 'application/json',
+//              'Content-Type': 'application/json',
+//              'Access-Token': data
+//            },
+//            body: JSON.stringify({
+//              gebruikerId: userData.sub,
+//              artikelenIds: artikelIds,
+//            })
+//          }).then(data => {
+//            if(data.status == 401) {
+//              fetch(environment.API.accountservice + '/refresh', {
+//                method: 'post',
+//                headers: {
+//                  'Refresh-Token': authenticationData
+//                }
+//              }).then(data => {
+//                if(!data.ok) {
+//                  this._logout()
+//                  location.reload()
+//                }
+//                data.text().then(data => {
+//                  localStorage.setItem('refreshToken', data)
+//                })
+//              })
+//            }
+//            this.shadowRoot.querySelector('#modal').open();
+//            localStorage.removeItem(['shop-cart-data'])
+//          }).catch(() => {
+//            this.shadowRoot.querySelector('#modalFail').open();
+//          })
+//        }).catch(() =>{
+//          this.authenticated = false;
+//          this.shadowRoot.querySelector('#modalFailLogin').open();
+//          this._logout()
+//        })
+//      }
 
       _logout() {
         localStorage.getItem(['refreshToken']) ? localStorage.removeItem(['refreshToken']) : '';
