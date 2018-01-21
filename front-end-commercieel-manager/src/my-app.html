@@ -25,6 +25,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="my-icons.html">
 
 <script src="environment.js"></script>
+<script src="globals.js"></script>
+
 <link rel="lazy-import" href="gebruikers-past-limit.html">
 <link rel="lazy-import" href="notFound.html">
 
@@ -110,6 +112,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             attr-for-selected="name"
             fallback-selection="view404"
             role="main">
+          <login-form-view name="login-form"></login-form-view>
           <gebruikers-past-limit-view name="gebruikers-past-limit"></gebruikers-past-limit-view>
           <gebruiker-detail-view name="gebruiker-detail"></gebruiker-detail-view>
           <not-found-view name="notFound"></not-found-view>
@@ -155,6 +158,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _pageChanged(page) {
+        let refreshToken = localStorage.getItem("refreshToken");
+
+        if (refreshToken && page === 'login-form') {
+          location.pathname = 'gebruikers-past-limit';
+        } else if (!refreshToken && page !== 'login-form') {
+          location.pathname = 'login-form';
+        }
+
         // Load page import on demand. Show 404 page if fails
         var resolvedPageUrl = this.resolveUrl(page + '.html');
 

@@ -15,12 +15,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.util.*;
+
 @Order(1)
 public class BestellingFilter implements Filter {
 
   private static final Logger logger = LoggerFactory.getLogger(BestellingFilter.class);
 
   private final String accessTokenSecret;
+
+  private HashMap<String, String[]> urlMapping;
 
   public BestellingFilter(String accessTokenSecret) {
     this.accessTokenSecret = accessTokenSecret;
@@ -34,6 +38,8 @@ public class BestellingFilter implements Filter {
   @Override
   public void init(javax.servlet.FilterConfig filterConfig) {
     logger.info("init");
+    urlMapping = new HashMap<>();
+    this.initUrlMapping();
   }
 
   @Override
@@ -41,8 +47,9 @@ public class BestellingFilter implements Filter {
     String url = ((HttpServletRequest) request).getRequestURI();
     logger.info("Url: {}", url);
 
-    String role = determineRoleBasedOnRequestedUrl(url);
-    logger.info("Role: {}", role);
+    String[] roles = determineRolesBasedOnRequestedUrl(url);
+    logger.info("Roles: {}", roles);
+
 
     String accessToken = ((HttpServletRequest) request).getHeader("Access-Token");
     logger.info("access: {}", accessToken);
@@ -52,7 +59,8 @@ public class BestellingFilter implements Filter {
         .parser()
         .setSigningKey(this.accessTokenSecret)
         .parseClaimsJws(accessToken);
-      if (!claims.getBody().get("role", String.class).equals(role)) {
+
+      if (!Arrays.asList(roles).contains(claims.getBody().get("role", String.class))) {
         logger.info("if");
         ((HttpServletResponse) response).setStatus(401);
         // maybe here should be stopped from going to the controller
@@ -69,28 +77,37 @@ public class BestellingFilter implements Filter {
     }
   }
 
-  private String determineRoleBasedOnRequestedUrl(String url) {
-    String role;
-    if (isMagazijnMedewerkerUrl(url)) {
-      role = "MAGAZIJN_MEDEWERKER";
-    } else if (isCommercieelMedewerkerUrl(url)) {
-      role = "COMMERCIEEL_MEDEWERKER";
-    } else {
-      role = "USER";
-    }
-    return role;
+  private String[] determineRolesBasedOnRequestedUrl(String url) {
+    String[] roles;
+
+    Optional<String[]> result =
+      this.urlMapping.entrySet()
+        .stream()
+        .filter((e) -> url.matches(e.getKey()))
+        .map(Map.Entry::getValue)
+        .findFirst();
+
+    roles = result.orElseGet(() -> new String[]{"User"});
+
+    return roles;
   }
 
-  private boolean isMagazijnMedewerkerUrl(String url) {
-    return "/bestelling?status=goedgekeurd&limit=1".equals(url) ||
-      url.matches("/bestelling/[0-9]+/setStatus/ingepakt");
-  }
+  private void initUrlMapping() {
+    // Magazijn medewerker specific urls
+    this.urlMapping.put("/bestelling/[0-9]+/setStatus/ingepakt", new String[]{"MAGAZIJN_MEDEWERKER"});
 
-  private boolean isCommercieelMedewerkerUrl(String url) {
-    return "/bestelling/gebruikercontrole".equals(url) ||
-      url.matches("/bestelling/[0-9]+/setStatus/goedgekeurd") ||
-      url.matches("/bestelling/[0-9]+/setStatus/afgekeurd") ||
-      url.matches("/bestelling/gebruiker/[0-9]+");
+    // Commeercieel medewerker specific urls
+    this.urlMapping.put("/bestelling/[0-9]+/setStatus/goedgekeurd", new String[]{"COMMERCIEEL_MEDEWERKER"});
+    this.urlMapping.put("/bestelling/[0-9]+/setStatus/afgekeurd", new String[]{"COMMERCIEEL_MEDEWERKER"});
+    this.urlMapping.put("/bestelling/gebruiker/[0-9]+", new String[]{"COMMERCIEEL_MEDEWERKER"});
+    this.urlMapping.put("/bestelling/gebruikercontrole", new String[]{"COMMERCIEEL_MEDEWERKER"});
+
+    // Commeercieel medewerker and Magazijn medewerker specific urls;
+    this.urlMapping.put("/bestelling\\?.*", new String[]{"MAGAZIJN_MEDEWERKER"});
+
+    // Logged in requirement
+    this.urlMapping.put("/bestelling", new String[]{"MAGAZIJN_MEDEWERKER", "USER"});
+
   }
 
 }

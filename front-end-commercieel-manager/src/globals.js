@@ -57,7 +57,7 @@ let globals = {
           return cb();
         }
       }
-      alert('Het gekozen account is geen \'magazijn medewerker\' account');
+      alert('Het gekozen account is geen \'commercieel medewerker\' account');
       this.logout();
     }).catch(err => {
       console.log('err', err);

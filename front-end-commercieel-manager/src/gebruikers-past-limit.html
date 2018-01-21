@@ -70,7 +70,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       ready() {
         let url = environment.API.bestellingservice + "/bestelling/gebruikercontrole";
-        fetch(url).then(data => {
+
+        globals.makeAuthenticatedCall(url).then(data => {
           return data.json()
         }).then(gebruikers => {
           gebruikers.forEach(gebruiker => {

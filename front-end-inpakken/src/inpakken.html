@@ -99,29 +99,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let bestellingUrl = environment.API.bestellingservice + "/bestelling?status=goedgekeurd&limit=1";
 
         globals.makeAuthenticatedCall(bestellingUrl).then(data => {
-            return data.json();
+          return data.json();
+        }).then(bestellingen => {
+          if (bestellingen && bestellingen.length > 0) {
+            this.currentBestelling = bestellingen[0];
+
+            let gebruikerUrl = environment.API.accountservice + "/gebruiker/" + this.currentBestelling.gebruikerId;
+
+            return globals.makeAuthenticatedCall(gebruikerUrl).then(data => {
+              return data.json();
+            }).then(gebruiker => {
+              if (gebruiker) {
+                if (gebruiker.tussenvoegsel) {
+                  gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.tussenvoegsel + " " + gebruiker.achternaam;
+                } else {
+                  gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.achternaam;
+                }
+                this.gebruiker = gebruiker;
+              }
+              super.ready();
+            });
+          } else {
+            super.ready();
+          }
         })
-//          .then(bestellingen => {
-//          if (bestellingen) {
-//            if (bestellingen.length > 0) {
-//              this.currentBestelling = bestellingen[0];
-//            }
-//
-//            let gebruikerUrl = environment.API.accountservice + "/gebruiker/" + this.currentBestelling.gebruikerId;
-//            return fetch(gebruikerUrl);
-//          }
-//        }).then(data => {
-//          return data.json();
-//        }).then(gebruiker => {
-//          if (gebruiker.tussenvoegsel) {
-//            gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.tussenvoegsel + " " + gebruiker.achternaam;
-//          } else {
-//            gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.achternaam;
-//          }
-//
-//          this.gebruiker = gebruiker;
-//          super.ready();
-//        });
       }
 
       showTable() {
@@ -137,10 +138,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       setBestellingIngepakt() {
         let url = environment.API.bestellingservice + "/bestelling/" + this.currentBestelling.id + "/setStatus/ingepakt";
 
-        fetch(url, {method: 'PUT'}).then(() => {
+        globals.makeAuthenticatedCall(url, {method: 'PUT'}).then(() => {
           this.reloadPage();
-        }).catch(err => {
-          alert(err);
         });
       }
 
@@ -179,9 +178,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // Default export is a4 paper, portrait, using milimeters for units
         let doc = new jsPDF('p', 'pt');
 
-        doc.text(this.gebruiker.volledigeNaam, 10, 20);
-        doc.text(this.gebruiker.straatnaam + " " + this.gebruiker.huisnummer, 10, 40);
-        doc.text(this.gebruiker.postcode + ", " + this.gebruiker.stad, 10, 60);
+        doc.text(this.gebruiker.volledigeNaam || "", 10, 20);
+        doc.text(this.gebruiker.straatnaam || "" + " " + this.gebruiker.huisnummer || "", 10, 40);
+        doc.text(this.gebruiker.postcode || "" + ", " + this.gebruiker.stad || "", 10, 60);
 
         doc.text("Factuurdatum: " + new Date().toDateString(), 10, 100);
 
@@ -191,7 +190,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let alleArtikelenTotaal = 0;
         artikelen.forEach(artikel => {
           alleArtikelenTotaal += artikel.Totaal;
-          rows.push([this.currentBestelling.geplaatstOp, artikel.Naam, artikel.Aantal, "€" + artikel.Prijs, "€" + artikel.Totaal]);
+          rows.push([this.currentBestelling.geplaatstOp || "", artikel.Naam || "", artikel.Aantal || "", "€" + artikel.Prijs || 0.00, "€" + artikel.Totaal || 0.00]);
         });
 
         doc.text("Totaalprijs: €" + alleArtikelenTotaal, 400, 100);
@@ -214,11 +213,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             unit: 'pt',
             format: [250, 90]
           });
-        doc.text(this.gebruiker.volledigeNaam, 10, 20);
-        doc.text(this.gebruiker.straatnaam + " " + this.gebruiker.huisnummer, 10, 40);
-        doc.text(this.gebruiker.postcode + ", " + this.gebruiker.stad, 10, 60);
-        doc.text(this.gebruiker.land, 10, 80);
-        doc.save("Adressticker.pdf");
+
+        doc.text(this.gebruiker.volledigeNaam || "", 10, 20);
+        doc.text(this.gebruiker.straatnaam || "" + " " + this.gebruiker.huisnummer || "", 10, 40);
+        doc.text(this.gebruiker.postcode || "" + ", " + this.gebruiker.stad || "", 10, 60);
+        doc.text(this.gebruiker.land || "", 10, 80);
+        doc.save("AdresSticker.pdf");
 
         this.requiredActions.printedSticker = true;
         this._toggleIngepaktButton();
@@ -253,17 +253,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         return null;
       }
-
     }
 
-    window
-      .customElements
-      .define(Inpakken
-
-          .is
-        ,
-        Inpakken
-      )
-    ;
+    window.customElements.define(Inpakken.is, Inpakken);
   </script>
 </dom-module>

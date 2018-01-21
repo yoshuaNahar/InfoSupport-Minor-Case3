@@ -47,6 +47,7 @@ public class BestellingControllerTest {
     mockMvc.perform(post("/bestelling")
       .contentType(MediaType.APPLICATION_JSON)
       .content(mapper.writeValueAsString(bestelling))
+      .header("Access-Token", "a_random_token")
       .accept(MediaType.APPLICATION_JSON)
     ).andExpect(status().isCreated());
 
