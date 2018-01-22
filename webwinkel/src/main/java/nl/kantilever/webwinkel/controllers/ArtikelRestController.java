@@ -34,15 +34,15 @@ public class ArtikelRestController {
     this.leverancierService = leverancierService;
 
     //####################Uitzetten voor tests####################
-    Categorie categorie1 = new Categorie("Onderdelen", "bike_lock_small.gif");
-    Categorie categorie2 = new Categorie("Roestvrijstaal", "pedal_small.gif");
-    categorieService.save(categorie1);
-    categorieService.save(categorie2);
-
-    Artikel artikel1 = new Artikel(115L, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 50.50, "silver_chain_small.gif", new Date(199929999), new Date(1999999999), "KAN0LE", "Henk & Nagel B.V.", Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1)));
-    Artikel artikel2 = new Artikel(116L, "Fiets tas", "Ruime fietstas die past op vrijwel iedere fiets. Uitgerust met leren gesp en waterdichte naden.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1022222999), "COUDNR", "Courend B.V.", Arrays.asList(new Categorie("Fietsaccesoires", "innertube_small.gif"), new Categorie("Baggage", "shorts_male_small.gif")));
-    artikelService.save(artikel1);
-    artikelService.save(artikel2);
+//    Categorie categorie1 = new Categorie("Onderdelen", "bike_lock_small.gif");
+//    Categorie categorie2 = new Categorie("Roestvrijstaal", "pedal_small.gif");
+//    categorieService.save(categorie1);
+//    categorieService.save(categorie2);
+//
+//    Artikel artikel1 = new Artikel(115L, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 50.50, "silver_chain_small.gif", new Date(199929999), new Date(1999999999), "KAN0LE", "Henk & Nagel B.V.", Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1)));
+//    Artikel artikel2 = new Artikel(116L, "Fiets tas", "Ruime fietstas die past op vrijwel iedere fiets. Uitgerust met leren gesp en waterdichte naden.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1022222999), "COUDNR", "Courend B.V.", Arrays.asList(new Categorie("Fietsaccesoires", "innertube_small.gif"), new Categorie("Baggage", "shorts_male_small.gif")));
+//    artikelService.save(artikel1);
+//    artikelService.save(artikel2);
     //####################Uitzetten voor tests####################
   }
 
