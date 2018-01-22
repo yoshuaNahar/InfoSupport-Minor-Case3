@@ -14,12 +14,14 @@ services:
 
   de-jong-webwinkel-phpmyadmin:
    image: phpmyadmin/phpmyadmin
+   container_name: de-jong-webwinkel-phpmyadmin
    ports:
     - "8926:80"
    links:
      - de-jong-webwinkel-mysql:db
 
   de-jong-webwinkel:
+    container_name: de-jong-webwinkel
     build:
       context: .
       dockerfile: ops/Java/Dockerfile
@@ -34,6 +36,7 @@ services:
       - de-jong-webwinkel-mysql
 
   de-jong-front-end-webwinkel:
+    container_name: de-jong-front-end-webwinkel
     build:
       context: .
       dockerfile: ops/Polymer/Dockerfile
@@ -43,16 +46,18 @@ services:
       - "8928:80"
 
   de-jong-replayservice:
-      build:
-        context: .
-        dockerfile: ops/Java/Dockerfile
-        args:
-          - DIRECTORY=replayservice
-      command: java -jar app.jar
-      ports:
-        - "8929:8080"
+    container_name: de-jong-replayservice
+    build:
+      context: .
+      dockerfile: ops/Java/Dockerfile
+      args:
+        - DIRECTORY=replayservice
+    command: java -jar app.jar
+    ports:
+      - "8929:8080"
 
   de-jong-bestellingservice:
+    container_name: de-jong-bestellingservice
     build:
       context: .
       dockerfile: ops/Java/Dockerfile
@@ -79,6 +84,7 @@ services:
       - MYSQL_DATABASE=bestellingservice
 
   de-jong-bestellingservice-phpmyadmin:
+   container_name: de-jong-bestellingservice-phpmyadmin
    image: phpmyadmin/phpmyadmin
    ports:
     - "8932:80"
@@ -86,6 +92,7 @@ services:
      - de-jong-bestellingservice-mysql:db
 
   de-jong-front-end-commercieel-manager:
+     container_name: de-jong-front-end-commercieel-manager
      build:
        context: .
        dockerfile: ops/Polymer/Dockerfile
@@ -94,7 +101,8 @@ services:
      ports:
        - "8933:80"
 
-  de-jong-front-end-commercieel-manager:
+  de-jong-front-end-inpakken:
+    container_name: de-jong-front-end-inpakken
     build:
       context: .
       dockerfile: ops/Polymer/Dockerfile
@@ -114,6 +122,7 @@ services:
      - MYSQL_DATABASE=accountservice
 
   de-jong-accountservice-phpmyadmin:
+    container_name: de-jong-accountservice-phpmyadmin
     image: phpmyadmin/phpmyadmin
     ports:
      - "8936:80"
@@ -121,6 +130,7 @@ services:
       - de-jong-accountservice-mysql:db
 
   de-jong-accountservice:
+    container_name: de-jong-accountservice
     build:
      context: .
      dockerfile: ops/Java/Dockerfile
