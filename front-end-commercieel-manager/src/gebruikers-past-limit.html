@@ -96,7 +96,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       goToGebruikerDetail(event) {
         let gebruikerId = JSON.parse(event.target.dataset.item).id;
-        location.pathname = '/gebruiker-detail/' + gebruikerId;
+        location.href = '/gebruiker-detail/' + gebruikerId;
       }
 
       showList() {

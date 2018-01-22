@@ -1,8 +1,8 @@
 let environment = {
   API: {
-    webwinkel: "http://192.168.178.158:8927",
-    bestellingservice: "http://192.168.178.158:8930",
-    accountservice: "http://192.168.178.158:8937"
+    webwinkel: "http://de-jong-webwinkel:8081",
+    bestellingservice: "http://de-jong-bestellingservice:8082",
+    accountservice: "http://de-jong-accountservice:9999"
   },
   role: 'USER'
 };
