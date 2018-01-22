@@ -25,7 +25,7 @@ services:
       #- proxy
 
   kantilever-auditlog:
-    image: minordotnet.azurecr.io/kantilever-auditlog:latest
+    image: minordotnet.azurecr.io/kantilever-auditlog
     container_name: kantilever-auditlog
     environment:
       - AuditLogDb=Server=sql,1433;Database=AuditLogDB;User ID=sa;Password=Geheim_101
@@ -47,8 +47,8 @@ services:
       - "8922:80"
 
   kantilever-magazijn-service:
-    image: minordotnet.azurecr.io/kantilever-magazijn-services:latest
-    container_name: kantilever-magazijn-services
+    image: minordotnet.azurecr.io/kantilever-magazijn-service
+    container_name: kantilever-magazijn-service
     environment:
       - MagazijnDb=Server=sql,1433;Database=MagazijnDb;User ID=sa;Password=Geheim_101
       - VIRTUAL_HOST=kantilever-magazijn-services.netminor.infosupport.net

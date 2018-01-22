@@ -264,17 +264,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           leveranciers.push(checkbox.getAttribute('name'))
         }
 
+        let leverbaarVanaf = this.shadowRoot.querySelector("#leverbaar_vanaf").value;
+        let leverbaarTot = this.shadowRoot.querySelector("#leverbaar_tot").value;
+        let dateFormatOptions = {day: '2-digit', month: '2-digit', year: 'numeric'};
+
         let searchObject = {
           naam: this.shadowRoot.querySelector('#searchform').value,
           minPrice: this.shadowRoot.querySelector('#min_price').value,
           maxPrice: this.shadowRoot.querySelector('#max_price').value,
-          leverbaarVanaf: this.shadowRoot.querySelector('#leverbaar_vanaf').value,
-          leverbaarTot: this.shadowRoot.querySelector('#leverbaar_tot').value,
+          leverbaarVanaf: new Date(leverbaarVanaf).toLocaleDateString("nl-NL", dateFormatOptions),
+          leverbaarTot: new Date(leverbaarTot).toLocaleDateString("nl-NL", dateFormatOptions),
 //          categorieen: categorieen,
           leverancier: leveranciers
         };
 
         let queryString = 'zoeken=';
+
         for(let key of Object.keys(searchObject)){
           if(searchObject[key].length !== 0) {
             if(searchObject[key] === 'categorieen') {
@@ -299,6 +304,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               queryString = queryString.concat('prijs>' + encodeURIComponent(searchObject['minPrice']) + ';')
             } else if (key === 'maxPrice') {
               queryString = queryString.concat('prijs<' + encodeURIComponent(searchObject['maxPrice']) + ';')
+            } else if(key === 'leverbaarVanaf') {
+              queryString = queryString.concat('leverbaarVanaf>' + searchObject['leverbaarVanaf'])
+            } else if (key === 'leverbaarTot') {
+              queryString = queryString.concat('leverbaarTot<' + searchObject['leverbaarTot'])
             } else {
               queryString = queryString.concat(key + ':' + encodeURIComponent(searchObject[key]) + ';')
             }

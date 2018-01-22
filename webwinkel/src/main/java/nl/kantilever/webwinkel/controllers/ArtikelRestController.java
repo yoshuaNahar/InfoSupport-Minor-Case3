@@ -1,9 +1,5 @@
 package nl.kantilever.webwinkel.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import nl.kantilever.webwinkel.domain.Artikel;
 import nl.kantilever.webwinkel.domain.Categorie;
 import nl.kantilever.webwinkel.domain.Leverancier;
@@ -17,13 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @CrossOrigin
 @RestController
@@ -43,6 +40,7 @@ public class ArtikelRestController {
     this.leverancierService = leverancierService;
   }
 
+
   /**
    * De regex string split de input (key, operator, waarde(n)) op in 3 delen.
    * Deel 1 is de key, deel 2 is de operator en deel 3 zijn de waarden.
@@ -56,35 +54,31 @@ public class ArtikelRestController {
   @ResponseBody
   public List<Artikel> search(@RequestParam(value = "zoeken") String zoekString) {
     ZoekCriteriaBuilder builder = new ZoekCriteriaBuilder();
-    String[] filters = zoekString
-      .split(";"); //sla de verschillende zoekmogelijkheden op met hun waarden
+    String[] filters = zoekString.split(";"); //sla de verschillende zoekmogelijkheden op met hun waarden
 
     for (int i = 0; i < filters.length; i++) {
       Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w.*)");
       Matcher matcher = pattern.matcher(filters[i]); //Splits de zoekfilters op
 
       while (matcher.find()) { //Loop door alle keys met bijbehorende operator en waarden
-        String waarden = matcher
-          .group(3); //Onthoud de waarde, hier zitten mogelijk meerdere waarden in
+        String waarden = matcher.group(3); //Onthoud de waarde, hier zitten mogelijk meerdere waarden in
         String[] waardenArray = waarden.split(","); //Split de waarden van de huidige key op
 
         for (int j = 0; j < waardenArray.length; j++) {
           if ("categorieen".equals(matcher.group(1))) {
             Categorie potentialCategorie = categorieService.findCategorieByNaam(waardenArray[j]);
             if (potentialCategorie != null) {
-              potentialCategorie
-                .setArtikelen(new ArrayList<Artikel>()); //Nodig om overflow te voorkomen
+              potentialCategorie.setArtikelen(new ArrayList<Artikel>()); //Nodig om overflow te voorkomen
               builder.voegCategorieToe(potentialCategorie);
             } else {
-              logger.info("Categorie in de zoekfilter kan niet worden gevonden");
+              System.out.println("Categorie in de zoekfilter kan niet worden gevonden");
             }
           } else if ("prijs".equals(matcher.group(1)) && "<".equals(matcher.group(2))) {
-            builder.setMinPrice(waardenArray[j]);
-          } else if ("prijs".equals(matcher.group(1)) && ">".equals(matcher.group(2))) {
             builder.setMaxPrice(waardenArray[j]);
+          } else if ("prijs".equals(matcher.group(1)) && ">".equals(matcher.group(2))) {
+            builder.setMinPrice(waardenArray[j]);
           } else {
-            builder.voegZoekCriteriumToe(matcher.group(1), matcher.group(2),
-              waardenArray[j]); //Zoekfilter bestaat altijd uit 3 delen (key, operator, waarde)
+            builder.voegZoekCriteriumToe(matcher.group(1), matcher.group(2), waardenArray[j]); //Zoekfilter bestaat altijd uit 3 delen (key, operator, waarde)
           }
         }
       }
@@ -121,6 +115,7 @@ public class ArtikelRestController {
 
     if (matchendeCategorie != null) {
       artikelLijst = matchendeCategorie.getArtikelen();
+      //artikelLijst = artikelService.findArtikelenByCategorieID(matchendeCategorie.getId());
     } else {
       logger.info("Categorie not found");
     }
@@ -132,6 +127,7 @@ public class ArtikelRestController {
   public Categorie findCategorieByNaam(Model model, @PathVariable String naam) {
     return categorieService.findCategorieByNaam(naam);
   }
+
 
   @RequestMapping(value = "artikelen/beschrijving/{beschrijving}", method = RequestMethod.GET)
   public List<Artikel> findArtikelenByBeschrijving(Model model, @PathVariable String beschrijving) {
