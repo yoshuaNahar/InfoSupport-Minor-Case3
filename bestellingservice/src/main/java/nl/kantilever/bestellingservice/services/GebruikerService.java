@@ -1,7 +1,7 @@
 package nl.kantilever.bestellingservice.services;
 
 import java.util.List;
-import nl.kantilever.bestellingservice.entities.Gebruiker;
+import nl.kantilever.bestellingservice.domain.Gebruiker;
 import nl.kantilever.bestellingservice.repositories.GebruikerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.kantilever.accountservice.entities.Account;
-import nl.kantilever.accountservice.entities.Gebruiker;
+import nl.kantilever.accountservice.domain.Account;
+import nl.kantilever.accountservice.domain.Gebruiker;
 import nl.kantilever.accountservice.services.AccountService;
 import nl.kantilever.accountservice.services.GebruikerService;
 import org.junit.Before;

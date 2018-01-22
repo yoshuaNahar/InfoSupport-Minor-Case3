@@ -1,6 +1,6 @@
 package nl.kantilever.bestellingservice.repositories;
 
-import nl.kantilever.bestellingservice.entities.Bestelling;
+import nl.kantilever.bestellingservice.domain.Bestelling;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -28,9 +28,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-    <sonar.coverage.exclusions>**/entities/*.java</sonar.coverage.exclusions>
+    <sonar.coverage.exclusions>**/domain/*.java</sonar.coverage.exclusions>
     <sonar.coverage.exclusions>**/config/*.java</sonar.coverage.exclusions>
-    <sonar.exclusions> **/entities/*.java</sonar.exclusions>
+    <sonar.exclusions> **/domain/*.java</sonar.exclusions>
     <sonar.exclusions> **/config/*.java</sonar.exclusions>
   </properties>
 
@@ -71,7 +71,7 @@
           </outputFormats>
           <excludedClasses>
             <excludedClass>nl.kantilever.bestellingservice.config.*</excludedClass>
-            <excludedClass>nl.kantilever.bestellingservice.entities.*</excludedClass>
+            <excludedClass>nl.kantilever.bestellingservice.domain.*</excludedClass>
           </excludedClasses>
         </configuration>
       </plugin>

@@ -1,16 +1,15 @@
 package nl.kantilever.bestellingservice.controllers;
 
 import java.util.List;
-import nl.kantilever.bestellingservice.entities.Bestelling;
-import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
-import nl.kantilever.bestellingservice.entities.Gebruiker;
+import nl.kantilever.bestellingservice.domain.Bestelling;
+import nl.kantilever.bestellingservice.domain.BestellingSnapshot;
+import nl.kantilever.bestellingservice.domain.Gebruiker;
 import nl.kantilever.bestellingservice.services.BestellingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.web.bind.annotation.*;
 
 //@CrossOrigin

@@ -1,7 +1,7 @@
 package nl.kantilever.accountservice.controllers;
 
 import io.jsonwebtoken.*;
-import nl.kantilever.accountservice.entities.Account;
+import nl.kantilever.accountservice.domain.Account;
 import nl.kantilever.accountservice.services.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

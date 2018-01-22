@@ -1,10 +1,10 @@
 package nl.kantilever.bestellingservice.services;
 
 import nl.kantilever.bestellingservice.config.AppConfig;
-import nl.kantilever.bestellingservice.entities.Artikel;
-import nl.kantilever.bestellingservice.entities.Bestelling;
-import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
-import nl.kantilever.bestellingservice.entities.Gebruiker;
+import nl.kantilever.bestellingservice.domain.Artikel;
+import nl.kantilever.bestellingservice.domain.Bestelling;
+import nl.kantilever.bestellingservice.domain.BestellingSnapshot;
+import nl.kantilever.bestellingservice.domain.Gebruiker;
 import nl.kantilever.bestellingservice.repositories.ArtikelenRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;

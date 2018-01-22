@@ -1,4 +1,4 @@
-package nl.kantilever.bestellingservice.entities;
+package nl.kantilever.bestellingservice.domain;
 
 import java.util.List;
 import javax.persistence.Column;
