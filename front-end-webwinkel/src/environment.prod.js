@@ -1,8 +1,8 @@
 let environment = {
   API: {
-    webwinkel: "de-jong-webwinkel:8081",
-    bestellingservice: "de-jong-bestellingservice:8082",
-    accountservice: "de-jong-accountservice:9999"
+    webwinkel: process.env.WEBWINKEL_URL,
+    bestellingservice: process.env.BESTELLING_URL,
+    accountservice: process.env.ACCOUNT_URL,
   },
   role: 'USER'
 };
