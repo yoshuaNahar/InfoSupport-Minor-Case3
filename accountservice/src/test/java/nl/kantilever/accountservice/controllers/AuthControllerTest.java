@@ -15,7 +15,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.impl.DefaultClaims;
-import nl.kantilever.accountservice.entities.Account;
+import nl.kantilever.accountservice.domain.Account;
 import nl.kantilever.accountservice.services.AccountService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,16 +1,15 @@
 package nl.kantilever.bestellingservice.controllers;
 
 import java.util.List;
-import nl.kantilever.bestellingservice.entities.Bestelling;
-import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
-import nl.kantilever.bestellingservice.entities.Gebruiker;
+import nl.kantilever.bestellingservice.domain.Bestelling;
+import nl.kantilever.bestellingservice.domain.BestellingSnapshot;
+import nl.kantilever.bestellingservice.domain.Gebruiker;
 import nl.kantilever.bestellingservice.services.BestellingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.web.bind.annotation.*;
 
 //@CrossOrigin
@@ -36,6 +35,7 @@ public class BestellingController {
 
       return new ResponseEntity(HttpStatus.CREATED); // 201 Created
     } catch (Exception e) {
+      logger.info("Exception: {}", e);
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
     }
   }
@@ -50,7 +50,7 @@ public class BestellingController {
 
       return new ResponseEntity(HttpStatus.OK); // 200 OK
     } catch (Exception e) {
-      logger.info(e.getMessage());
+      logger.info("Exception: {}", e);
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
     }
   }

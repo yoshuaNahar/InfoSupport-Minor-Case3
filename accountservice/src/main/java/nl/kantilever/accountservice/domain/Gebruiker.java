@@ -1,4 +1,4 @@
-package nl.kantilever.accountservice.entities;
+package nl.kantilever.accountservice.domain;
 
 import org.hibernate.annotations.Cascade;
 

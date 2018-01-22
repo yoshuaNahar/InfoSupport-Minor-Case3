@@ -1,6 +1,6 @@
 package nl.kantilever.bestellingservice.repositories;
 
-import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
+import nl.kantilever.bestellingservice.domain.BestellingSnapshot;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;

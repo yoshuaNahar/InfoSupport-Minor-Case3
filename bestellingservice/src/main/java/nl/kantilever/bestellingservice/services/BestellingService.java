@@ -1,9 +1,9 @@
 package nl.kantilever.bestellingservice.services;
 
-import nl.kantilever.bestellingservice.entities.Artikel;
-import nl.kantilever.bestellingservice.entities.Bestelling;
-import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
-import nl.kantilever.bestellingservice.entities.Gebruiker;
+import nl.kantilever.bestellingservice.domain.Artikel;
+import nl.kantilever.bestellingservice.domain.Bestelling;
+import nl.kantilever.bestellingservice.domain.BestellingSnapshot;
+import nl.kantilever.bestellingservice.domain.Gebruiker;
 import nl.kantilever.bestellingservice.repositories.BestellingRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;
 import org.slf4j.Logger;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -150,7 +149,7 @@ public class BestellingService {
       .findBestellingenByGebruiker(id);
     if (bestellingenByGebruiker != null) {
       for (BestellingSnapshot bestellingSnapshot : bestellingenByGebruiker) {
-        if (!bestellingSnapshot.getStatus().equals("betaald")) {
+        if (!"betaald".equals(bestellingSnapshot.getStatus())) {
           totaalWaarde = totaalWaarde + bestellingSnapshot.getTotal();
         }
       }

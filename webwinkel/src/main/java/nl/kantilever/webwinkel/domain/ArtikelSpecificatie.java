@@ -20,11 +20,11 @@ public class ArtikelSpecificatie implements Specification<Artikel> {
 
   @Override
   public Predicate toPredicate(Root<Artikel> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-    if (zoekCriterium.getOperator().equalsIgnoreCase(">")) {
+    if (">".equalsIgnoreCase(zoekCriterium.getOperator())) {
       return builder.greaterThanOrEqualTo(root.<String>get(zoekCriterium.getKey()), zoekCriterium.getWaarde().toString());
-    } else if (zoekCriterium.getOperator().equalsIgnoreCase("<")) {
+    } else if ("<".equalsIgnoreCase(zoekCriterium.getOperator())) {
       return builder.lessThanOrEqualTo(root.<String>get(zoekCriterium.getKey()), zoekCriterium.getWaarde().toString());
-    } else if (zoekCriterium.getOperator().equalsIgnoreCase(":")) {
+    } else if (":".equalsIgnoreCase(zoekCriterium.getOperator())) {
       if (root.get(zoekCriterium.getKey()).getJavaType() == String.class) {
         return builder.like(root.<String>get(zoekCriterium.getKey()), "%" + zoekCriterium.getWaarde() + "%");
       } else {

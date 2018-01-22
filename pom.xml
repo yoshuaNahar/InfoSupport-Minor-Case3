@@ -28,7 +28,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-	</properties>
+    <sonar.coverage.exclusions>**/domain/*.java, **/config/*.java, **/filter/*.java, **/AccountServiceApp.java, **/BestellingServiceApplication.java,
+      **/ReplayServiceApplication.java, **/WebWinkelServiceApplication.java</sonar.coverage.exclusions>
+  </properties>
 
 	<dependencies>
 		<dependency>
@@ -67,7 +69,7 @@
           </outputFormats>
           <excludedClasses>
             <excludedClass>nl.kantilever.bestellingservice.config.*</excludedClass>
-            <excludedClass>nl.kantilever.bestellingservice.entities.*</excludedClass>
+            <excludedClass>nl.kantilever.bestellingservice.domain.*</excludedClass>
           </excludedClasses>
         </configuration>
       </plugin>

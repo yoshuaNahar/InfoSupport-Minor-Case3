@@ -1,7 +1,7 @@
 package nl.kantilever.accountservice.controllers;
 
 import io.jsonwebtoken.*;
-import nl.kantilever.accountservice.entities.Account;
+import nl.kantilever.accountservice.domain.Account;
 import nl.kantilever.accountservice.services.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +64,7 @@ public class AuthController {
 
       // Build AccessToken
       String accessToken = Jwts.builder()
-        .setSubject(account.getId() + "")
+        .setSubject(Long.toString(account.getId()))
         .addClaims(claims)
         .setExpiration(exp)
         .signWith(SignatureAlgorithm.HS256, this.accessTokenSecret)
@@ -72,9 +72,11 @@ public class AuthController {
 
       return ResponseEntity.ok().body(accessToken);
     } catch (SignatureException e) {
+      logger.info("Exception: {}", e);
       return new ResponseEntity(HttpStatus.UNAUTHORIZED);
       //don't trust the JWT!
     } catch (Exception e) {
+      logger.info("Exception: {}", e);
       return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -105,7 +107,7 @@ public class AuthController {
 
       // Build RefreshToken
       String refreshToken = Jwts.builder()
-        .setSubject(accountFromDB.getId() + "")
+        .setSubject(Long.toString(accountFromDB.getId()))
         .setExpiration(exp)
         .signWith(SignatureAlgorithm.HS256, this.refreshTokenSecret)
         .compact();

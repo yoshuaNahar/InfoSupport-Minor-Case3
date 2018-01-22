@@ -107,7 +107,6 @@ public class BestellingFilter implements Filter {
 
     // Logged in requirement
     this.urlMapping.put("/bestelling", new String[]{"MAGAZIJN_MEDEWERKER", "USER"});
-
   }
 
 }

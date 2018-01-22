@@ -3,7 +3,7 @@ package nl.kantilever.accountservice.services;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import nl.kantilever.accountservice.entities.Gebruiker;
+import nl.kantilever.accountservice.domain.Gebruiker;
 import nl.kantilever.accountservice.repositories.GebruikerRepository;
 import org.junit.Before;
 import org.junit.Test;

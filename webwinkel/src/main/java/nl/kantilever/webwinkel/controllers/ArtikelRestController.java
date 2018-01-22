@@ -7,6 +7,8 @@ import nl.kantilever.webwinkel.domain.ZoekCriteriaBuilder;
 import nl.kantilever.webwinkel.services.ArtikelService;
 import nl.kantilever.webwinkel.services.CategorieService;
 import nl.kantilever.webwinkel.services.LeverancierService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,27 +25,19 @@ import java.util.regex.Pattern;
 @CrossOrigin
 @RestController
 public class ArtikelRestController {
+
+  private static final Logger logger = LoggerFactory.getLogger(ArtikelRestController.class);
+
   private ArtikelService artikelService;
   private CategorieService categorieService;
   private LeverancierService leverancierService;
 
   @Autowired
-  public ArtikelRestController(ArtikelService artikelService, CategorieService categorieService, LeverancierService leverancierService) {
+  public ArtikelRestController(ArtikelService artikelService, CategorieService categorieService,
+    LeverancierService leverancierService) {
     this.artikelService = artikelService;
     this.categorieService = categorieService;
     this.leverancierService = leverancierService;
-
-    //####################Uitzetten voor tests####################
-//    Categorie categorie1 = new Categorie("Onderdelen", "bike_lock_small.gif");
-//    Categorie categorie2 = new Categorie("Roestvrijstaal", "pedal_small.gif");
-//    categorieService.save(categorie1);
-//    categorieService.save(categorie2);
-//
-//    Artikel artikel1 = new Artikel(115L, "Fietsketting", "Robuuste fietsketting, past op vrijwel iedere fiets. Uitgerust met roestvrijstale componenten.", 50.50, "silver_chain_small.gif", new Date(199929999), new Date(1999999999), "KAN0LE", "Henk & Nagel B.V.", Arrays.asList(categorieService.findAll().get(0), categorieService.findAll().get(1)));
-//    Artikel artikel2 = new Artikel(116L, "Fiets tas", "Ruime fietstas die past op vrijwel iedere fiets. Uitgerust met leren gesp en waterdichte naden.", 79.50, "silver_chain_small.gif", new Date(5), new Date(1022222999), "COUDNR", "Courend B.V.", Arrays.asList(new Categorie("Fietsaccesoires", "innertube_small.gif"), new Categorie("Baggage", "shorts_male_small.gif")));
-//    artikelService.save(artikel1);
-//    artikelService.save(artikel2);
-    //####################Uitzetten voor tests####################
   }
 
 
@@ -71,7 +65,7 @@ public class ArtikelRestController {
         String[] waardenArray = waarden.split(","); //Split de waarden van de huidige key op
 
         for (int j = 0; j < waardenArray.length; j++) {
-          if (matcher.group(1).equals("categorieen")) {
+          if ("categorieen".equals(matcher.group(1))) {
             Categorie potentialCategorie = categorieService.findCategorieByNaam(waardenArray[j]);
             if (potentialCategorie != null) {
               potentialCategorie.setArtikelen(new ArrayList<Artikel>()); //Nodig om overflow te voorkomen
@@ -79,9 +73,9 @@ public class ArtikelRestController {
             } else {
               System.out.println("Categorie in de zoekfilter kan niet worden gevonden");
             }
-          } else if (matcher.group(1).equals("prijs") && matcher.group(2).equals("<")) {
+          } else if ("prijs".equals(matcher.group(1)) && "<".equals(matcher.group(2))) {
             builder.setMaxPrice(waardenArray[j]);
-          } else if (matcher.group(1).equals("prijs") && matcher.group(2).equals(">")) {
+          } else if ("prijs".equals(matcher.group(1)) && ">".equals(matcher.group(2))) {
             builder.setMinPrice(waardenArray[j]);
           } else {
             builder.voegZoekCriteriumToe(matcher.group(1), matcher.group(2), waardenArray[j]); //Zoekfilter bestaat altijd uit 3 delen (key, operator, waarde)
@@ -96,8 +90,7 @@ public class ArtikelRestController {
 
   @RequestMapping(value = "artikel/artikelnummer/{artikelnummer}", method = RequestMethod.GET)
   public Artikel findArtikelByArtikelnummer(Model model, @PathVariable int artikelnummer) {
-    Artikel artikel = artikelService.findArtikelByArtikelnummer(artikelnummer);
-    return artikel;
+    return artikelService.findArtikelByArtikelnummer(artikelnummer);
   }
 
   @RequestMapping(value = "artikelen/naam/{naam}", method = RequestMethod.GET)
@@ -118,13 +111,13 @@ public class ArtikelRestController {
   @RequestMapping(value = "artikelen/categorie/{categorie}", method = RequestMethod.GET)
   public List<Artikel> findArtikelenByCategorie(Model model, @PathVariable String categorie) {
     Categorie matchendeCategorie = categorieService.findCategorieByNaam(categorie);
-    List<Artikel> artikelLijst = new ArrayList<Artikel>();
+    List<Artikel> artikelLijst = new ArrayList<>();
 
     if (matchendeCategorie != null) {
       artikelLijst = matchendeCategorie.getArtikelen();
       //artikelLijst = artikelService.findArtikelenByCategorieID(matchendeCategorie.getId());
     } else {
-      System.out.println("Categorie not found");
+      logger.info("Categorie not found");
     }
 
     return artikelLijst;
@@ -142,17 +135,20 @@ public class ArtikelRestController {
   }
 
   @RequestMapping(value = "artikelen/pricerange/{minPrice}/{maxPrice}", method = RequestMethod.GET)
-  public List<Artikel> findArtikelenInPriceRange(Model model, @PathVariable final double minPrice, @PathVariable final double maxPrice) {
+  public List<Artikel> findArtikelenInPriceRange(Model model, @PathVariable final double minPrice,
+    @PathVariable final double maxPrice) {
     return artikelService.findArtikelenInPriceRange(minPrice, maxPrice);
   }
 
   @RequestMapping(value = "artikelen/leverbaar_vanaf/{leverbaar_vanaf}", method = RequestMethod.GET)
-  public List<Artikel> findArtikelenLeverbaarVanaf(Model model, @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") java.util.Date leverbaar_vanaf) {
+  public List<Artikel> findArtikelenLeverbaarVanaf(Model model,
+    @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") java.util.Date leverbaar_vanaf) {
     return artikelService.findArtikelenLeverbaarVanaf(leverbaar_vanaf);
   }
 
   @RequestMapping(value = "artikelen/leverbaar_tot/{leverbaar_tot}", method = RequestMethod.GET)
-  public List<Artikel> findArtikelenLeverbaarTot(Model model, @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") java.util.Date leverbaar_tot) {
+  public List<Artikel> findArtikelenLeverbaarTot(Model model,
+    @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") java.util.Date leverbaar_tot) {
     return artikelService.findArtikelenLeverbaarTot(leverbaar_tot);
   }
 

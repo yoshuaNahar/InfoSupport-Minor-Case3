@@ -1,9 +1,8 @@
 package nl.kantilever.bestellingservice.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.kantilever.bestellingservice.entities.Artikel;
-import nl.kantilever.bestellingservice.entities.Bestelling;
-import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
+import nl.kantilever.bestellingservice.domain.Bestelling;
+import nl.kantilever.bestellingservice.domain.BestellingSnapshot;
 import nl.kantilever.bestellingservice.services.BestellingService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

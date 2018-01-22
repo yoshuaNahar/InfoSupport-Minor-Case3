@@ -1,7 +1,7 @@
 package nl.kantilever.bestellingservice.services;
 
 import nl.kantilever.bestellingservice.config.AppConfig;
-import nl.kantilever.bestellingservice.entities.Gebruiker;
+import nl.kantilever.bestellingservice.domain.Gebruiker;
 import nl.kantilever.bestellingservice.repositories.GebruikerRepository;
 import org.junit.Before;
 import org.junit.Test;
