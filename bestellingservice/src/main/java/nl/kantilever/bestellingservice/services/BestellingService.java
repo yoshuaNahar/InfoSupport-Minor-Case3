@@ -113,8 +113,6 @@ public class BestellingService {
       ResponseEntity<Gebruiker> respEntity = restTemplate.exchange(url, HttpMethod.GET, entity, Gebruiker.class);
 
       Gebruiker gebruikerFromAccountService = respEntity.getBody();
-      System.out.println(gebruikerFromAccountService);
-
 
       gebruiker = gebruikerService.save(gebruikerFromAccountService);
     }
