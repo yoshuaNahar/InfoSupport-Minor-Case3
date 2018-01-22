@@ -1,5 +1,11 @@
 # Kantilever Webwinkel
 
+# Leesmij (na de minor)
+TODO:
+- Sla alles op in 1 GitLab project
+- Zip in deze git project, daarin zit alle documentatie. Gebruik de buildstraat docs als referentie voor de toekomst
+
+
 ## Day-to-Day Development
 1. Open a unix based terminal (Git Bash, Docker Quickstart Terminal, etc.).
 2. Navigate to the root of the project.
