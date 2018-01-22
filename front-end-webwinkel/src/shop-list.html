@@ -279,7 +279,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         };
 
         let queryString = 'zoeken=';
-        let queryNameString = "";
+        
         for(let key of Object.keys(searchObject)){
           if(searchObject[key].length !== 0) {
             if(searchObject[key] === 'categorieen') {
@@ -305,12 +305,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             } else if (key === 'maxPrice') {
               queryString = queryString.concat('prijs<' + encodeURIComponent(searchObject['maxPrice']) + ';')
             } else {
-              queryNameString = queryString.concat(key + ':' + encodeURIComponent(searchObject[key]) + ';')
+              queryString = queryString.concat(key + ':' + encodeURIComponent(searchObject[key]) + ';')
             }
           }
         }
         if(queryString !== 'zoeken=') {
-          fetch(environment.API.webwinkel + '/artikelen?' + queryString + decodeURIComponent(queryNameString))
+          fetch(environment.API.webwinkel + '/artikelen?' + queryString)
             .then(data => {
               if(!data.ok) {
                 throw Error()
