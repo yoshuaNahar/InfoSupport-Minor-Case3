@@ -1,5 +1,7 @@
 let environment = {
   API: {
-    bestellingservice: "http://192.168.178.158:8930"
-  }
+    bestellingservice: "http://de-jong-bestellingservice:8082",
+    accountservice: "http://de-jong-accountservice:9999"
+  },
+  role: 'COMMERCIEEL_MEDEWERKER'
 };

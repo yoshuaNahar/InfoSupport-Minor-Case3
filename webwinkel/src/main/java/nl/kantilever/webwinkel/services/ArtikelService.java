@@ -1,5 +1,7 @@
 package nl.kantilever.webwinkel.services;
 
+import java.util.Date;
+import java.util.List;
 import nl.kantilever.webwinkel.domain.Artikel;
 import nl.kantilever.webwinkel.domain.Categorie;
 import nl.kantilever.webwinkel.repositories.ArtikelRepository;
@@ -8,14 +10,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.util.Date;
-import java.util.List;
-
 @Service
 public class ArtikelService {
 
@@ -23,7 +17,7 @@ public class ArtikelService {
   private CategorieService categorieService;
 
   @Autowired
-  public void setArtikelRepository(ArtikelRepository artikelRepository, CategorieService categorieService) {
+  public ArtikelService(ArtikelRepository artikelRepository, CategorieService categorieService) {
     this.artikelRepository = artikelRepository;
     this.categorieService = categorieService;
   }
@@ -32,9 +26,9 @@ public class ArtikelService {
   public void save(Artikel artikel) {
     List<Categorie> categorieen = categorieService.findAll();
     List<Categorie> artikelCategorieen = artikel.getCategorieen();
-    for (Categorie categorie: artikelCategorieen) {
+    for (Categorie categorie : artikelCategorieen) {
       for (Categorie allCategorieen : categorieen) {
-        if(categorie.getNaam().equals(allCategorieen.getNaam())){
+        if (categorie.getNaam().equals(allCategorieen.getNaam())) {
           categorie.setId(allCategorieen.getId());
         }
       }

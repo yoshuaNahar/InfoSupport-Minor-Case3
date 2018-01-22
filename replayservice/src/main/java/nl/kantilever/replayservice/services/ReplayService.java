@@ -1,48 +1,48 @@
 package nl.kantilever.replayservice.services;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 import nl.kantilever.replayservice.domain.ReplayEventsCommand;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-
 @Service
 public class ReplayService {
 
+  @Value("${rest.service.url}")
+  private String restServiceUrl;
+
   private RestTemplate restTemplate;
-  private static final String REST_SERVICE_URI = "http://192.168.178.158:8922/api/ReplayEvents";
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   @Autowired
   public ReplayService(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
   }
 
-  public ResponseEntity<String> replayEvents(){
+  public ResponseEntity<String> replayEvents() {
     ReplayEventsCommand replayEventsCommand = new ReplayEventsCommand();
-    return restTemplate.postForEntity(REST_SERVICE_URI, replayEventsCommand, String.class);
+    return restTemplate.postForEntity(restServiceUrl, replayEventsCommand, String.class);
   }
 
-  public  ResponseEntity<List<String>> getAllEvents(){
-    ResponseEntity<List<String>> response = null;
+  public ResponseEntity<List<String>> getAllEvents() {
+    ResponseEntity<List<String>> response;
     try {
       response = restTemplate
-        .exchange(new URI(REST_SERVICE_URI),
+        .exchange(new URI(restServiceUrl),
           HttpMethod.GET,
           null,
           new ParameterizedTypeReference<List<String>>() {
           });
     } catch (URISyntaxException e) {
-      e.printStackTrace();
+      throw new UnsupportedOperationException(e);
     }
     return response;
   }
+
 }

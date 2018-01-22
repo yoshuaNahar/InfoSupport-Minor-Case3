@@ -156,7 +156,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="price">[[_formatPrice(item.Prijs)]]</div>
         <h2>Leverancier</h2>
         <p>[[item.Leverancier]]</p>
-        <h2>Voorraad</h2><span>420</span>
         <div class="pickers">
           <!--<shop-select>-->
             <!--<label id="sizeLabel" prefix>Size</label>-->
@@ -213,6 +212,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       ready() {
         super.ready()
+        console.log(this.item)
+        console.log(this.routeData.item)
+
       }
 
       static get is() { return 'shop-detail'; }
@@ -224,7 +226,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: false
         },
 
-        item: Object,
+        item: {
+          type: Object
+
+        },
 
         route: Object,
 

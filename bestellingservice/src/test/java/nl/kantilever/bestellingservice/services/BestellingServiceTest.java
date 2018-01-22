@@ -1,6 +1,6 @@
 package nl.kantilever.bestellingservice.services;
 
-import nl.kantilever.bestellingservice.config.Config;
+import nl.kantilever.bestellingservice.config.AppConfig;
 import nl.kantilever.bestellingservice.entities.Artikel;
 import nl.kantilever.bestellingservice.entities.Bestelling;
 import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
@@ -10,10 +10,8 @@ import nl.kantilever.bestellingservice.repositories.BestellingRepository;
 import nl.kantilever.bestellingservice.repositories.BestellingSnapshotRepository;
 import nl.kantilever.bestellingservice.repositories.GebruikerRepository;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,7 +36,7 @@ import static org.mockito.Mockito.doReturn;
 
 
 @RunWith(SpringRunner.class)
-@Import(Config.class)
+@Import(AppConfig.class)
 //@Transactional
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @DataJpaTest
@@ -90,7 +88,6 @@ public class BestellingServiceTest {
   }
 
   @Test
-  @Ignore
   public void addBestellingGivenBestellingExpectBestellingViewSavedCorrectly() {
     Mockito.when(bestellingRepository.findOne(Mockito.anyLong())).thenReturn(bestelling);
     bestellingService.addBestelling(bestelling);
@@ -110,7 +107,7 @@ public class BestellingServiceTest {
     Artikel a = new Artikel();
     a.setPrijs(12.0);
     doReturn(a).when(restTemplate).getForObject(any(String.class), eq(Artikel.class));
-    bestellingService.saveBestellingSnapshot(bestellingFromDb);
+    bestellingService.saveBestellingSnapshot(bestellingFromDb, "123123");
 
     BestellingSnapshot bestellingSnapshotFromDb = bestellingService.findById(Mockito.anyLong());
     assertBestelling(bestellingSnapshotFromDb, bestelling);
@@ -183,9 +180,9 @@ public class BestellingServiceTest {
     Page<BestellingSnapshot> page = new PageImpl(bestellingenList);
     Mockito.when(bestellingSnapshotRepository.findAllByStatus(Mockito.anyString(), Mockito.any(Pageable.class))).thenReturn(page);
 
-    bestellingService.setBestellingIngepakt(1L);
-    bestellingService.setBestellingIngepakt(2L);
-    bestellingService.setBestellingIngepakt(3L);
+    bestellingService.setBestellingStatus(1L, "ingepakt");
+    bestellingService.setBestellingStatus(2L, "ingepakt");
+    bestellingService.setBestellingStatus(3L, "ingepakt");
 
     assertThat(bestellingService.findAllByStatus("geplaatst", null).size(), is(3));
   }
@@ -223,7 +220,7 @@ public class BestellingServiceTest {
   public void getGebruikersMetBestellingenBoven500ReturnsGebruikers() throws Exception {
     List<Gebruiker> gebruikers = new ArrayList<>();
     Gebruiker gebruiker = new Gebruiker();
-    gebruiker.setMaxCrediet(500);
+    gebruiker.setMaxKrediet(500);
     gebruikers.add(gebruiker);
     Mockito.when(gebruikerService.getGebruikersBoven500()).thenReturn(gebruikers);
 

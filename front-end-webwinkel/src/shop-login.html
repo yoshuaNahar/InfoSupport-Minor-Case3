@@ -31,7 +31,15 @@
       pattern="/:category"
       data="{{routeData}}"></app-route>
 
-  <h1 style="text-align: center">Inloggen</h1>
+
+    <paper-dialog id="modal" modal>
+      <p>We hebben geen gebruiker gevonden met het gegeven gebruikersnaam en wachtwoord.</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>Sluiten</paper-button>
+      </div>
+    </paper-dialog>
+
+    <h1 style="text-align: center">Inloggen</h1>
     <div class="login-field vertical around-justified wrap layout">
       <div>
 
@@ -42,7 +50,7 @@
                 <p>Gebruikersnaam: </p><input type="text" name="username" id="username" required>
               </div>
               <div>
-                <p>Password: </p><input type="password" name="password" id="password" required>
+                <p>Wachtwoord: </p><input type="password" name="password" id="password" required>
               </div>
               <shop-button responsive>
                   <input type="submit">
@@ -66,35 +74,21 @@
         super.ready()
       }
 
+      makeAuthenticated() {
+        location.href="/"
+      }
+
       submit(event) {
-        this.loginFailed = false;
         event.preventDefault();
-        console.log(event)
-        fetch(environment.API.gebruikerservice + '/authenticate',
-          {
-            method: 'post',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              username: this.shadowRoot.querySelector('#username').value,
-              password: this.shadowRoot.querySelector('#password').value
-            })
-          })
-          .then(data => {
-            if (!data.ok) {
-              throw Error(data.statusText)
-            }
-            return data.text()
-          }).then(data => {
-          this.dispatchEvent(new CustomEvent('authenticate', {
-            bubbles: true, composed: true}));
-            localStorage.setItem("refreshToken",data);
-            location.href="/"
-        }).catch(error => {
-          this.loginFailed = true
-        })
+        let username = this.shadowRoot.querySelector('#username').value;
+        let password = this.shadowRoot.querySelector('#password').value;
+        globals.authenticate(
+          username,
+          password,
+          this.makeAuthenticated
+        );
+        this.dispatchEvent(new CustomEvent('authenticate', {
+          bubbles: true, composed: true}));
       }
     }
     customElements.define(ShopLogin.is, ShopLogin);

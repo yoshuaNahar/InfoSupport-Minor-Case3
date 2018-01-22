@@ -1,7 +1,5 @@
 package nl.kantilever.bestellingservice.services;
 
-import java.util.ArrayList;
-import java.util.List;
 import nl.kantilever.bestellingservice.entities.Artikel;
 import nl.kantilever.bestellingservice.entities.Bestelling;
 import nl.kantilever.bestellingservice.entities.BestellingSnapshot;
@@ -14,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -34,6 +34,9 @@ public class BestellingService {
 
   @Value("${urls.webwinkel}")
   private String webwinkelUrl;
+
+  @Value("${urls.account}")
+  private String accountUrl;
 
   @Autowired
   public BestellingService(
@@ -77,7 +80,8 @@ public class BestellingService {
     return bestellingSnapshotRepository.findAllByStatus(status, pageLimit).getContent();
   }
 
-  public void saveBestellingSnapshot(Bestelling bestelling) {
+  @Transactional
+  public void saveBestellingSnapshot(Bestelling bestelling, String accessToken) {
     List<Artikel> artikelen = new ArrayList<>();
 
     // NOTE: webwinkel + replayservice draaien
@@ -89,12 +93,36 @@ public class BestellingService {
     logger.info("artikkelen list: {}", artikelen);
 
     artikelService.saveArtikelen(artikelen);
+
     Gebruiker gebruiker = gebruikerService.getGebruikerById(bestelling.getGebruikerId());
+    if (gebruiker == null) {
+//      HttpHeaders httpHeaders = new HttpHeaders();
+//      httpHeaders.set("Access-Token", accessToken);
+//
+//      RestTemplate restTemplate = new RestTemplate();
+//      restTemplate.headForHeaders("http://" + accountUrl + "gebruiker/" + bestelling.getGebruikerId(), httpHeaders);
+//      Gebruiker gebruikerFromAccountService = restTemplate.getForObject("http://" + accountUrl + "gebruiker/" + bestelling.getGebruikerId(), Gebruiker.class);
+
+      String url = "http://" + accountUrl + "/gebruiker/" + bestelling.getGebruikerId();
+
+      RestTemplate restTemplate = new RestTemplate();
+
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("Access-Token", accessToken);
+      HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+      ResponseEntity<Gebruiker> respEntity = restTemplate.exchange(url, HttpMethod.GET, entity, Gebruiker.class);
+
+      Gebruiker gebruikerFromAccountService = respEntity.getBody();
+
+      gebruiker = gebruikerService.save(gebruikerFromAccountService);
+    }
+
     Double bestellingTotal = artikelen.stream().mapToDouble(Artikel::getPrijs).sum();
+    gebruiker.setHuidigKrediet(gebruiker.getHuidigKrediet() + bestellingTotal);
 
     BestellingSnapshot bestellingSnapshot = new BestellingSnapshot();
     bestellingSnapshot.setId(bestelling.getId());
-    bestellingSnapshot.setGebruikerId(gebruiker.getGebruikerId());
+    bestellingSnapshot.setGebruikerId(gebruiker.getId());
     bestellingSnapshot.setArtikelen(artikelen);
     bestellingSnapshot.setTotal(bestellingTotal);
     bestellingSnapshot.setStatus("geplaatst");
@@ -103,8 +131,8 @@ public class BestellingService {
   }
 
   @Transactional
-  public void setBestellingIngepakt(Long bestellingId) {
-    bestellingSnapshotRepository.setStatusIngepakt(bestellingId);
+  public void setBestellingStatus(Long bestellingId, String status) {
+    bestellingSnapshotRepository.setStatus(bestellingId, status);
   }
 
   public List<BestellingSnapshot> getBestellingenGebruiker(int id) {

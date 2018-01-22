@@ -20,10 +20,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
 <link rel="import" href="my-icons.html">
 
 <script src="environment.js"></script>
-<link rel="lazy-import" href="bestellingen.html">
+<script src="globals.js"></script>
+
+<link rel="lazy-import" href="gebruikers-past-limit.html">
 <link rel="lazy-import" href="notFound.html">
 
 <dom-module id="my-app">
@@ -79,12 +83,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         tail="{{subroute}}">
     </app-route>
 
+    <app-route
+      route="[[route]]"
+      data="{{routeData}}">
+    </app-route>
+
     <app-drawer-layout fullbleed narrow="{{narrow}}">
       <!-- Drawer content -->
       <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="bestellingen" href="[[rootPath]]bestellingen">Bestellingen</a>
+          <a name="bestellingen" href="[[rootPath]]gebruikers-past-limit">Te keuren bestellingen</a>
         </iron-selector>
       </app-drawer>
 
@@ -103,7 +112,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             attr-for-selected="name"
             fallback-selection="view404"
             role="main">
-          <bestellingen-view name="bestellingen"></bestellingen-view>
+          <login-form-view name="login-form"></login-form-view>
+          <gebruikers-past-limit-view name="gebruikers-past-limit"></gebruikers-past-limit-view>
+          <gebruiker-detail-view name="gebruiker-detail"></gebruiker-detail-view>
           <not-found-view name="notFound"></not-found-view>
         </iron-pages>
       </app-header-layout>
@@ -137,8 +148,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _routePageChanged(page) {
         // If no page was found in the route data, page will be an empty string.
-        // Default to 'bestellingen' in that case.
-        this.page = page || 'bestellingen';
+        // Default to 'gebruikers-past-limit' in that case.
+        this.page = page || 'gebruikers-past-limit';
 
         // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {
@@ -147,12 +158,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _pageChanged(page) {
-        console.log(page, 'page');
+        let refreshToken = localStorage.getItem("refreshToken");
+
+        if (refreshToken && page === 'login-form') {
+          location.href = '/gebruikers-past-limit';
+        } else if (!refreshToken && page !== 'login-form') {
+          location.href = '/login-form';
+        }
 
         // Load page import on demand. Show 404 page if fails
         var resolvedPageUrl = this.resolveUrl(page + '.html');
 
-        console.log( resolvedPageUrl, "resolved")
         Polymer.importHref(
             resolvedPageUrl,
             null,

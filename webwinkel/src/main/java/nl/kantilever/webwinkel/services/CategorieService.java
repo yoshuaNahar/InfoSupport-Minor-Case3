@@ -12,14 +12,14 @@ import java.util.List;
 public class CategorieService {
   private CategorieRepository categorieRepository;
 
+  @Autowired
+  public CategorieService(CategorieRepository categorieRepository) {
+    this.categorieRepository = categorieRepository;
+  }
+
   @Transactional
   public void save(Categorie categorie) {
     this.categorieRepository.save(categorie);
-  }
-
-  @Autowired
-  public void setCategorieRepository(CategorieRepository categorieRepository) {
-    this.categorieRepository = categorieRepository;
   }
 
   public List<Categorie> findAll() {

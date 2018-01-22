@@ -1,62 +1,62 @@
 package nl.kantilever.webwinkel.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "artikelen")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Artikel {
+
   @Id
   @Column(name = "artikelnummer")
-  @JsonProperty("Artikelnummer") @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @JsonProperty("Artikelnummer")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   long artikelnummer;
-
+  @JsonProperty("Leverancier")
+  @Column(name = "leverancier")
+  String leverancier;
   @JsonProperty("Naam")
   @Column(name = "naam")
   private String naam;
-
   @JsonProperty("Beschrijving")
   @Column(name = "beschrijving")
   private String beschrijving;
-
   @JsonProperty("Prijs")
   @Column(name = "prijs")
   private double prijs;
-
   @JsonProperty("AfbeeldingUrl")
   @Column(name = "afbeeldingURL")
   private String afbeeldingURL;
-
   @JsonProperty("LeverbaarVanaf")
   @Column(name = "leverbaarVanaf")
   @DateTimeFormat(pattern = "dd-MM-yyyy")
   @Temporal(TemporalType.DATE)
   private Date leverbaarVanaf;
-
   @JsonProperty("LeverbaarTot")
   @Column(name = "leverbaarTot")
   @DateTimeFormat(pattern = "dd-MM-yyyy")
   @Temporal(TemporalType.DATE)
   private Date leverbaarTot;
-
   @JsonProperty("Leveranciercode")
   @Column(name = "leverancierCode")
   private String leverancierCode;
-
-  @JsonProperty("Leverancier")
-  @Column(name = "leverancier")
-  String leverancier;
-
   @JsonProperty("Categorieen")
-  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<Categorie> categorieen;
 
   public Artikel(String naam) {
@@ -80,7 +80,8 @@ public class Artikel {
     this.categorieen = categorieen;
   }
 
-  public Artikel(Long artikelnummer, String naam, String beschrijving, double prijs, String afbeeldingURL,
+  public Artikel(Long artikelnummer, String naam, String beschrijving, double prijs,
+    String afbeeldingURL,
     Date leverbaarVanaf, Date leverbaarTot, String leverancierCode, String leverancier,
     List<Categorie> categorieen) {
     this.artikelnummer = artikelnummer;
@@ -94,7 +95,6 @@ public class Artikel {
     this.leverancier = leverancier;
     this.categorieen = categorieen;
   }
-
 
   public long getArtikelnummer() {
     return artikelnummer;

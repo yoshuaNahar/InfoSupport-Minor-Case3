@@ -1,0 +1,151 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="gebruiker-detail-view">
+  <template>
+    <app-location route="{{route}}"></app-location>
+    <app-route
+      route="{{route}}"
+      pattern="/gebruiker-detail/:gebruikerId"
+      data="{{routeData}}">
+    </app-route>
+
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      h2 {
+        color: black;
+      }
+    </style>
+
+    <h1>[[gebruiker.volledigeNaam]]</h1>
+    <b>Stad:</b> [[gebruiker.stad]]<br>
+    <b>Straat:</b> [[gebruiker.straatnaam]]<br>
+    <b>Huisnummer:</b> [[gebruiker.huisnummer]]<br>
+    <b>Postcode:</b> [[gebruiker.postcode]]<br>
+    <b>Telefoonnummer:</b> [[gebruiker.telefoonnummer]]<br>
+
+    <br>
+
+    <template is="dom-repeat" items="[[bestellingen]]">
+      <div class="card">
+        <span class="circle">[[item.id]]</span>
+        <h2>Bestelling geplaatst op [[item.geplaatstOp]]</h2>
+        <b>Totaalprijs:</b> €[[item.total]]<br>
+        <br>
+        <b>Artikelen:</b><br>
+        <!--<template is="dom-if" items="[[item.artikelen]]">-->
+        <table class="table" style="box-shadow: none;">
+          <tr>
+            <th>Naam</th>
+            <th>Leverancier</th>
+            <th>Prijs</th>
+          </tr>
+          <template is="dom-repeat" items="[[item.artikelen]]">
+            <tr>
+              <td>[[item.Naam]]</td>
+              <td>[[item.Leverancier]]</td>
+              <td>[[item.Prijs]]</td>
+            </tr>
+          </template>
+        </table>
+        <!--</template>-->
+
+      </div>
+    </template>
+
+    <div class="seperation-line"></div>
+
+    <div style="float: right;">
+      <paper-button class="mat-red" on-click="denyOrders">✖</paper-button>
+      <paper-button class="mat-green" on-click="confirmOrders">✔</paper-button>
+    </div>
+  </template>
+
+  <script>
+    class GebruikerDetail extends Polymer.Element {
+      static get is() {
+        return 'gebruiker-detail-view';
+      }
+
+      static get properties() {
+        return {
+          routeData: Object,
+          gebruiker: {
+            value: this.gebruiker
+          },
+          bestellingen: {
+            value: this.bestellingen
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+        let gebruikerUrl = environment.API.accountservice + "/gebruiker/" + this.routeData.gebruikerId;
+        let bestellingenUrl = environment.API.bestellingservice + "/bestelling/gebruiker/" + this.routeData.gebruikerId;
+
+        globals.makeAuthenticatedCall(gebruikerUrl).then(data => {
+          return data.json()
+        }).then(gebruiker => {
+          if (gebruiker.tussenvoegsel) {
+            gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.tussenvoegsel + " " + gebruiker.achternaam;
+          } else {
+            gebruiker.volledigeNaam = gebruiker.voornaam + " " + gebruiker.achternaam;
+          }
+
+          this.gebruiker = gebruiker;
+          return globals.makeAuthenticatedCall(bestellingenUrl);
+        }).then(data => {
+          return data.json();
+        }).then(bestellingen => {
+          this.bestellingen = bestellingen;
+        })
+      }
+
+      goToGebruikersPastLimit() {
+        location.href = '/gebruikers-past-limit';
+      }
+
+      setStatusOrders(status) {
+        this.bestellingen.forEach(bestelling => {
+          let url = environment.API.bestellingservice + "/bestelling/" + bestelling.id + "/setStatus/" + status;
+
+          globals.makeAuthenticatedCall(url, {method: 'PUT'}).then(data => {
+            if (data.status >= 300) { // Error Response
+              alert("Error:" + data.status);
+            }
+          }).catch(err => {
+            alert(err);
+          })
+        });
+        this.goToGebruikersPastLimit();
+      }
+
+      confirmOrders() {
+        this.setStatusOrders('goedgekeurd')
+      }
+
+      denyOrders() {
+        this.setStatusOrders('afgekeurd')
+      }
+
+    }
+
+    window.customElements.define(GebruikerDetail.is, GebruikerDetail);
+  </script>
+</dom-module>

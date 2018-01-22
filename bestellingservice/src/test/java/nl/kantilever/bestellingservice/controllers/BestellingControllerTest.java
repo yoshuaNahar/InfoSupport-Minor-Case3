@@ -47,11 +47,12 @@ public class BestellingControllerTest {
     mockMvc.perform(post("/bestelling")
       .contentType(MediaType.APPLICATION_JSON)
       .content(mapper.writeValueAsString(bestelling))
+      .header("Access-Token", "a_random_token")
       .accept(MediaType.APPLICATION_JSON)
     ).andExpect(status().isCreated());
 
     verify(bestellingService, times(1)).addBestelling(any(Bestelling.class));
-    verify(bestellingService, times(1)).saveBestellingSnapshot(any(Bestelling.class));
+    verify(bestellingService, times(1)).saveBestellingSnapshot(any(Bestelling.class), any(String.class));
   }
 
   @Test
@@ -63,14 +64,14 @@ public class BestellingControllerTest {
   public void setBestellingIngepaktWithBestellingSnapshotIdShouldCallSetBestellingIngepaktAndReturnOkResponseEntity() throws Exception {
     long bestellingSnapshotId = 1L;
 
-    mockMvc.perform(put("/bestelling/" + bestellingSnapshotId + "/setIngepakt")).andExpect(status().isOk());
+    mockMvc.perform(put("/bestelling/" + bestellingSnapshotId + "/setStatus/ingepakt")).andExpect(status().isOk());
 
-    verify(bestellingService, times(1)).setBestellingIngepakt(bestellingSnapshotId);
+    verify(bestellingService, times(1)).setBestellingStatus(bestellingSnapshotId, "ingepakt");
   }
 
   @Test
   public void setBestellingIngepaktWithNoBestellingSnapshotIdShouldReturnBadRequestResponseEntity() throws Exception {
-    mockMvc.perform(put("/bestelling/null/setIngepakt")).andExpect(status().isBadRequest());
+    mockMvc.perform(put("/bestelling/null/setStatus/ingepakt")).andExpect(status().isBadRequest());
   }
 
   @Test
