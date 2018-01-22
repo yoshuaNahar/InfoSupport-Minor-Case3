@@ -4,6 +4,7 @@
   "fragments": [
     "src/gebruiker-detail.html",
     "src/gebruikers-past-limit.html",
+    "src/login-form.html",
     "src/notFound.html"
   ],
   "sources": [

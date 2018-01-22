@@ -99,7 +99,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let gebruikerUrl = environment.API.accountservice + "/gebruiker/" + this.routeData.gebruikerId;
         let bestellingenUrl = environment.API.bestellingservice + "/bestelling/gebruiker/" + this.routeData.gebruikerId;
 
-        fetch(gebruikerUrl).then(data => {
+        globals.makeAuthenticatedCall(gebruikerUrl).then(data => {
           return data.json()
         }).then(gebruiker => {
           if (gebruiker.tussenvoegsel) {
@@ -109,16 +109,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
 
           this.gebruiker = gebruiker;
-          console.log('gebruiker', gebruiker);
-
-          return fetch(bestellingenUrl);
+          return globals.makeAuthenticatedCall(bestellingenUrl);
         }).then(data => {
           return data.json();
         }).then(bestellingen => {
-          console.log('bestellingen', bestellingen);
           this.bestellingen = bestellingen;
-        }).catch(err => {
-          alert(err);
         })
       }
 
@@ -129,7 +124,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       setStatusOrders(status) {
         this.bestellingen.forEach(bestelling => {
           let url = environment.API.bestellingservice + "/bestelling/" + bestelling.id + "/setStatus/" + status;
-          fetch(url, {method: 'PUT'}).then(data => {
+
+          globals.makeAuthenticatedCall(url, {method: 'PUT'}).then(data => {
             if (data.status >= 300) { // Error Response
               alert("Error:" + data.status);
             }

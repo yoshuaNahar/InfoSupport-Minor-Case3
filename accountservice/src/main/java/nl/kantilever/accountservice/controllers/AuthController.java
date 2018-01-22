@@ -12,9 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
-@CrossOrigin("*")
 @RestController
 public class AuthController {
 
@@ -55,10 +56,17 @@ public class AuthController {
       HashMap<String, Object> claims = new HashMap<>();
       claims.put("role", account.getRole());
 
+      // Determine experation time
+      Calendar cal = Calendar.getInstance(); // creates calendar
+      cal.setTime(new Date()); // sets calendar time/date
+      cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
+      Date exp = cal.getTime(); // returns new date object, one hour in the future
+
       // Build AccessToken
       String accessToken = Jwts.builder()
         .setSubject(account.getId() + "")
         .addClaims(claims)
+        .setExpiration(exp)
         .signWith(SignatureAlgorithm.HS256, this.accessTokenSecret)
         .compact();
 
@@ -89,9 +97,16 @@ public class AuthController {
         return new ResponseEntity(HttpStatus.UNAUTHORIZED);
       }
 
+      // Determine experation time
+      Calendar cal = Calendar.getInstance(); // creates calendar
+      cal.setTime(new Date()); // sets calendar time/date
+      cal.add(Calendar.DATE, 1); // adds one day
+      Date exp = cal.getTime(); // returns new date object, one hour in the future
+
       // Build RefreshToken
       String refreshToken = Jwts.builder()
         .setSubject(accountFromDB.getId() + "")
+        .setExpiration(exp)
         .signWith(SignatureAlgorithm.HS256, this.refreshTokenSecret)
         .compact();
 
