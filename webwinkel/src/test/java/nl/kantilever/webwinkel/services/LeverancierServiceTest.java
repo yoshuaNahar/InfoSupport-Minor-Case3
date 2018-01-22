@@ -18,7 +18,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
 public class LeverancierServiceTest {
 
   LeverancierService leverancierService;

@@ -33,7 +33,7 @@ public class ArtikelAanCatalogusToegevoegdListenerTest {
 //  }
 
   @Test
-  public void name() throws Exception {
-
+  public void test() throws Exception {
+    Assert.assertTrue(true);
   }
 }
