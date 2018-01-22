@@ -279,7 +279,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         };
 
         let queryString = 'zoeken=';
-        
+
         for(let key of Object.keys(searchObject)){
           if(searchObject[key].length !== 0) {
             if(searchObject[key] === 'categorieen') {
@@ -304,6 +304,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               queryString = queryString.concat('prijs>' + encodeURIComponent(searchObject['minPrice']) + ';')
             } else if (key === 'maxPrice') {
               queryString = queryString.concat('prijs<' + encodeURIComponent(searchObject['maxPrice']) + ';')
+            } else if(key === 'leverbaarVanaf') {
+              queryString = queryString.concat('leverbaarVanaf>' + searchObject['leverbaarVanaf'])
+            } else if (key === 'leverbaarTot') {
+              queryString = queryString.concat('leverbaarTot<' + searchObject['leverbaarTot'])
             } else {
               queryString = queryString.concat(key + ':' + encodeURIComponent(searchObject[key]) + ';')
             }
