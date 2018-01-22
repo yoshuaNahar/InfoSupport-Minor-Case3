@@ -77,7 +77,6 @@
       submit(event) {
         this.loginFailed = false;
         event.preventDefault();
-        console.log(event)
         fetch(environment.API.accountservice + '/authenticate',
           {
             method: 'post',

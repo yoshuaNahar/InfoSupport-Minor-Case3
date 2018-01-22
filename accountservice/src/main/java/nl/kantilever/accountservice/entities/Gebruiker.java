@@ -35,6 +35,16 @@ public class Gebruiker {
 
   private double huidigKrediet = 0.0; // default value
 
+  private String factuurStraatnaam;
+
+  private String factuurHuisnummer;
+
+  private String factuurPostcode;
+
+  private String factuurStad;
+
+  private String factuurLand;
+
   @OneToOne
   @Cascade({org.hibernate.annotations.CascadeType.ALL})
   private Account account;
@@ -151,10 +161,51 @@ public class Gebruiker {
     this.huidigKrediet = huidigKrediet;
   }
 
+  public String getFactuurStraatnaam() {
+    return factuurStraatnaam;
+  }
+
+  public void setFactuurStraatnaam(String factuurStraatnaam) {
+    this.factuurStraatnaam = factuurStraatnaam;
+  }
+
+  public String getFactuurHuisnummer() {
+    return factuurHuisnummer;
+  }
+
+  public void setFactuurHuisnummer(String factuurHuisnummer) {
+    this.factuurHuisnummer = factuurHuisnummer;
+  }
+
+  public String getFactuurPostcode() {
+    return factuurPostcode;
+  }
+
+  public void setFactuurPostcode(String factuurPostcode) {
+    this.factuurPostcode = factuurPostcode;
+  }
+
+  public String getFactuurStad() {
+    return factuurStad;
+  }
+
+  public void setFactuurStad(String factuurStad) {
+    this.factuurStad = factuurStad;
+  }
+
+  public String getFactuurLand() {
+    return factuurLand;
+  }
+
+  public void setFactuurLand(String factuurLand) {
+    this.factuurLand = factuurLand;
+  }
+
   @Override
   public String toString() {
     return "Gebruiker{" +
-      "id='" + id + '\'' +
+      "id=" + id +
+      ", aanhef='" + aanhef + '\'' +
       ", voornaam='" + voornaam + '\'' +
       ", tussenvoegsel='" + tussenvoegsel + '\'' +
       ", achternaam='" + achternaam + '\'' +
@@ -164,8 +215,14 @@ public class Gebruiker {
       ", stad='" + stad + '\'' +
       ", land='" + land + '\'' +
       ", telefoonnummer='" + telefoonnummer + '\'' +
+      ", maxKrediet=" + maxKrediet +
+      ", huidigKrediet=" + huidigKrediet +
+      ", factuurStraatnaam='" + factuurStraatnaam + '\'' +
+      ", factuurHuisnummer='" + factuurHuisnummer + '\'' +
+      ", factuurPostcode='" + factuurPostcode + '\'' +
+      ", factuurStad='" + factuurStad + '\'' +
+      ", factuurLand='" + factuurLand + '\'' +
       ", account=" + account +
       '}';
   }
-
 }
