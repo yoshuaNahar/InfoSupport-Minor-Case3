@@ -78,14 +78,14 @@ public class AccountFilter implements Filter {
   private String determineRoleBasedOnRequestedUrl(String url) {
     String role = "USER";
 
-    if (isRegisterationUrl(url)) {
+    if (isRegistrationUrl(url)) {
       role = null;
     }
 
     return role;
   }
 
-  private boolean isRegisterationUrl(String url) {
+  private boolean isRegistrationUrl(String url) {
     return url.matches("/gebruiker");
   }
 
