@@ -47,8 +47,8 @@ services:
       - "8922:80"
 
   kantilever-magazijn-service:
-    image: minordotnet.azurecr.io/kantilever-magazijn-services
-    container_name: kantilever-magazijn-services
+    image: minordotnet.azurecr.io/kantilever-magazijn-service
+    container_name: kantilever-magazijn-service
     environment:
       - MagazijnDb=Server=sql,1433;Database=MagazijnDb;User ID=sa;Password=Geheim_101
       - VIRTUAL_HOST=kantilever-magazijn-services.netminor.infosupport.net
@@ -65,7 +65,7 @@ services:
       - "8923:80"
 
   kantilever-magazijn-frontend:
-    image: minordotnet.azurecr.io/kantilever-magazijn-frontend
+    image: minordotnet.azurecr.io/kantilever-magazijn-frontend:latest
     container_name: kantilever-magazijn-frontend
     environment:
       - MagazijnViewDb=Server=sql,1433;Database=MagazijnViewDb;User ID=sa;Password=Geheim_101

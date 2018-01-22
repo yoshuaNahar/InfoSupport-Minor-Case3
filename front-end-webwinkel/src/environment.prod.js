@@ -1,8 +1,8 @@
 let environment = {
   API: {
-    webwinkel: process.env.WEBWINKEL_URL,
-    bestellingservice: process.env.BESTELLING_URL,
-    accountservice: process.env.ACCOUNT_URL,
+    webwinkel: "http://192.168.178.158:8927",
+    bestellingservice: "http://l92.168.178.158:8930",
+    accountservice: "http://l92.168.178.158:8937"
   },
   role: 'USER'
 };
