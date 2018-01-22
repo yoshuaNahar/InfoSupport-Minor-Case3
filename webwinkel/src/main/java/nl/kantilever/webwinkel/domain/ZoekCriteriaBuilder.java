@@ -49,34 +49,33 @@ public class ZoekCriteriaBuilder {
   }
 
   public Specification<Artikel> build() { //Bouwt een specificatie met zoekcriteria en bijbehorend compositietype (AND/OR)
-    if (zoekCriteria.size() == 0) {
-      return null;
-    }
+    Specification<Artikel> result = null;
 
     List<Specification<Artikel>> specs = new ArrayList<Specification<Artikel>>();
     for (ZoekCriterium param : zoekCriteria) {
       specs.add(new ArtikelSpecificatie(param));
     }
 
-    Specification<Artikel> result = specs.get(0);
-    for (int i = 1; i < specs.size(); i++) {
-      result = Specifications.where(result).or(specs.get(i));
+
+    if (!zoekCriteria.isEmpty()) {
+      result = specs.get(0);
+      for (int i = 1; i < specs.size(); i++) {
+        result = Specifications.where(result).or(specs.get(i));
+      }
+
+      Specification<Artikel> categorieResults = null;
+      for (Categorie currentCategorie : categorieen) {
+        result = Specifications.where(result).and(isArtikelInCategorieen(categorieen));
+      }
     }
 
-
-    Specification<Artikel> categorieResults = null;
-    for (Categorie currentCategorie : categorieen) {
-      result = Specifications.where(result).and(isArtikelInCategorieen(categorieen));
-    }
-
-    if(minPrice != 0) {
+    if (!specs.isEmpty()) {
       result = Specifications.where(result).and(isArtikelMinimumPrice(minPrice)); //Controle van pricerange
-    }
-
-    if(maxPrice != 999999999) {
+      result = Specifications.where(result).and(isArtikelMaximumPricePrice(maxPrice)); //Controle van pricerange
+    } else {
+      result = Specifications.where(result).or(isArtikelMinimumPrice(minPrice)); //Controle van pricerange
       result = Specifications.where(result).and(isArtikelMaximumPricePrice(maxPrice)); //Controle van pricerange
     }
-
     return result;
   }
 
@@ -92,7 +91,7 @@ public class ZoekCriteriaBuilder {
   public static Specification<Artikel> isArtikelMinimumPrice(int minPrice) {
     return new Specification<Artikel>() {
       public Predicate toPredicate(Root<Artikel> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-        return builder.lessThanOrEqualTo(root.<Integer>get("prijs"), minPrice);
+        return builder.greaterThanOrEqualTo(root.<Integer>get("prijs"), minPrice);
       }
     };
   }
@@ -100,7 +99,7 @@ public class ZoekCriteriaBuilder {
   public static Specification<Artikel> isArtikelMaximumPricePrice(int maxPrice) {
     return new Specification<Artikel>() {
       public Predicate toPredicate(Root<Artikel> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-        return builder.greaterThanOrEqualTo(root.<Integer>get("prijs"), maxPrice);
+        return builder.lessThanOrEqualTo(root.<Integer>get("prijs"), maxPrice);
       }
     };
   }
