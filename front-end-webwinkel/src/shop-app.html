@@ -7,6 +7,9 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
+<script src="globals.js"></script>
+<script src="environment.js"></script>
+
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
@@ -663,7 +666,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _authenticate(e) {
-        console.log('authenticate event')
         if (localStorage.getItem(['refreshToken'])) {
           this.authenticated = true;
         } else {
