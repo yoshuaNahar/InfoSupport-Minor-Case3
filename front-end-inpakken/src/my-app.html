@@ -158,9 +158,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let refreshToken = localStorage.getItem("refreshToken");
 
         if (refreshToken && page === 'login-form') {
-          location.pathname = 'inpakken';
+          location.href = '/inpakken';
         } else if (!refreshToken && page !== 'login-form') {
-          location.pathname = 'login-form';
+          location.href = '/login-form';
         }
 
         // Load page import on demand. Show 404 page if fails

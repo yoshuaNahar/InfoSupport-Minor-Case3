@@ -3,7 +3,7 @@ version: '3'
 services:
 
   de-jong-webwinkel-mysql:
-    image: 'bitnami/mysql:latest'
+    image: 'bitnami/mysql:5.7.21-r0'
     container_name: de-jong-webwinkel-mysql
     ports:
       - "8925:3306"
@@ -13,7 +13,7 @@ services:
       - MYSQL_DATABASE=webwinkelservice
 
   de-jong-webwinkel-phpmyadmin:
-   image: phpmyadmin/phpmyadmin
+   image: phpmyadmin/phpmyadmin:4.7.7-1
    container_name: de-jong-webwinkel-phpmyadmin
    ports:
     - "8926:80"
@@ -74,7 +74,7 @@ services:
       - de-jong-bestellingservice-mysql
 
   de-jong-bestellingservice-mysql:
-    image: 'bitnami/mysql:latest'
+    image: 'bitnami/mysql:5.7.21-r0'
     container_name: de-jong-bestellingservice-mysql
     ports:
       - "8931:3306"
@@ -85,7 +85,7 @@ services:
 
   de-jong-bestellingservice-phpmyadmin:
    container_name: de-jong-bestellingservice-phpmyadmin
-   image: phpmyadmin/phpmyadmin
+   image: phpmyadmin/phpmyadmin:4.7.7-1
    ports:
     - "8932:80"
    links:
@@ -112,7 +112,7 @@ services:
       - "8934:80"
 
   de-jong-accountservice-mysql:
-    image: 'bitnami/mysql:latest'
+    image: 'bitnami/mysql:5.7.21-r0'
     container_name: de-jong-accountservice-mysql
     ports:
      - "8935:3306"
@@ -123,7 +123,7 @@ services:
 
   de-jong-accountservice-phpmyadmin:
     container_name: de-jong-accountservice-phpmyadmin
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:4.7.7-1
     ports:
      - "8936:80"
     links:
