@@ -66,7 +66,7 @@ public class GebruikerController {
 
       return ResponseEntity.ok().body(gebruikerService.findById(gebruikerId));
     } catch (Exception e) {
-      logger.info(e.getMessage());
+      logger.info("Exception: {}", e);
       return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR); // 400 Bad Request
     }
   }

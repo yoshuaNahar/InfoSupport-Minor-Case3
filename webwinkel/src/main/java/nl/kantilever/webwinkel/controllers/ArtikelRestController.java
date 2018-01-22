@@ -69,7 +69,7 @@ public class ArtikelRestController {
         String[] waardenArray = waarden.split(","); //Split de waarden van de huidige key op
 
         for (int j = 0; j < waardenArray.length; j++) {
-          if (matcher.group(1).equals("categorieen")) {
+          if ("categorieen".equals(matcher.group(1))) {
             Categorie potentialCategorie = categorieService.findCategorieByNaam(waardenArray[j]);
             if (potentialCategorie != null) {
               potentialCategorie
@@ -78,9 +78,9 @@ public class ArtikelRestController {
             } else {
               logger.info("Categorie in de zoekfilter kan niet worden gevonden");
             }
-          } else if (matcher.group(1).equals("prijs") && matcher.group(2).equals("<")) {
+          } else if ("prijs".equals(matcher.group(1)) && "<".equals(matcher.group(2))) {
             builder.setMinPrice(waardenArray[j]);
-          } else if (matcher.group(1).equals("prijs") && matcher.group(2).equals(">")) {
+          } else if ("prijs".equals(matcher.group(1)) && ">".equals(matcher.group(2))) {
             builder.setMaxPrice(waardenArray[j]);
           } else {
             builder.voegZoekCriteriumToe(matcher.group(1), matcher.group(2),

@@ -65,7 +65,7 @@ public class ZoekCriteriaBuilder {
   }
 
   public Specification<Artikel> build() {
-    if (zoekCriteria.size() == 0) {
+    if (zoekCriteria.isEmpty()) {
       return null;
     }
 

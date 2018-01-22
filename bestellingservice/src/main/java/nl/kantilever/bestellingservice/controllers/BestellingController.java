@@ -35,6 +35,7 @@ public class BestellingController {
 
       return new ResponseEntity(HttpStatus.CREATED); // 201 Created
     } catch (Exception e) {
+      logger.info("Exception: {}", e);
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
     }
   }
@@ -49,7 +50,7 @@ public class BestellingController {
 
       return new ResponseEntity(HttpStatus.OK); // 200 OK
     } catch (Exception e) {
-      logger.info(e.getMessage());
+      logger.info("Exception: {}", e);
       return new ResponseEntity(HttpStatus.BAD_REQUEST); // 400 Bad Request
     }
   }

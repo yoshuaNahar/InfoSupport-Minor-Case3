@@ -64,7 +64,7 @@ public class AuthController {
 
       // Build AccessToken
       String accessToken = Jwts.builder()
-        .setSubject(account.getId() + "")
+        .setSubject(Long.toString(account.getId()))
         .addClaims(claims)
         .setExpiration(exp)
         .signWith(SignatureAlgorithm.HS256, this.accessTokenSecret)
@@ -72,9 +72,11 @@ public class AuthController {
 
       return ResponseEntity.ok().body(accessToken);
     } catch (SignatureException e) {
+      logger.info("Exception: {}", e);
       return new ResponseEntity(HttpStatus.UNAUTHORIZED);
       //don't trust the JWT!
     } catch (Exception e) {
+      logger.info("Exception: {}", e);
       return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -105,7 +107,7 @@ public class AuthController {
 
       // Build RefreshToken
       String refreshToken = Jwts.builder()
-        .setSubject(accountFromDB.getId() + "")
+        .setSubject(Long.toString(accountFromDB.getId()))
         .setExpiration(exp)
         .signWith(SignatureAlgorithm.HS256, this.refreshTokenSecret)
         .compact();

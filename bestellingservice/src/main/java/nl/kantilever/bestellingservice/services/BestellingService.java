@@ -149,7 +149,7 @@ public class BestellingService {
       .findBestellingenByGebruiker(id);
     if (bestellingenByGebruiker != null) {
       for (BestellingSnapshot bestellingSnapshot : bestellingenByGebruiker) {
-        if (!bestellingSnapshot.getStatus().equals("betaald")) {
+        if (!"betaald".equals(bestellingSnapshot.getStatus())) {
           totaalWaarde = totaalWaarde + bestellingSnapshot.getTotal();
         }
       }
