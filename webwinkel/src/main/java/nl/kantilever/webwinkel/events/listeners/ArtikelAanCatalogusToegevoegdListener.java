@@ -28,7 +28,7 @@ public class ArtikelAanCatalogusToegevoegdListener {
   private ArtikelService artikelService;
 
   @Autowired
-  public void setArtikelService(ArtikelService artikelService) {
+  public ArtikelAanCatalogusToegevoegdListener(ArtikelService artikelService) {
     this.artikelService = artikelService;
   }
 
@@ -37,9 +37,9 @@ public class ArtikelAanCatalogusToegevoegdListener {
     exchange = @Exchange(value = "KantileverBus", ignoreDeclarationExceptions = "true", durable = "false", type = ExchangeTypes.TOPIC),
     key = "Kantilever.CatalogusService.ArtikelAanCatalogusToegevoegd")
   )
-  public void listen(byte[] test) throws IOException {
+  public void listen(byte[] input) throws IOException {
     logger.debug("Event Caught: Kantilever.CatalogusService.ArtikelAanCatalogusToegevoegd");
-    String s = new String(test);
+    String s = new String(input);
 
     Artikel ontvangenArtikel = objectMapper.readValue(s, new TypeReference<Artikel>(){});
     if(ontvangenArtikel !=null){
